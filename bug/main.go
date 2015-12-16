@@ -85,6 +85,7 @@ func printHelp() {
 	fmt.Printf("\tcreate\tFile a new bug\n")
 	fmt.Printf("\tlist\tList existing bugs\n")
 	fmt.Printf("\tclose\tDelete an existing bug\n")
+	fmt.Printf("\tpurge\tRemove all issues not tracked by git\n")
 	fmt.Printf("\trm\tAlias of close\n")
 	fmt.Printf("\tenv\tShow settings that bug will use if invoked from this directory\n")
 	fmt.Printf("\tdir\tPrints the issues directory to stdout (useful subcommand in the shell)\n")
@@ -158,6 +159,19 @@ func getEditor() string {
 	return "vim"
 
 }
+
+func purgeBugs() {
+	cmd := exec.Command("git", "clean", "-fd", getRootDir()+"/issues")
+
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 func createBug(Args []string) {
 	var bug Bug
 
@@ -202,6 +216,8 @@ func main() {
 			fallthrough
 		case "list":
 			listBugs(os.Args[2:])
+		case "purge":
+			purgeBugs()
 		case "rm":
 			fallthrough
 		case "close":
