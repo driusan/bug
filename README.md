@@ -1,16 +1,16 @@
 # Issue Tracker 
 
 This repo contains an implementation of a tool to create
-bug's in a (poor man's issue tracker)[https://github.com/driusan/PoormanIssueTracker].
+bug's in a [poor man's issue tracker](https://github.com/driusan/PoormanIssueTracker).
 
-After compiling the main.go file, copy it somewhere in your PATH
+After compiling the main.go file, copy the resulting binary in your PATH
 and use it to create issues. If an environment variable named PMIT
 is set, it will create issues in that directory, otherwise it will
 walk up the path from the current working directory until it finds
 somewhere with an "issues" subdirectory and use that as a location
 for any issues that are created.
 
-Some sample usage (assuming you compile it into a binary called "bug":
+Some sample usage (assuming you compile it into a binary called "bug"):
 
 ```bash
 $ bug
