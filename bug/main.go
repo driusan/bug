@@ -90,8 +90,8 @@ func printHelp() {
 
 func showEnv() {
 	fmt.Printf("Settings used by this command:\n")
-	fmt.Printf("\nIssues directory:\t" + getRootDir() + "/issues/")
-	fmt.Printf("\nEditor:\tvim")
+	fmt.Printf("\nIssues directory:\t%s/issues/", getRootDir())
+	fmt.Printf("\nEditor:\t%s", getEditor())
 	fmt.Printf("\n")
 }
 func listBugs(args []string) {
@@ -121,6 +121,16 @@ func listBugs(args []string) {
 		}
 	}
 }
+
+func getEditor() string {
+	editor := os.Getenv("EDITOR")
+
+	if editor != "" {
+		return editor 
+	}
+	return "vim"
+	
+ }
 func createBug(Args []string) {
 	var bug Bug
 
@@ -135,7 +145,7 @@ func createBug(Args []string) {
 	mode = 0775
 	os.Mkdir(string(dir), mode)
 
-	cmd := exec.Command("vim", string(dir)+"/Description")
+	cmd := exec.Command(getEditor(), string(dir)+"/Description")
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
