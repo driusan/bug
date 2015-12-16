@@ -18,6 +18,7 @@ func (a BugApplication) Help() {
 	fmt.Printf("Valid commands\n")
 	fmt.Printf("\tcreate\tFile a new bug\n")
 	fmt.Printf("\tlist\tList existing bugs\n")
+	fmt.Printf("\tedit\tEdit an existing bug\n")
 	fmt.Printf("\tclose\tDelete an existing bug\n")
 	fmt.Printf("\tpurge\tRemove all issues not tracked by git\n")
 	fmt.Printf("\trm\tAlias of close\n")
@@ -58,6 +59,33 @@ func (a BugApplication) List(args []string) {
 			b.LoadBug(Directory(getRootDir() + "/issues/" + issues[idx-1].Name()))
 			b.ViewBug()
 		}
+	}
+}
+
+func (a BugApplication) Edit(args []string) {
+	issues, _ := ioutil.ReadDir(getRootDir() + "/issues")
+
+	// No parameters, print a list of all bugs
+	if len(args) == 1 {
+		idx, err := strconv.Atoi(args[0])
+		if idx > len(issues) || idx < 1 {
+			fmt.Printf("Invalid issue number %d\n", idx)
+			return
+		}
+		dir := Directory(getRootDir() + "/issues/" + issues[idx-1].Name())
+		cmd := exec.Command(getEditor(), string(dir)+"/Description")
+
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
+		err = cmd.Run()
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		fmt.Printf("Usage: %s edit issuenum\n", os.Args[0])
+		fmt.Printf("\nNo issue number specified\n")
 	}
 }
 func (a BugApplication) Close(args []string) {
@@ -105,7 +133,7 @@ func (a BugApplication) Create(Args []string) {
 	}
 
 	dir, _ := bug.GetDirectory()
-	fmt.Printf("Created a bug: %s\n\tIn directory: %s", bug.Title, dir)
+	fmt.Printf("Created issue: %s\n", bug.Title)
 
 	var mode os.FileMode
 	mode = 0775

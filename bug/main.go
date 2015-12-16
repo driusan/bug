@@ -76,6 +76,8 @@ func main() {
 			fallthrough
 		case "close":
 			app.Close(os.Args[2:])
+		case "edit":
+			app.Edit(os.Args[2:])
 		case "env":
 			app.Env()
 		case "dir":
