@@ -13,18 +13,38 @@ import (
 
 type BugApplication struct{}
 
-func (a BugApplication) Help() {
-	fmt.Printf("Usage: " + os.Args[0] + " command [options]\n\n")
-	fmt.Printf("Valid commands\n")
-	fmt.Printf("\tcreate\tFile a new bug\n")
-	fmt.Printf("\tlist\tList existing bugs\n")
-	fmt.Printf("\tedit\tEdit an existing bug\n")
-	fmt.Printf("\tclose\tDelete an existing bug\n")
-	fmt.Printf("\tpurge\tRemove all issues not tracked by git\n")
-	fmt.Printf("\trm\tAlias of close\n")
-	fmt.Printf("\tenv\tShow settings that bug will use if invoked from this directory\n")
-	fmt.Printf("\tdir\tPrints the issues directory to stdout (useful subcommand in the shell)\n")
-	fmt.Printf("\thelp\tShow this screen\n")
+func (a BugApplication) Help(args ...string) {
+	var cmd string
+	if args == nil {
+		cmd = "help"
+
+	}
+	if len(args) <= 1 {
+		cmd = "help"
+	} else {
+		cmd = args[1]
+	}
+	switch cmd {
+	case "create":
+		fmt.Printf("Usage: " + os.Args[0] + " create Issue Title\n\n")
+		fmt.Printf("This will create an issue with the title Issue Title\n")
+		fmt.Printf("An editor will be opened automatically for you to enter\n")
+		fmt.Printf("a more detailed description\n")
+	case "help":
+		fallthrough
+	default:
+		fmt.Printf("Usage: " + os.Args[0] + " command [options]\n\n")
+		fmt.Printf("Valid commands\n")
+		fmt.Printf("\tcreate\tFile a new bug\n")
+		fmt.Printf("\tlist\tList existing bugs\n")
+		fmt.Printf("\tedit\tEdit an existing bug\n")
+		fmt.Printf("\tclose\tDelete an existing bug\n")
+		fmt.Printf("\tpurge\tRemove all issues not tracked by git\n")
+		fmt.Printf("\trm\tAlias of close\n")
+		fmt.Printf("\tenv\tShow settings that bug will use if invoked from this directory\n")
+		fmt.Printf("\tdir\tPrints the issues directory to stdout (useful subcommand in the shell)\n")
+		fmt.Printf("\thelp\tShow this screen\n")
+	}
 }
 
 func (a BugApplication) Env() {

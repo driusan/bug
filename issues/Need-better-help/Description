@@ -1,3 +1,6 @@
 There is no help for the subcommands/parameters to "bug".
 
 They're pretty self-evident, but should be better documented.
+
+The infrastructure is in place to add help for subcommands now,
+but the help for each needs to be written.

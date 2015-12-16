@@ -80,12 +80,14 @@ func main() {
 			app.Edit(os.Args[2:])
 		case "env":
 			app.Env()
+		case "pwd":
+			fallthrough
 		case "dir":
 			app.Dir()
 		case "help":
 			fallthrough
 		default:
-			app.Help()
+			app.Help(os.Args[1:]...)
 		}
 	} else {
 		app.Help()
