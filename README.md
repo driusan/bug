@@ -22,9 +22,10 @@ Valid commands
     edit    Edit an existing bug
     close   Delete an existing bug
     purge   Remove all issues not tracked by git
-    rm  Alias of close
-    env Show settings that bug will use if invoked from this directory
-    dir Prints the issues directory to stdout (useful subcommand in the shell)
+    rm      Alias of close
+    env     Show settings that bug will use if invoked from this directory
+    dir     Prints the issues directory to stdout (useful subcommand in the shell)
+    pwd     Alias of dir
     help    Show this screen
 
 $ bug create I don't know what I'm doing
