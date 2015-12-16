@@ -85,7 +85,9 @@ func printHelp() {
 	fmt.Printf("\tcreate\tFile a new bug\n")
 	fmt.Printf("\tlist\tList existing bugs\n")
 	fmt.Printf("\tclose\tDelete an existing bug\n")
+	fmt.Printf("\trm\tAlias of close\n")
 	fmt.Printf("\tenv\tShow settings that bug will use if invoked from this directory\n")
+	fmt.Printf("\tdir\tPrints the issues directory to stdout (useful subcommand in the shell)\n")
 	fmt.Printf("\thelp\tShow this screen\n")
 }
 
@@ -182,6 +184,9 @@ func createBug(Args []string) {
 	}
 }
 
+func printDir() {
+	fmt.Printf("%s", getRootDir()+"/issues")
+}
 func main() {
 	if getRootDir() == "" {
 		fmt.Printf("Could not find issues directory.\n")
@@ -197,10 +202,14 @@ func main() {
 			fallthrough
 		case "list":
 			listBugs(os.Args[2:])
+		case "rm":
+			fallthrough
 		case "close":
 			closeBugs(os.Args[2:])
 		case "env":
 			showEnv()
+		case "dir":
+			printDir()
 		case "help":
 			fallthrough
 		default:
