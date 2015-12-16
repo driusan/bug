@@ -1,0 +1,2 @@
+The user's editor environment variable should be used if it
+is set. Instead, currently we only launch vim.
