@@ -84,6 +84,7 @@ func printHelp() {
 	fmt.Printf("Valid commands\n")
 	fmt.Printf("\tcreate\tFile a new bug\n")
 	fmt.Printf("\tlist\tList existing bugs\n")
+	fmt.Printf("\tclose\tDelete an existing bug\n")
 	fmt.Printf("\tenv\tShow settings that bug will use if invoked from this directory\n")
 	fmt.Printf("\thelp\tShow this screen\n")
 }
@@ -107,7 +108,7 @@ func listBugs(args []string) {
 	}
 
 	// There were parameters, so show the full description of each
-        // of those issues
+	// of those issues
 	b := Bug{}
 	for i := 0; i < len(args); i += 1 {
 		idx, err := strconv.Atoi(args[i])
@@ -121,16 +122,40 @@ func listBugs(args []string) {
 		}
 	}
 }
+func closeBugs(args []string) {
+	issues, _ := ioutil.ReadDir(getRootDir() + "/issues")
+
+	// No parameters, print a list of all bugs
+	if len(args) == 0 {
+		fmt.Printf("Must provide bug to close as parameter\n")
+		return
+	}
+
+	// There were parameters, so show the full description of each
+	// of those issues
+	for i := 0; i < len(args); i += 1 {
+		idx, err := strconv.Atoi(args[i])
+		if idx > len(issues) || idx < 1 {
+			fmt.Printf("Invalid issue number %d\n", idx)
+			continue
+		}
+		if err == nil {
+			var dir string = getRootDir() + "/issues/" + issues[idx-1].Name()
+			fmt.Printf("Removing %s\n", dir)
+			os.RemoveAll(dir)
+		}
+	}
+}
 
 func getEditor() string {
 	editor := os.Getenv("EDITOR")
 
 	if editor != "" {
-		return editor 
+		return editor
 	}
 	return "vim"
-	
- }
+
+}
 func createBug(Args []string) {
 	var bug Bug
 
@@ -172,6 +197,8 @@ func main() {
 			fallthrough
 		case "list":
 			listBugs(os.Args[2:])
+		case "close":
+			closeBugs(os.Args[2:])
 		case "env":
 			showEnv()
 		case "help":
