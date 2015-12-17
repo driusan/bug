@@ -72,6 +72,14 @@ git.
 
 It is an alias for "git clean -fd $(bug dir)"
 `)
+	case "commit":
+		fmt.Printf("Usage: " + os.Args[0] + " commit\n\n")
+		fmt.Printf(`This will commit any new, modified, or removed issues to
+git.
+
+Your working tree and staging area should be otherwise unaffected by using
+this command.
+`)
 	case "env":
 		fmt.Printf("Usage: " + os.Args[0] + " env\n\n")
 		fmt.Printf(`This will print the environment used by the bug command to stdout.
@@ -99,6 +107,7 @@ for arguments to any arbitrary shell commands. For example "cd $(bug dir)" or
 		fmt.Printf("\tlist\tList existing bugs\n")
 		fmt.Printf("\tedit\tEdit an existing bug\n")
 		fmt.Printf("\tclose\tDelete an existing bug\n")
+		fmt.Printf("\tcommit\tCommit any new, changed or deleted bug to git\n")
 		fmt.Printf("\tpurge\tRemove all issues not tracked by git\n")
 		fmt.Printf("\trm\tAlias of close\n")
 		fmt.Printf("\tenv\tShow settings that bug will use if invoked from this directory\n")
