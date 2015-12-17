@@ -3,20 +3,7 @@
 Bug is an implementation of a distributed issue issue tracker using
 git to manage issue's on the filesystem following [poor man's issue tracker](https://github.com/driusan/PoormanIssueTracker) conventions.
 
-# Installation
-If you have go installed, install the latest version with:
-
-`go get github.com/driusan/bug`
-
-Make sure `$GOPATH/bin` or `$GOBIN` are in your path (or copy
-the "bug" binary somewhere that is.)
-
-Otherwise, you can download a 64 bit release for OS X or Linux on the 
-[releases](https://github.com/driusan/bug/releases/) page. Just rename
-the binary downloaded to "bug" (or anything command line name you like)
-and make it executable.
-
-# Usage
+# Sample Usage
 
 If an environment variable named PMIT is set, that directory will be
 used to create and maintain issues, otherwise the bug command will
@@ -76,4 +63,17 @@ and manage your tasks without needing any server-side project management
 software. Since issues are just plain text files tracked by git, they'll
 merge and branch as expected along with the rest of your code when you
 `bug commit` things that have been added or removed.
+
+# Installation
+If you have go installed, install the latest version with:
+
+`go get github.com/driusan/bug`
+
+Make sure `$GOPATH/bin` or `$GOBIN` are in your path (or copy
+the "bug" binary somewhere that is.)
+
+Otherwise, you can download a 64 bit release for OS X or Linux on the 
+[releases](https://github.com/driusan/bug/releases/) page. Just rename
+the binary downloaded to "bug" (or anything command line name you like)
+and make it executable.
 
