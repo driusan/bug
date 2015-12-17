@@ -236,6 +236,19 @@ func (a BugApplication) Dir() {
 	fmt.Printf("%s", getRootDir()+"/issues")
 }
 
+// This will try and
+// 1. Stash any local changes (mostly, we want to stash the index)
+// 2. git add $(bug pwd) to add any new issues
+// 3. commit the new issues
+// 4. pop the stash.
+//
+// I'm not certain that this will work for every permutation
+// of dirty/clean index and new/no new issue, (in fact, it
+// certainly won't work for modified issues) so for now
+// the command is undocumented and has no help until I've
+// used it enough to be a little more comfortable with it.
+// TODO: Look into git stash create (and git reset --mixed?)
+// instead of git stash save?
 func (a BugApplication) Commit() {
 	cmd := exec.Command("git", "stash", "save", "-q")
 
