@@ -1,7 +1,7 @@
 # Bug
 
-Bug is an implementation of a distributed issue issue tracker using
-git to manage issue's on the filesystem following [poor man's issue tracker](https://github.com/driusan/PoormanIssueTracker) conventions.
+Bug is an implementation of a distributed issue tracker using
+git to manage issues on the filesystem following [poor man's issue tracker](https://github.com/driusan/PoormanIssueTracker) conventions.
 
 # Sample Usage
 
