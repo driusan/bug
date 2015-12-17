@@ -256,11 +256,15 @@ func (a BugApplication) Commit() {
 	cmd = exec.Command("git", "commit", "-m", "Added new issues", "-q")
 	err = cmd.Run()
 	if err != nil {
+		// If nothing was added commit will have an error,
+		// but we don't care it just means there's nothing
+		// to commit.
 		fmt.Printf("No issues commited\n")
 	}
 	cmd = exec.Command("git", "stash", "pop", "-q")
 	err = cmd.Run()
 	if err != nil {
-		fmt.Printf("Could not pop from stash\n")
+		// If nothing was stashed, it's not the end of the world.
+		//fmt.Printf("Could not pop from stash\n")
 	}
 }
