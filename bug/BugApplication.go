@@ -235,3 +235,33 @@ func (a BugApplication) Create(Args []string) {
 func (a BugApplication) Dir() {
 	fmt.Printf("%s", getRootDir()+"/issues")
 }
+
+func (a BugApplication) Commit() {
+	cmd := exec.Command("git", "stash", "save")
+
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cmd = exec.Command("git", "add", getRootDir()+"/issues")
+	err = cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+	cmd = exec.Command("git", "commit", "-m", "Added new issues", "-q")
+	err = cmd.Run()
+	if err != nil {
+		fmt.Printf("No issues commited\n")
+		//log.Fatal(err)
+	}
+	cmd = exec.Command("git", "stash", "pop")
+	err = cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+}

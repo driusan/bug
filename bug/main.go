@@ -84,6 +84,8 @@ func main() {
 			fallthrough
 		case "dir":
 			app.Dir()
+		case "commit":
+			app.Commit()
 		case "help":
 			fallthrough
 		default:
