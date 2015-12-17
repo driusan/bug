@@ -1,26 +1,44 @@
-# Issue Tracker 
+# Bug
 
-This repo contains an implementation of a tool to create
-bug's in a [poor man's issue tracker](https://github.com/driusan/PoormanIssueTracker).
+Bug is an implementation of a distributed issue issue tracker using
+git to manage issue's on the filesystem following [poor man's issue tracker](https://github.com/driusan/PoormanIssueTracker) conventions.
 
-After compiling source in the `bug/`, directory, copy the resulting 
-binary in your PATH and use it to create issues. If an environment 
-variable named PMIT is set, it will create issues in that directory,
-otherwise it will walk up the path from the current working directory
-until it finds somewhere with an "issues" subdirectory and use that as
-a location for any issues that are created.
+# Installation
+If you have go installed, install the latest version with:
 
-Some sample usage:
+`go get github.com/driusan/bug`
 
-```bash
-$ bug
+Make sure `$GOPATH/bin` or `$GOBIN` are in your path (or copy
+the "bug" binary somewhere that is.)
+
+Otherwise, you can download a 64 bit release for OS X or Linux on the 
+[releases](https://github.com/driusan/bug/releases/) page. Just rename
+the binary downloaded to "bug" (or anything command line name you like)
+and make it executable.
+
+# Usage
+
+If an environment variable named PMIT is set, that directory will be
+used to create and maintain issues, otherwise the bug command will
+walk up the tree until it finds somewhere with a subdirectory named
+"issues" to track issues in.
+
+Some sample usage (assuming you're already in a directory tracked by
+git):
+
+```
+$ mkdir issues
+$ bug help
 Usage: bug command [options]
+
+Use "bug help [command]" for more information about any command below
 
 Valid commands
     create  File a new bug
     list    List existing bugs
     edit    Edit an existing bug
     close   Delete an existing bug
+    commit  Commit any new, changed or deleted bug to git
     purge   Remove all issues not tracked by git
     rm      Alias of close
     env     Show settings that bug will use if invoked from this directory
@@ -29,18 +47,33 @@ Valid commands
     help    Show this screen
 
 $ bug create I don't know what I'm doing
-# (An editor will open here for you to enter a description, save it when you're done)
+# (Your standard editor will open here for you to enter a description, save it when you're done)
 
 $ bug list
 Issue 1: I don't know what I'm doing
 
 $ bug list 1
-
 Title: I don't know what I'm doing
 
 Description:
 The description that I entered
+
+$ bug purge
+Removing issues/I-don't-know-what-I'm-doing
+
+$ bug create Need better formating for README
+# (Your editor opens again)
+
+$ bug list
+Issue 1: Need better formating for README
+
+$ bug commit
+$ git push
 ```
 
-Not that the issue numbers are not stable and only used to simplify command
-line entry. They will change as you add and remove bugs.
+You can use this tool to keep track of the state of different branches
+and manage your tasks without needing any server-side project management
+software. Since issues are just plain text files tracked by git, they'll
+merge and branch as expected along with the rest of your code when you
+`bug commit` things that have been added or removed.
+
