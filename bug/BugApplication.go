@@ -237,7 +237,7 @@ func (a BugApplication) Dir() {
 }
 
 func (a BugApplication) Commit() {
-	cmd := exec.Command("git", "stash", "save")
+	cmd := exec.Command("git", "stash", "save", "-q")
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -245,12 +245,14 @@ func (a BugApplication) Commit() {
 	err := cmd.Run()
 
 	if err != nil {
+		fmt.Printf("Could not save stash?\n")
 		log.Fatal(err)
 	}
 
 	cmd = exec.Command("git", "add", getRootDir()+"/issues")
 	err = cmd.Run()
 	if err != nil {
+		fmt.Printf("Could not add to index?\n")
 		log.Fatal(err)
 	}
 	cmd = exec.Command("git", "commit", "-m", "Added new issues", "-q")
@@ -259,9 +261,10 @@ func (a BugApplication) Commit() {
 		fmt.Printf("No issues commited\n")
 		//log.Fatal(err)
 	}
-	cmd = exec.Command("git", "stash", "pop")
+	cmd = exec.Command("git", "stash", "pop", "-q")
 	err = cmd.Run()
 	if err != nil {
+		fmt.Printf("Could not pop from stash\n")
 		log.Fatal(err)
 	}
 }
