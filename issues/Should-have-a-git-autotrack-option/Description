@@ -1,9 +1,0 @@
-There should be an option to autotrack issues with git,
-if it's enabled there should be a thin wrapper around git
-when creating/closing/editing bugs to ensure that they're
-commited to the current branch.
-
-Perhaps this can be done with a git alias so that you
-use the command "git bug" instead of "bug" if you're
-tracking with git, or perhaps there should be a hidden
-configuration file in parallel of the issues directory
