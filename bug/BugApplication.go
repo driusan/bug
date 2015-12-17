@@ -236,48 +236,75 @@ func (a BugApplication) Dir() {
 	fmt.Printf("%s", getRootDir()+"/issues")
 }
 
-// This will try and
-// 1. Stash any local changes (mostly, we want to stash the index)
-// 2. git add $(bug pwd) to add any new issues
-// 3. commit the new issues
-// 4. pop the stash.
+// This will try and commit the $(bug pwd) directory
+// transparently. It does the following steps:
 //
-// I'm not certain that this will work for every permutation
-// of dirty/clean index and new/no new issue, (in fact, it
-// certainly won't work for modified issues) so for now
-// the command is undocumented and has no help until I've
-// used it enough to be a little more comfortable with it.
-// TODO: Look into git stash create (and git reset --mixed?)
-// instead of git stash save?
+// 1. "git stash create"
+// 2. "git reset --mixed" (unstage the user's currently staged files)
+// 3. "git add $(bug pwd)"
+// 4. "git commit"
+// 5a. "git reset --hard" (if there was any stash created,
+// 						this is necessary for 5b to work.)
+// 5b. "git stash apply --index" the stash from step 1
 func (a BugApplication) Commit() {
-	cmd := exec.Command("git", "stash", "save", "-q")
+	cmd := exec.Command("git", "stash", "create")
 
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
+	output, err := cmd.Output()
 
 	if err != nil {
-		fmt.Printf("Could not save stash?\n")
+		fmt.Printf("Could not execute git stash create")
+	}
+	var stashHash string = strings.Trim(string(output), "\n")
+
+	// Unstage everything, if there was anything stashed, so that
+	// we don't commit things that the user has staged that aren't
+	// issues
+	if stashHash != "" {
+		cmd = exec.Command("git", "reset", "--mixed")
+		err = cmd.Run()
+
+		if err != nil {
+		}
 	}
 
-	cmd = exec.Command("git", "add", getRootDir()+"/issues")
+	// Commit the issues directory
+	// git add $(bug pwd)
+	// git commit -m "Added new issues" -q
+	cmd = exec.Command("git", "add", "-A", getRootDir()+"/issues")
 	err = cmd.Run()
 	if err != nil {
 		fmt.Printf("Could not add to index?\n")
 	}
-	cmd = exec.Command("git", "commit", "-m", "Added new issues", "-q")
+	cmd = exec.Command("git", "commit", "-m", "Added or removes issues with the tool \"bug\"", "-q")
 	err = cmd.Run()
 	if err != nil {
 		// If nothing was added commit will have an error,
 		// but we don't care it just means there's nothing
 		// to commit.
-		fmt.Printf("No issues commited\n")
+		fmt.Printf("No new issues commited\n")
 	}
-	cmd = exec.Command("git", "stash", "pop", "-q")
-	err = cmd.Run()
-	if err != nil {
-		// If nothing was stashed, it's not the end of the world.
-		//fmt.Printf("Could not pop from stash\n")
+
+	// There were changes that had been stashed, so we need
+	// to restore them with git stash apply.. first, we
+	// need to do a "git reset --hard" so that the dirty working
+	// tree doesn't cause an error. This isn't as scary as it
+	// sounds, since immediately after git reset --hard we apply
+	// a stash which has the exact same changes that we just threw
+	// away.
+	if stashHash != "" {
+		cmd = exec.Command("git", "reset", "--hard")
+		err = cmd.Run()
+		if err != nil {
+			fmt.Printf("Error resetting the git working tree")
+			// If nothing was stashed, it's not the end of the world.
+			//fmt.Printf("Could not pop from stash\n")
+		}
+		cmd = exec.Command("git", "stash", "apply", "--index", stashHash)
+		err = cmd.Run()
+		if err != nil {
+			fmt.Printf("Error resetting the git working tree")
+			// If nothing was stashed, it's not the end of the world.
+			//fmt.Printf("Could not pop from stash\n")
+		}
 	}
 }
