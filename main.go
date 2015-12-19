@@ -64,6 +64,8 @@ func main() {
 	}
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
+		case "add":
+			fallthrough
 		case "create":
 			app.Create(os.Args[2:])
 		case "view":
