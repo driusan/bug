@@ -26,12 +26,13 @@ func (a BugApplication) Help(args ...string) {
 	}
 	switch cmd {
 	case "create":
-		fmt.Printf("Usage: " + os.Args[0] + " create Issue Title\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " create [-n] Issue Title\n\n")
 		fmt.Printf("This will create an issue with the title Issue Title\n\n")
 		fmt.Printf("An editor will be opened automatically for you to enter\n")
 		fmt.Printf("a more detailed description.\n\n")
 		fmt.Printf("If your EDITOR environment variable is set, it will be\n")
 		fmt.Printf("used, otherwise the default is vim.\n")
+		fmt.Printf("If the first argument to create is \"-n\", then " + os.Args[0] + " will not open any editor and create an empty Description\n\n")
 	case "list":
 		fmt.Printf("Usage: " + os.Args[0] + " list [issue numbers]\n\n")
 		fmt.Printf(`This will list the issues found in the current environment
@@ -217,7 +218,12 @@ func (a BugApplication) Purge() {
 }
 func (a BugApplication) Create(Args []string) {
 	var bug Bug
+	var noDesc bool = false
 
+	if Args != nil && Args[0] == "-n" {
+		noDesc = true
+		Args = Args[1:]
+	}
 	bug = Bug{
 		Title: strings.Join(Args, " "),
 	}
@@ -229,15 +235,20 @@ func (a BugApplication) Create(Args []string) {
 	mode = 0775
 	os.Mkdir(string(dir), mode)
 
-	cmd := exec.Command(getEditor(), string(dir)+"/Description")
+	if noDesc {
+		txt := []byte("");
+		ioutil.WriteFile(string(dir)+"/Description", txt, 0644)
+	} else {
+		cmd := exec.Command(getEditor(), string(dir)+"/Description")
 
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err := cmd.Run()
 
-	if err != nil {
-		log.Fatal(err)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
