@@ -1,8 +1,0 @@
-There should be a -n option to create a bug with
-no description. This would be useful for scripting
-the creation of multiple bugs where you don't want
-to enter a description for every one in your editor.
-
-bug should add a .gitdontignore (or similar) file into
-the directory to ensure the directory has a file for
-git to track.
