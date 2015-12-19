@@ -98,6 +98,13 @@ for arguments to any arbitrary shell commands. For example "cd $(bug dir)" or
 "git rm -r $(bug dir)/Issue-Title"
 `)
 		fmt.Printf("\n\n\"%s pwd\" is an alias for this \"%s dir\"\n", os.Args[0], os.Args[0])
+    case "tag":
+		fmt.Printf("Usage: " + os.Args[0] + " tag IssueNumber [tags]\n\n")
+    fmt.Printf(`This will tag the given IssueNumber with the tags
+given as parameters. At least one tag is required.
+
+Tags can be any string which would make a valid file name.
+`);
 	case "help":
 		fallthrough
 	default:
@@ -107,6 +114,7 @@ for arguments to any arbitrary shell commands. For example "cd $(bug dir)" or
 		fmt.Printf("\tcreate\tFile a new bug\n")
 		fmt.Printf("\tlist\tList existing bugs\n")
 		fmt.Printf("\tedit\tEdit an existing bug\n")
+		fmt.Printf("\ttag\tTag a bug with a category\n")
 		fmt.Printf("\tclose\tDelete an existing bug\n")
 		fmt.Printf("\tcommit\tCommit any new, changed or deleted bug to git\n")
 		fmt.Printf("\tpurge\tRemove all issues not tracked by git\n")
@@ -216,6 +224,35 @@ func (a BugApplication) Purge() {
 		log.Fatal(err)
 	}
 }
+
+func (a BugApplication) Tag(Args []string) {
+	if len(Args) < 2 {
+		fmt.Printf("Invalid usage. Must provide issue and tags\n.")
+		return
+	}
+
+	issues, err := ioutil.ReadDir(getRootDir() + "/issues")
+	if err != nil {
+		fmt.Printf("Unknown error reading directory: %s\n", err.Error())
+		return
+	}
+	idx, err := strconv.Atoi(Args[0])
+    idx = idx - 1
+	if err != nil {
+		fmt.Printf("Unknown looking up bug: %s\n", err)
+		return
+	}
+    if idx >= len(issues) || idx < 0 {
+		fmt.Printf("Invalid issue index.\n")
+        return
+    }
+	var b Bug
+	b.LoadBug(Directory(getRootDir() + "/issues/" + issues[idx].Name()))
+	for _, tag := range Args[1:] {
+        b.TagBug(tag)
+	}
+
+}
 func (a BugApplication) Create(Args []string) {
 	var bug Bug
 	var noDesc bool = false
@@ -236,7 +273,7 @@ func (a BugApplication) Create(Args []string) {
 	os.Mkdir(string(dir), mode)
 
 	if noDesc {
-		txt := []byte("");
+		txt := []byte("")
 		ioutil.WriteFile(string(dir)+"/Description", txt, 0644)
 	} else {
 		cmd := exec.Command(getEditor(), string(dir)+"/Description")

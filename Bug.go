@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	//"regex"
 	"strings"
 )
@@ -34,6 +35,14 @@ func (b *Bug) LoadBug(dir Directory) {
 	b.Description = string(desc)
 }
 
+func (b *Bug) TagBug(tag string) {
+	if dir, err := b.GetDirectory(); err == nil {
+		os.Mkdir(string(dir)+"/tags/", 0755)
+		ioutil.WriteFile(string(dir)+"/tags/"+tag, []byte(""), 0644)
+	} else {
+        fmt.Printf("Error tagging bug: %s", err.Error())
+    }
+}
 func (b Bug) ViewBug() {
 	fmt.Printf("Title: %s\n\n", b.Title)
 	fmt.Printf("Description:\n%s\n", b.Description)

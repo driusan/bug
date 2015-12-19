@@ -72,6 +72,8 @@ func main() {
 			fallthrough
 		case "list":
 			app.List(os.Args[2:])
+		case "tag":
+			app.Tag(os.Args[2:])
 		case "purge":
 			app.Purge()
 		case "rm":
