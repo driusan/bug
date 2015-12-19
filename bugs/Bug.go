@@ -1,4 +1,4 @@
-package main
+package bugs
 
 import (
 	"fmt"
@@ -19,7 +19,7 @@ func (b Bug) GetDirectory() (Directory, error) {
 
 	tokens := strings.Split(s, " ")
 
-	return Directory(getRootDir() + "/issues/" + strings.Join(tokens, "-")), nil
+	return Directory(GetRootDir() + "/issues/" + strings.Join(tokens, "-")), nil
 }
 
 func (b *Bug) LoadBug(dir Directory) {

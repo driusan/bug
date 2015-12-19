@@ -5,32 +5,8 @@ import (
 	"os"
 	//"regex"
 	"strings"
+	"github.com/driusan/bug/bugs"
 )
-
-func getRootDir() string {
-	dir := os.Getenv("PMIT")
-	if dir != "" {
-		return dir
-	}
-
-	wd, _ := os.Getwd()
-
-	if dirinfo, err := os.Stat(wd + "/issues"); err == nil && dirinfo.IsDir() {
-		return wd
-	}
-
-	// There's no environment variable and no issues
-	// directory, so walk up the tree until we find one
-	pieces := strings.Split(wd, "/")
-
-	for i := len(pieces); i > 0; i -= 1 {
-		dir := strings.Join(pieces[0:i], "/")
-		if dirinfo, err := os.Stat(dir + "/issues"); err == nil && dirinfo.IsDir() {
-			return dir
-		}
-	}
-	return ""
-}
 
 func getEditor() string {
 	editor := os.Getenv("EDITOR")
@@ -56,7 +32,7 @@ func (d Directory) ToTitle() string {
 
 func main() {
 	app := BugApplication{}
-	if getRootDir() == "" {
+	if bugs.GetRootDir() == "" {
 		fmt.Printf("Could not find issues directory.\n")
 		fmt.Printf("Make sure either the PMIT environment variable is set, or a parent directory of your working directory has an issues folder.\n")
 		fmt.Printf("Aborting.\n")

@@ -1,2 +1,0 @@
-The bug command and bug serve command should share more code, things
-like "Bug.go" and "Directory" should be in their own package.
