@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	//"regex"
-	"strings"
 	"github.com/driusan/bug/bugs"
 )
 
@@ -18,17 +17,6 @@ func getEditor() string {
 
 }
 
-type Directory string
-
-func (d Directory) GetShortName() Directory {
-	pieces := strings.Split(string(d), "/")
-	return Directory(pieces[len(pieces)-1])
-}
-
-func (d Directory) ToTitle() string {
-	tokens := strings.Split(string(d), "-")
-	return strings.Join(tokens, " ")
-}
 
 func main() {
 	app := BugApplication{}

@@ -140,7 +140,7 @@ func (a BugApplication) List(args []string) {
 	// No parameters, print a list of all bugs
 	if len(args) == 0 {
 		for idx, issue := range issues {
-			var dir Directory = Directory(issue.Name())
+			var dir bugs.Directory = bugs.Directory(issue.Name())
 			fmt.Printf("Issue %d: %s\n", idx+1, dir.ToTitle())
 		}
 		return
@@ -172,7 +172,7 @@ func (a BugApplication) Edit(args []string) {
 			fmt.Printf("Invalid issue number %d\n", idx)
 			return
 		}
-		dir := Directory(bugs.GetRootDir() + "/issues/" + issues[idx-1].Name())
+		dir := bugs.Directory(bugs.GetRootDir() + "/issues/" + issues[idx-1].Name())
 		cmd := exec.Command(getEditor(), string(dir)+"/Description")
 
 		cmd.Stdin = os.Stdin
@@ -232,7 +232,7 @@ func (a BugApplication) Tag(Args []string) {
 		return
 	}
 
-	issues, err := ioutil.ReadDir(getRootDir() + "/issues")
+	issues, err := ioutil.ReadDir(bugs.GetRootDir() + "/issues")
 	if err != nil {
 		fmt.Printf("Unknown error reading directory: %s\n", err.Error())
 		return
@@ -247,8 +247,8 @@ func (a BugApplication) Tag(Args []string) {
 		fmt.Printf("Invalid issue index.\n")
         return
     }
-	var b Bug
-	b.LoadBug(Directory(getRootDir() + "/issues/" + issues[idx].Name()))
+	var b bugs.Bug
+	b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + issues[idx].Name()))
 	for _, tag := range Args[1:] {
         b.TagBug(tag)
 	}
