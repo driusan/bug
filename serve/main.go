@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/driusan/GoWebapp/HTMLPageRenderer"
 	"github.com/driusan/GoWebapp/URLHandler"
 	"github.com/driusan/bug/bugs"
 	"io/ioutil"
@@ -17,24 +18,53 @@ type MainPageHandler struct {
 type BugPageHandler struct {
 	URLHandler.DefaultHandler
 }
-func (m MainPageHandler) Get(*http.Request, map[string]interface{}) (string, error) {
+
+type BugListRenderer struct {
+	HTMLPageRenderer.Page
+}
+
+func (b BugListRenderer) GetBody() string {
 	issues, _ := ioutil.ReadDir(bugs.GetRootDir() + "/issues")
 
-	var ret string = "<html><body><h2>Open issues</h2><ol>"
+	ret := "<h2>" + b.Title + "</h2><ol>"
 	for _, issue := range issues {
 		var dir bugs.Directory = bugs.Directory(issue.Name())
 		ret += fmt.Sprintf("<li><a href=\"/issues/%s\">%s</a></li>\n", (dir), dir.ToTitle())
 	}
+	ret += "</ol>"
 
-	ret += "</ol></body></html>"
+	return ret
+}
 
-	return ret, nil
+type BugRenderer struct {
+	HTMLPageRenderer.ReactPage
+	Bug bugs.Bug
+}
+func (m MainPageHandler) Get(*http.Request, map[string]interface{}) (string, error) {
+
+	page := BugListRenderer{}
+	page.Title = "Open Issues"
+	page.JSFiles = []string{"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"}
+	page.CSSFiles = []string{
+"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css",
+	"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"}
+
+	return HTMLPageRenderer.Render(page), nil
 }
 func (m BugPageHandler) Get(r *http.Request, extras map[string]interface{}) (string, error) {
 	bugDir := getRootDir() + r.URL.Path
 	b := bugs.Bug{}
 	b.LoadBug(bugs.Directory(bugDir))
-	return "<html><body><h2>" + b.Title + "</h2>" + "<p>" + strings.Replace(b.Description, "\n\n", "</p><p>", -1) + "</p></body></html>", nil
+
+	page := BugRenderer{Bug: b}
+	page.RootElement = "abc"
+	page.Title = b.Title
+	page.JSFiles = []string{"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"}
+	page.CSSFiles = []string{
+"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css",
+	"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"}
+	return HTMLPageRenderer.Render(page), nil
+
 }
 
 func main() {
