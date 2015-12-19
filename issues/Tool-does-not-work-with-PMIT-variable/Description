@@ -1,6 +1,0 @@
-The bug create/edit/close tools don't work with the PMIT
-variable set on the command line.
-
-These should work properly when using the environment instead
-of only working when walking up the tree to find an "issues"
-directory
