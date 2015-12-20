@@ -358,14 +358,14 @@ func (a BugApplication) Commit() {
 		cmd = exec.Command("git", "reset", "--hard")
 		err = cmd.Run()
 		if err != nil {
-			fmt.Printf("Error resetting the git working tree")
-			// If nothing was stashed, it's not the end of the world.
-			//fmt.Printf("Could not pop from stash\n")
+			fmt.Printf("Error resetting the git working tree\n")
+			fmt.Printf("The stash which should have your changes is: %s\n", stashHash)
 		}
 		cmd = exec.Command("git", "stash", "apply", "--index", stashHash)
 		err = cmd.Run()
 		if err != nil {
-			fmt.Printf("Error resetting the git working tree")
+			fmt.Printf("Error restoring the git working tree")
+			fmt.Printf("The stash which should have your changes is: %s\n", stashHash)
 			// If nothing was stashed, it's not the end of the world.
 			//fmt.Printf("Could not pop from stash\n")
 		}
