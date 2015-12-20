@@ -35,7 +35,8 @@ func (a BugApplication) Help(args ...string) {
 		fmt.Printf("used, otherwise the default is vim.\n")
 		fmt.Printf("If the first argument to create is \"-n\", then " + os.Args[0] + " will not open any editor and create an empty Description\n\n")
 	case "list":
-		fmt.Printf("Usage: " + os.Args[0] + " list [issue numbers]\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " list [issue numbers]\n")
+        fmt.Printf("       " + os.Args[0] + " list [tags]\n\n")
 		fmt.Printf(`This will list the issues found in the current environment
 
 With no arguments, titles will be printed to the screen along with the issue
@@ -43,6 +44,9 @@ number that can be used to reference this issue on the command line.
 
 If 1 or more issue numbers are provided, the whole issue including description
 will be printed to stdout.
+
+If, instead of issue numbers, you provide list with 1 or more tags, it will
+print any issues which have that tag (in short form)
 `)
 
 	case "edit":
@@ -134,6 +138,27 @@ func (a BugApplication) Env() {
 	fmt.Printf("\n")
 }
 
+func listTags(files []os.FileInfo, args []string) {
+    hasTag := func(tags []string, tag string) bool {
+        for _, candidate := range tags {
+            if candidate == tag {
+                return true
+            }
+        }
+        return false
+    }
+    b := bugs.Bug{}
+    for idx, _ := range files {
+        b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + files[idx].Name()))
+
+        tags := b.Tags()
+        for _, tag := range args {
+            if hasTag(tags, tag) {
+                fmt.Printf("Issue %d: %s (%s)\n", idx+1, b.Title, strings.Join(tags, ", "))
+            }
+        }
+    }
+}
 func (a BugApplication) List(args []string) {
 	issues, _ := ioutil.ReadDir(bugs.GetRootDir() + "/issues")
 
@@ -151,6 +176,10 @@ func (a BugApplication) List(args []string) {
 	b := bugs.Bug{}
 	for i, length := 0, len(args); i < length; i += 1 {
 		idx, err := strconv.Atoi(args[i])
+        if err != nil {
+            listTags(issues, args)
+            return
+        }
 		if idx > len(issues) || idx < 1 {
 			fmt.Printf("Invalid issue number %d\n", idx)
 			continue
