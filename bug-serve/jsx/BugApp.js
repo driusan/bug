@@ -7,9 +7,15 @@ var BugApp = React.createClass({
 				"Bugs" : JSON.parse(response)
 			});
 		});
+        AjaxGet("/settings", function(response) {
+			that.setState({
+				"Settings" : JSON.parse(response)
+			});
+        })
 	},
 	getInitialState : function() {
 		return {
+            "Settings" : {},
 			"Title" : "Open Issues",
 			"Bugs": [],
 			"SelectedBugJSON" : null
@@ -34,7 +40,7 @@ var BugApp = React.createClass({
 			content = <BugList Title={this.state.Title} Bugs={this.state.Bugs} onBugClicked={this.selectBugHandler} />
 		}
 		return (<div>
-			<h1>Poor Man's Issue Tracker Issues</h1>
+			<h1>Issues for: {this.state.Settings.Title}</h1>
 			<div>
 				{content}
 			</div>
