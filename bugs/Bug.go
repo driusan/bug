@@ -46,25 +46,25 @@ func (b *Bug) TagBug(tag string) {
 func (b Bug) ViewBug() {
 	fmt.Printf("Title: %s\n\n", b.Title)
 	fmt.Printf("Description:\n%s", b.Description)
-    
-    tags := b.Tags()
-    if tags != nil {
-        fmt.Printf("\nTags: %s", strings.Join(tags, ", "))
-    }
+
+	tags := b.Tags()
+	if tags != nil {
+		fmt.Printf("\nTags: %s", strings.Join(tags, ", "))
+	}
 }
 
 func (b Bug) Tags() []string {
-    dir, _ := b.GetDirectory()
-    dir += "/tags/"
-    issues, err := ioutil.ReadDir(string(dir))
-    if err != nil {
-        return nil
-            }
+	dir, _ := b.GetDirectory()
+	dir += "/tags/"
+	issues, err := ioutil.ReadDir(string(dir))
+	if err != nil {
+		return nil
+	}
 
-            tags := []string{}
-    for _, issue := range issues {
-        tags = append(tags, issue.Name())
-    }
-    return tags
+	tags := []string{}
+	for _, issue := range issues {
+		tags = append(tags, issue.Name())
+	}
+	return tags
 
 }
