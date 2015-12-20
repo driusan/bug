@@ -40,10 +40,10 @@ func (b *Bug) TagBug(tag string) {
 		os.Mkdir(string(dir)+"/tags/", 0755)
 		ioutil.WriteFile(string(dir)+"/tags/"+tag, []byte(""), 0644)
 	} else {
-        fmt.Printf("Error tagging bug: %s", err.Error())
-    }
+		fmt.Printf("Error tagging bug: %s", err.Error())
+	}
 }
 func (b Bug) ViewBug() {
 	fmt.Printf("Title: %s\n\n", b.Title)
-	fmt.Printf("Description:\n%s\n", b.Description)
+	fmt.Printf("Description:\n%s", b.Description)
 }

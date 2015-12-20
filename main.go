@@ -17,7 +17,6 @@ func getEditor() string {
 
 }
 
-
 func main() {
 	app := BugApplication{}
 	if bugs.GetRootDir() == "" {

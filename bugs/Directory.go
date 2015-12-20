@@ -1,8 +1,9 @@
 package bugs
 
 import (
-"strings"
-"os")
+	"os"
+	"strings"
+)
 
 func GetRootDir() string {
 	dir := os.Getenv("PMIT")
@@ -40,4 +41,3 @@ func (d Directory) ToTitle() string {
 	tokens := strings.Split(string(d), "-")
 	return strings.Join(tokens, " ")
 }
-

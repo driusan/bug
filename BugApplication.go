@@ -8,8 +8,8 @@ import (
 	"os/exec"
 	"strconv"
 	//"regex"
-	"strings"
 	"github.com/driusan/bug/bugs"
+	"strings"
 )
 
 type BugApplication struct{}
@@ -99,13 +99,13 @@ for arguments to any arbitrary shell commands. For example "cd $(bug dir)" or
 "git rm -r $(bug dir)/Issue-Title"
 `)
 		fmt.Printf("\n\n\"%s pwd\" is an alias for this \"%s dir\"\n", os.Args[0], os.Args[0])
-    case "tag":
+	case "tag":
 		fmt.Printf("Usage: " + os.Args[0] + " tag IssueNumber [tags]\n\n")
-    fmt.Printf(`This will tag the given IssueNumber with the tags
+		fmt.Printf(`This will tag the given IssueNumber with the tags
 given as parameters. At least one tag is required.
 
 Tags can be any string which would make a valid file name.
-`);
+`)
 	case "help":
 		fallthrough
 	default:
@@ -149,7 +149,7 @@ func (a BugApplication) List(args []string) {
 	// There were parameters, so show the full description of each
 	// of those issues
 	b := bugs.Bug{}
-	for i := 0; i < len(args); i += 1 {
+	for i, length := 0, len(args); i < length; i += 1 {
 		idx, err := strconv.Atoi(args[i])
 		if idx > len(issues) || idx < 1 {
 			fmt.Printf("Invalid issue number %d\n", idx)
@@ -158,8 +158,12 @@ func (a BugApplication) List(args []string) {
 		if err == nil {
 			b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + issues[idx-1].Name()))
 			b.ViewBug()
+			if i < length-1 {
+				fmt.Printf("\n--\n\n")
+			}
 		}
 	}
+	fmt.Printf("\n")
 }
 
 func (a BugApplication) Edit(args []string) {
@@ -238,19 +242,19 @@ func (a BugApplication) Tag(Args []string) {
 		return
 	}
 	idx, err := strconv.Atoi(Args[0])
-    idx = idx - 1
+	idx = idx - 1
 	if err != nil {
 		fmt.Printf("Unknown looking up bug: %s\n", err)
 		return
 	}
-    if idx >= len(issues) || idx < 0 {
+	if idx >= len(issues) || idx < 0 {
 		fmt.Printf("Invalid issue index.\n")
-        return
-    }
+		return
+	}
 	var b bugs.Bug
 	b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + issues[idx].Name()))
 	for _, tag := range Args[1:] {
-        b.TagBug(tag)
+		b.TagBug(tag)
 	}
 
 }
