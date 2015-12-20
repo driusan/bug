@@ -1,2 +1,0 @@
-There is an error in the console about children in iterators
-needing a key prop. This should be fixed.

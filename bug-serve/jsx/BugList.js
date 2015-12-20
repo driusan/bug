@@ -9,7 +9,7 @@ var BugList = React.createClass({
 	render: function() {
 		var that = this;
 		var elements = 	this.props.Bugs.map(function (val) {
-			return (<li>
+			return (<li key={"BugListItem" + val}>
 				<a href="#" onClick={that.props.onBugClicked}>{val}</a>
 				</li>);
 		});
