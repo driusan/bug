@@ -1,8 +1,0 @@
-The bug list command should be smart enough to
-determine if you're trying to list specific
-issues or tags based on if the parameters given
-are numeric values or strings.
-
-If it's a tag, it should list all issues which have
-the given tag instead of trying to show the full
-description of the issues.
