@@ -5,16 +5,16 @@ import (
 	"strings"
 )
 
-func GetRootDir() string {
+func GetRootDir() Directory {
 	dir := os.Getenv("PMIT")
 	if dir != "" {
-		return dir
+		return Directory(dir)
 	}
 
 	wd, _ := os.Getwd()
 
 	if dirinfo, err := os.Stat(wd + "/issues"); err == nil && dirinfo.IsDir() {
-		return wd
+		return Directory(wd)
 	}
 
 	// There's no environment variable and no issues
@@ -24,7 +24,7 @@ func GetRootDir() string {
 	for i := len(pieces); i > 0; i -= 1 {
 		dir := strings.Join(pieces[0:i], "/")
 		if dirinfo, err := os.Stat(dir + "/issues"); err == nil && dirinfo.IsDir() {
-			return dir
+			return Directory(dir)
 		}
 	}
 	return ""

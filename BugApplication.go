@@ -36,7 +36,7 @@ func (a BugApplication) Help(args ...string) {
 		fmt.Printf("If the first argument to create is \"-n\", then " + os.Args[0] + " will not open any editor and create an empty Description\n\n")
 	case "list":
 		fmt.Printf("Usage: " + os.Args[0] + " list [issue numbers]\n")
-        fmt.Printf("       " + os.Args[0] + " list [tags]\n\n")
+		fmt.Printf("       " + os.Args[0] + " list [tags]\n\n")
 		fmt.Printf(`This will list the issues found in the current environment
 
 With no arguments, titles will be printed to the screen along with the issue
@@ -139,28 +139,28 @@ func (a BugApplication) Env() {
 }
 
 func listTags(files []os.FileInfo, args []string) {
-    hasTag := func(tags []string, tag string) bool {
-        for _, candidate := range tags {
-            if candidate == tag {
-                return true
-            }
-        }
-        return false
-    }
-    b := bugs.Bug{}
-    for idx, _ := range files {
-        b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + files[idx].Name()))
+	hasTag := func(tags []string, tag string) bool {
+		for _, candidate := range tags {
+			if candidate == tag {
+				return true
+			}
+		}
+		return false
+	}
+	b := bugs.Bug{}
+	for idx, _ := range files {
+		b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + bugs.Directory(files[idx].Name())))
 
-        tags := b.Tags()
-        for _, tag := range args {
-            if hasTag(tags, tag) {
-                fmt.Printf("Issue %d: %s (%s)\n", idx+1, b.Title, strings.Join(tags, ", "))
-            }
-        }
-    }
+		tags := b.Tags()
+		for _, tag := range args {
+			if hasTag(tags, tag) {
+				fmt.Printf("Issue %d: %s (%s)\n", idx+1, b.Title, strings.Join(tags, ", "))
+			}
+		}
+	}
 }
 func (a BugApplication) List(args []string) {
-	issues, _ := ioutil.ReadDir(bugs.GetRootDir() + "/issues")
+	issues, _ := ioutil.ReadDir(string(bugs.GetRootDir()) + "/issues")
 
 	// No parameters, print a list of all bugs
 	if len(args) == 0 {
@@ -176,16 +176,16 @@ func (a BugApplication) List(args []string) {
 	b := bugs.Bug{}
 	for i, length := 0, len(args); i < length; i += 1 {
 		idx, err := strconv.Atoi(args[i])
-        if err != nil {
-            listTags(issues, args)
-            return
-        }
+		if err != nil {
+			listTags(issues, args)
+			return
+		}
 		if idx > len(issues) || idx < 1 {
 			fmt.Printf("Invalid issue number %d\n", idx)
 			continue
 		}
 		if err == nil {
-			b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + issues[idx-1].Name()))
+			b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + bugs.Directory(issues[idx-1].Name())))
 			b.ViewBug()
 			if i < length-1 {
 				fmt.Printf("\n--\n\n")
@@ -196,7 +196,7 @@ func (a BugApplication) List(args []string) {
 }
 
 func (a BugApplication) Edit(args []string) {
-	issues, _ := ioutil.ReadDir(bugs.GetRootDir() + "/issues")
+	issues, _ := ioutil.ReadDir(string(bugs.GetRootDir()) + "/issues")
 
 	// No parameters, print a list of all bugs
 	if len(args) == 1 {
@@ -205,7 +205,7 @@ func (a BugApplication) Edit(args []string) {
 			fmt.Printf("Invalid issue number %d\n", idx)
 			return
 		}
-		dir := bugs.Directory(bugs.GetRootDir() + "/issues/" + issues[idx-1].Name())
+		dir := bugs.Directory(bugs.GetRootDir()) + "/issues/" + bugs.Directory(issues[idx-1].Name())
 		cmd := exec.Command(getEditor(), string(dir)+"/Description")
 
 		cmd.Stdin = os.Stdin
@@ -222,7 +222,7 @@ func (a BugApplication) Edit(args []string) {
 	}
 }
 func (a BugApplication) Close(args []string) {
-	issues, _ := ioutil.ReadDir(bugs.GetRootDir() + "/issues")
+	issues, _ := ioutil.ReadDir(string(bugs.GetRootDir()) + "/issues")
 
 	// No parameters, print a list of all bugs
 	if len(args) == 0 {
@@ -239,15 +239,15 @@ func (a BugApplication) Close(args []string) {
 			continue
 		}
 		if err == nil {
-			var dir string = bugs.GetRootDir() + "/issues/" + issues[idx-1].Name()
+			dir := bugs.GetRootDir() + "/issues/" + bugs.Directory(issues[idx-1].Name())
 			fmt.Printf("Removing %s\n", dir)
-			os.RemoveAll(dir)
+			os.RemoveAll(string(dir))
 		}
 	}
 }
 
 func (a BugApplication) Purge() {
-	cmd := exec.Command("git", "clean", "-fd", bugs.GetRootDir()+"/issues")
+	cmd := exec.Command("git", "clean", "-fd", string(bugs.GetRootDir())+"/issues")
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -265,7 +265,7 @@ func (a BugApplication) Tag(Args []string) {
 		return
 	}
 
-	issues, err := ioutil.ReadDir(bugs.GetRootDir() + "/issues")
+	issues, err := ioutil.ReadDir(string(bugs.GetRootDir()) + "/issues")
 	if err != nil {
 		fmt.Printf("Unknown error reading directory: %s\n", err.Error())
 		return
@@ -281,7 +281,7 @@ func (a BugApplication) Tag(Args []string) {
 		return
 	}
 	var b bugs.Bug
-	b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + issues[idx].Name()))
+	b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + bugs.Directory(issues[idx].Name())))
 	for _, tag := range Args[1:] {
 		b.TagBug(tag)
 	}
@@ -362,7 +362,7 @@ func (a BugApplication) Commit() {
 	// Commit the issues directory
 	// git add $(bug pwd)
 	// git commit -m "Added new issues" -q
-	cmd = exec.Command("git", "add", "-A", bugs.GetRootDir()+"/issues")
+	cmd = exec.Command("git", "add", "-A", string(bugs.GetRootDir())+"/issues")
 	err = cmd.Run()
 	if err != nil {
 		fmt.Printf("Could not add to index?\n")
