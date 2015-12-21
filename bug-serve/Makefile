@@ -1,4 +1,4 @@
-all: Go React serve
+all: Go React
 
 Go:
 	go build .
