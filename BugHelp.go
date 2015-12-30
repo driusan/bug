@@ -47,6 +47,35 @@ print any issues which have that tag (in short form)
 IssueNumber, where IssueNumber is a reference to same index provided with a
 "bug list" command.
 `)
+	case "status":
+		fmt.Printf("Usage: " + os.Args[0] + " status IssueNumber [NewStatus]\n\n")
+		fmt.Printf(
+			`This will edit or display the status of the bug numbered IssueNumber.
+            
+If NewStatus is provided, it will update the first line of the Status file
+for the issue (creating the file as necessary). If not provided, it will 
+display the first line of the Status file to STDOUT.
+
+Note that you can manually edit the Status file in the issues/ directory
+to provide further explanation (for instance, why that status is set.)
+This command will preserve the explanation when updating a status.
+`)
+	case "priority":
+		fmt.Printf("Usage: " + os.Args[0] + " priority IssueNumber [NewPriority]\n\n")
+		fmt.Printf(
+			`This will edit or display the priority of the bug numbered IssueNumber.
+By convention, priorities should be an integer number (higher is more 
+urgent), but that is not enforced by this command and NewPriority can
+be any free-form text if you prefer.
+            
+If NewPriority is provided, it will update the first line of the Priority
+file for the issue (creating the file as necessary). If not provided, it 
+will display the first line of the Priority file to STDOUT.
+
+Note that you can manually edit the Priority file in the issues/ directory
+to provide further explanation (for instance, why that priority is set.)
+This command will preserve the explanation when updating a priority.
+`)
 	case "rm":
 		fallthrough
 	case "close":
@@ -107,17 +136,24 @@ Tags can be any string which would make a valid file name.
 		fmt.Printf("Usage: " + os.Args[0] + " command [options]\n\n")
 		fmt.Printf("Use \"bug help [command]\" for more information about any command below\n\n")
 		fmt.Printf("Valid commands\n")
-		fmt.Printf("\tcreate\tFile a new bug\n")
-		fmt.Printf("\tlist\tList existing bugs\n")
-		fmt.Printf("\tedit\tEdit an existing bug\n")
-		fmt.Printf("\ttag\tTag a bug with a category\n")
-		fmt.Printf("\tclose\tDelete an existing bug\n")
-		fmt.Printf("\tcommit\tCommit any new, changed or deleted bug to git\n")
-		fmt.Printf("\tpurge\tRemove all issues not tracked by git\n")
-		fmt.Printf("\trm\tAlias of close\n")
-		fmt.Printf("\tenv\tShow settings that bug will use if invoked from this directory\n")
-		fmt.Printf("\tdir\tPrints the issues directory to stdout (useful subcommand in the shell)\n")
-		fmt.Printf("\tpwd\tAlias of dir\n")
-		fmt.Printf("\thelp\tShow this screen\n")
+		fmt.Printf("\nIssue editing commands:\n")
+		fmt.Printf("\tcreate\t File a new bug\n")
+		fmt.Printf("\tlist\t List existing bugs\n")
+		fmt.Printf("\tedit\t Edit an existing bug\n")
+		fmt.Printf("\ttag\t Tag a bug with a category\n")
+		fmt.Printf("\tclose\t Delete an existing bug\n")
+		fmt.Printf("\trm\t Alias of close\n")
+		fmt.Printf("\tstatus\t View or edit a bug's status\n")
+		fmt.Printf("\tpriority View or edit a bug's priority\n")
+
+		fmt.Printf("\nSource control commands:\n")
+		fmt.Printf("\tcommit\t Commit any new, changed or deleted bug to git\n")
+		fmt.Printf("\tpurge\t Remove all issues not tracked by git\n")
+
+		fmt.Printf("\nOther commands:\n")
+		fmt.Printf("\tenv\t Show settings that bug will use if invoked from this directory\n")
+		fmt.Printf("\tdir\t Prints the issues directory to stdout (useful subcommand in the shell)\n")
+		fmt.Printf("\tpwd\t Alias of dir\n")
+		fmt.Printf("\thelp\t Show this screen\n")
 	}
 }

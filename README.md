@@ -21,17 +21,26 @@ Usage: bug command [options]
 Use "bug help [command]" for more information about any command below
 
 Valid commands
-    create  File a new bug
-    list    List existing bugs
-    edit    Edit an existing bug
-    close   Delete an existing bug
-    commit  Commit any new, changed or deleted bug to git
-    purge   Remove all issues not tracked by git
-    rm      Alias of close
-    env     Show settings that bug will use if invoked from this directory
-    dir     Prints the issues directory to stdout (useful subcommand in the shell)
-    pwd     Alias of dir
-    help    Show this screen
+
+Issue editing commands:
+	create	 File a new bug
+	list	 List existing bugs
+	edit	 Edit an existing bug
+	tag	 Tag a bug with a category
+	close	 Delete an existing bug
+	rm	 Alias of close
+	status	 View or edit a bug's status
+	priority View or edit a bug's priority
+
+Source control commands:
+	commit	 Commit any new, changed or deleted bug to git
+	purge	 Remove all issues not tracked by git
+
+Other commands:
+	env	 Show settings that bug will use if invoked from this directory
+	dir	 Prints the issues directory to stdout (useful subcommand in the shell)
+	pwd	 Alias of dir
+	help	 Show this screen
 
 $ bug create I don't know what I'm doing
 # (Your standard editor will open here for you to enter a description, save it when you're done)

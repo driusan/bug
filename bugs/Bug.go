@@ -47,10 +47,19 @@ func (b Bug) ViewBug() {
 	fmt.Printf("Title: %s\n\n", b.Title)
 	fmt.Printf("Description:\n%s", b.Description)
 
+	status := b.Status()
+	if status != "" {
+		fmt.Printf("\nStatus: %s", status)
+	}
+	priority := b.Priority()
+	if priority != "" {
+		fmt.Printf("\nPriority: %s", priority)
+	}
 	tags := b.Tags()
 	if tags != nil {
 		fmt.Printf("\nTags: %s", strings.Join(tags, ", "))
 	}
+
 }
 
 func (b Bug) Tags() []string {
@@ -67,4 +76,55 @@ func (b Bug) Tags() []string {
 	}
 	return tags
 
+}
+
+func (b Bug) getField(fieldName string) string {
+	dir, _ := b.GetDirectory()
+	field, err := ioutil.ReadFile(string(dir) + "/" + fieldName)
+	if err != nil {
+		return ""
+	}
+	lines := strings.Split(string(field), "\n")
+	if len(lines) > 0 {
+		return strings.TrimSpace(lines[0])
+	}
+	return ""
+}
+
+func (b Bug) setField(fieldName, value string) error {
+	dir, _ := b.GetDirectory()
+	oldValue, err := ioutil.ReadFile(string(dir) + "/" + fieldName)
+	var oldLines []string
+	if err == nil {
+		oldLines = strings.Split(string(oldValue), "\n")
+	}
+
+	newValue := ""
+	if len(oldLines) >= 1 {
+		// If there were 0 or 1 old lines, overwrite them
+		oldLines[0] = value
+		newValue = strings.Join(oldLines, "\n")
+	} else {
+		newValue = value
+	}
+
+	err = ioutil.WriteFile(string(dir)+"/"+fieldName, []byte(newValue), 0644)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (b Bug) Status() string {
+	return b.getField("Status")
+}
+
+func (b Bug) SetStatus(newStatus string) error {
+	return b.setField("Status", newStatus)
+}
+func (b Bug) Priority() string {
+	return b.getField("Priority")
+}
+
+func (b Bug) SetPriority(newValue string) error {
+	return b.setField("Priority", newValue)
 }

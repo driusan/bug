@@ -35,6 +35,10 @@ func main() {
 			fallthrough
 		case "list":
 			app.List(os.Args[2:])
+		case "priority":
+			app.Priority(os.Args[2:])
+		case "status":
+			app.Status(os.Args[2:])
 		case "tag":
 			app.Tag(os.Args[2:])
 		case "purge":
