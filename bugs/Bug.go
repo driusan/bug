@@ -53,6 +53,10 @@ func (b Bug) ViewBug() {
 	if priority != "" {
 		fmt.Printf("\nPriority: %s", priority)
 	}
+	milestone := b.Milestone()
+	if milestone != "" {
+		fmt.Printf("\nMilestone: %s", milestone)
+	}
 	tags := b.Tags()
 	if tags != nil {
 		fmt.Printf("\nTags: %s", strings.Join(tags, ", "))
@@ -125,4 +129,11 @@ func (b Bug) Priority() string {
 
 func (b Bug) SetPriority(newValue string) error {
 	return b.setField("Priority", newValue)
+}
+func (b Bug) Milestone() string {
+	return b.getField("Milestone")
+}
+
+func (b Bug) SetMilestone(newValue string) error {
+	return b.setField("Milestone", newValue)
 }

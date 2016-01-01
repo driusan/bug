@@ -207,6 +207,38 @@ func (a BugApplication) Create(Args []string) {
 	}
 }
 
+func (a BugApplication) Milestone(args []string) {
+	if len(args) < 1 {
+		fmt.Printf("Usage: %s priority issuenum [set priority]\n", os.Args[0])
+		return
+	}
+
+	idx, err := strconv.Atoi(args[0])
+	if err != nil {
+		fmt.Printf("Invalid issue number. \"%s\" is not a number.\n\n", args[0])
+		fmt.Printf("Usage: %s priority issuenum [set priority]\n", os.Args[0])
+		return
+	}
+	b, err := bugs.LoadBugByIndex(idx)
+	if err != nil {
+		fmt.Printf("Invalid issue number %s\n", args[0])
+		return
+	}
+	if len(args) > 1 {
+		newMilestone:= strings.Join(args[1:], " ")
+		err := b.SetMilestone(newMilestone)
+		if err != nil {
+			fmt.Printf("Error setting priority: %s", err.Error())
+		}
+	} else {
+		priority := b.Milestone()
+		if priority == "" {
+			fmt.Printf("Priority not defined\n")
+		} else {
+			fmt.Printf("%s\n", priority)
+		}
+	}
+}
 func (a BugApplication) Priority(args []string) {
 	if len(args) < 1 {
 		fmt.Printf("Usage: %s priority issuenum [set priority]\n", os.Args[0])
