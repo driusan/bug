@@ -29,6 +29,8 @@ func main() {
 		switch os.Args[1] {
 		case "add":
 			fallthrough
+		case "new":
+			fallthrough
 		case "create":
 			app.Create(os.Args[2:])
 		case "view":
