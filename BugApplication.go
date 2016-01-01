@@ -208,103 +208,50 @@ func (a BugApplication) Create(Args []string) {
 	}
 }
 
-func (a BugApplication) Milestone(args []string) {
+func (a BugApplication) fieldHandler(command string, args []string,
+	setCallback func(bugs.Bug, string) error, retrieveCallback func(bugs.Bug) string) {
 	if len(args) < 1 {
-		fmt.Printf("Usage: %s priority issuenum [set priority]\n", os.Args[0])
+		fmt.Printf("Usage: %s %s issuenum [set %s]\n", os.Args[0], command, command)
 		return
 	}
 
 	idx, err := strconv.Atoi(args[0])
 	if err != nil {
 		fmt.Printf("Invalid issue number. \"%s\" is not a number.\n\n", args[0])
-		fmt.Printf("Usage: %s priority issuenum [set priority]\n", os.Args[0])
+		fmt.Printf("Usage: %s %s issuenum [set %s]\n", os.Args[0], command, command)
 		return
 	}
+
 	b, err := bugs.LoadBugByIndex(idx)
 	if err != nil {
 		fmt.Printf("Invalid issue number %s\n", args[0])
 		return
 	}
 	if len(args) > 1 {
-		newMilestone := strings.Join(args[1:], " ")
-		err := b.SetMilestone(newMilestone)
+		newValue := strings.Join(args[1:], " ")
+		err := setCallback(*b, newValue)
 		if err != nil {
-			fmt.Printf("Error setting priority: %s", err.Error())
+			fmt.Printf("Error setting %s: %s", command, err.Error())
 		}
 	} else {
-		priority := b.Milestone()
-		if priority == "" {
-			fmt.Printf("Priority not defined\n")
+		val := retrieveCallback(*b)
+		if val == "" {
+			fmt.Printf("%s not defined\n", command)
 		} else {
-			fmt.Printf("%s\n", priority)
+			fmt.Printf("%s\n", val)
 		}
 	}
 }
 func (a BugApplication) Priority(args []string) {
-	if len(args) < 1 {
-		fmt.Printf("Usage: %s priority issuenum [set priority]\n", os.Args[0])
-		return
-	}
-
-	idx, err := strconv.Atoi(args[0])
-	if err != nil {
-		fmt.Printf("Invalid issue number. \"%s\" is not a number.\n\n", args[0])
-		fmt.Printf("Usage: %s priority issuenum [set priority]\n", os.Args[0])
-		return
-	}
-	b, err := bugs.LoadBugByIndex(idx)
-	if err != nil {
-		fmt.Printf("Invalid issue number %s\n", args[0])
-		return
-	}
-	if len(args) > 1 {
-		newPriority := strings.Join(args[1:], " ")
-		err := b.SetPriority(newPriority)
-		if err != nil {
-			fmt.Printf("Error setting priority: %s", err.Error())
-		}
-	} else {
-		priority := b.Priority()
-		if priority == "" {
-			fmt.Printf("Priority not defined\n")
-		} else {
-			fmt.Printf("%s\n", priority)
-		}
-	}
+	a.fieldHandler("priority", args, bugs.Bug.SetPriority, bugs.Bug.Priority)
 }
 func (a BugApplication) Status(args []string) {
-	if len(args) < 1 {
-		fmt.Printf("Usage: %s status issuenum [set status]\n", os.Args[0])
-		return
-	}
-
-	idx, err := strconv.Atoi(args[0])
-	if err != nil {
-		fmt.Printf("Invalid bug number. \"%s\" is not a number.\n\n", args[0])
-		fmt.Printf("Usage: %s status issuenum [set status]\n", os.Args[0])
-		return
-	}
-	b, err := bugs.LoadBugByIndex(idx)
-	if err != nil {
-		fmt.Printf("Invalid bug number %s\n", args[0])
-		return
-	}
-	if len(args) > 1 {
-		newStatus := strings.Join(args[1:], " ")
-		fmt.Printf("Setting status to %s\n", newStatus)
-		err := b.SetStatus(newStatus)
-		if err != nil {
-			fmt.Printf("Error setting status: %s", err.Error())
-		}
-	} else {
-		status := b.Status()
-		if status == "" {
-			fmt.Printf("Status not defined\n")
-		} else {
-			fmt.Printf("%s\n", status)
-		}
-	}
+	a.fieldHandler("status", args, bugs.Bug.SetStatus, bugs.Bug.Status)
 }
+func (a BugApplication) Milestone(args []string) {
+	a.fieldHandler("milestone", args, bugs.Bug.SetMilestone, bugs.Bug.Milestone)
+}
+
 func (a BugApplication) Dir() {
 	fmt.Printf("%s", bugs.GetRootDir()+"/issues")
 }
@@ -398,16 +345,16 @@ func (a BugApplication) Roadmap() {
 	}
 	sort.Sort(BugListByMilestone(bgs))
 
-    fmt.Printf("# Roadmap for %s\n", bugs.GetRootDir().GetShortName().ToTitle())
+	fmt.Printf("# Roadmap for %s\n", bugs.GetRootDir().GetShortName().ToTitle())
 	milestone := ""
 	for i := len(bgs) - 1; i >= 0; i -= 1 {
 		b := bgs[i]
 		newMilestone := b.Milestone()
 		if milestone != newMilestone {
 			if newMilestone == "" {
-                fmt.Printf("\nNo milestone set:\n")
+				fmt.Printf("\nNo milestone set:\n")
 			} else {
-                fmt.Printf("\n%s:\n", newMilestone)
+				fmt.Printf("\n%s:\n", newMilestone)
 			}
 		}
 		fmt.Printf("- %s\n", b.Title)

@@ -1,4 +1,0 @@
-bug status, priority, and milestone are all very similar
-in BugApplication. They do the same validations and only
-differ in the function names and error messages. The code
-should be refactored to reduce duplication.
