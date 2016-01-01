@@ -143,9 +143,28 @@ func (a BugApplication) Purge() {
 	}
 }
 
+func getAllTags() []string {
+	issues, _ := ioutil.ReadDir(string(bugs.GetRootDir()) + "/issues")
+	tagMap := make(map[string]bool)
+	for idx, _ := range issues {
+		var b bugs.Bug
+		b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + bugs.Directory(issues[idx].Name())))
+		for _, tag := range b.Tags() {
+			tagMap[tag] = true
+		}
+	}
+
+	keys := make([]string, 0, len(tagMap))
+	for k := range tagMap {
+		keys = append(keys, k)
+	}
+	return keys
+}
 func (a BugApplication) Tag(Args []string) {
 	if len(Args) < 2 {
-		fmt.Printf("Invalid usage. Must provide issue and tags\n.")
+		fmt.Printf("Usage: %s tag issuenum tagname [more tagnames]\n", os.Args[0])
+		fmt.Printf("\nBoth issue number and tagname to set are required.\n")
+		fmt.Printf("\nCurrently used tags in entire tree: %s\n", strings.Join(getAllTags(), ", "))
 		return
 	}
 

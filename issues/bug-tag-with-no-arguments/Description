@@ -1,2 +1,0 @@
-"bug tag" with no arguments should print a show usage
-line. It should also display all currently in use tags.

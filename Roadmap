@@ -5,14 +5,12 @@ v0.3:
 - More options for bug create
 
 v0.2:
+- Roadmap sorting should collate better
 - Add support for other source control engines
 - Should have git pre-commit hook to automatically regenerate roadmap
-- Roadmap sorting should collate better
 - Better handling of whitespace in issue titles
 - Roadmap should indicate status and priority
 
 v0.1:
-- Should have bug relabel command
 - bug commit is fickle
-- bug tag with no arguments
-- Refactor fields in BugApplication
+- Should have bug relabel command
