@@ -13,6 +13,11 @@ type Bug struct {
 	Description string
 }
 
+type Status string
+type Priority string
+type Milestone string
+type Tag string
+
 func (b Bug) GetDirectory() (Directory, error) {
 	re := regexp.MustCompile("(-+)")
 	s := re.ReplaceAllString(b.Title, "-$1")
@@ -33,10 +38,10 @@ func (b *Bug) LoadBug(dir Directory) {
 	b.Description = string(desc)
 }
 
-func (b *Bug) TagBug(tag string) {
+func (b *Bug) TagBug(tag Tag) {
 	if dir, err := b.GetDirectory(); err == nil {
 		os.Mkdir(string(dir)+"/tags/", 0755)
-		ioutil.WriteFile(string(dir)+"/tags/"+tag, []byte(""), 0644)
+		ioutil.WriteFile(string(dir)+"/tags/"+string(tag), []byte(""), 0644)
 	} else {
 		fmt.Printf("Error tagging bug: %s", err.Error())
 	}
@@ -57,14 +62,14 @@ func (b Bug) ViewBug() {
 	if milestone != "" {
 		fmt.Printf("\nMilestone: %s", milestone)
 	}
-	tags := b.Tags()
+	tags := b.StringTags()
 	if tags != nil {
-		fmt.Printf("\nTags: %s", strings.Join(tags, ", "))
+		fmt.Printf("\nTags: %s", strings.Join([]string(tags), ", "))
 	}
 
 }
 
-func (b Bug) Tags() []string {
+func (b Bug) StringTags() []string {
 	dir, _ := b.GetDirectory()
 	dir += "/tags/"
 	issues, err := ioutil.ReadDir(string(dir))
@@ -72,9 +77,23 @@ func (b Bug) Tags() []string {
 		return nil
 	}
 
-	tags := []string{}
+	tags := make([]string, 0, len(issues))
 	for _, issue := range issues {
 		tags = append(tags, issue.Name())
+	}
+	return tags
+}
+func (b Bug) Tags() []Tag {
+	dir, _ := b.GetDirectory()
+	dir += "/tags/"
+	issues, err := ioutil.ReadDir(string(dir))
+	if err != nil {
+		return nil
+	}
+
+	tags := make([]Tag, 0, len(issues))
+	for _, issue := range issues {
+		tags = append(tags, Tag(issue.Name()))
 	}
 	return tags
 
@@ -116,6 +135,7 @@ func (b Bug) setField(fieldName, value string) error {
 	}
 	return nil
 }
+
 func (b Bug) Status() string {
 	return b.getField("Status")
 }

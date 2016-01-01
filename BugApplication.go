@@ -35,7 +35,7 @@ func listTags(files []os.FileInfo, args []string) {
 	for idx, _ := range files {
 		b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + bugs.Directory(files[idx].Name())))
 
-		tags := b.Tags()
+		tags := b.StringTags()
 		for _, tag := range args {
 			if hasTag(tags, tag) {
 				fmt.Printf("Issue %d: %s (%s)\n", idx+1, b.Title, strings.Join(tags, ", "))
@@ -144,13 +144,14 @@ func (a BugApplication) Purge() {
 }
 
 func getAllTags() []string {
-	issues, _ := ioutil.ReadDir(string(bugs.GetRootDir()) + "/issues")
-	tagMap := make(map[string]bool)
-	for idx, _ := range issues {
-		var b bugs.Bug
-		b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + bugs.Directory(issues[idx].Name())))
-		for _, tag := range b.Tags() {
-			tagMap[tag] = true
+	bugs := bugs.GetAllBugs()
+
+	// Put all the tags in a map, then iterate over
+	// the keys so that only unique tags are included
+	tagMap := make(map[string]int, 0)
+	for _, bug := range bugs {
+		for _, tag := range bug.Tags() {
+			tagMap[string(tag)] += 1
 		}
 	}
 
@@ -168,25 +169,14 @@ func (a BugApplication) Tag(Args []string) {
 		return
 	}
 
-	issues, err := ioutil.ReadDir(string(bugs.GetRootDir()) + "/issues")
+	b, err := bugs.LoadBugByStringIndex(Args[0])
+
 	if err != nil {
-		fmt.Printf("Unknown error reading directory: %s\n", err.Error())
+		fmt.Printf("Could not load bug: %s\n", err.Error())
 		return
 	}
-	idx, err := strconv.Atoi(Args[0])
-	idx = idx - 1
-	if err != nil {
-		fmt.Printf("Unknown looking up bug: %s\n", err)
-		return
-	}
-	if idx >= len(issues) || idx < 0 {
-		fmt.Printf("Invalid issue index.\n")
-		return
-	}
-	var b bugs.Bug
-	b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + bugs.Directory(issues[idx].Name())))
 	for _, tag := range Args[1:] {
-		b.TagBug(tag)
+		b.TagBug(bugs.Tag(tag))
 	}
 
 }
