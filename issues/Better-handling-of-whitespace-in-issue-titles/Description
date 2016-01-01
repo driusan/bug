@@ -1,0 +1,7 @@
+The issue title format doesn't deal with combinations
+of whitespace and dashes well. In particular, there's
+no way to denote sequences such as "-- " or "command -option"
+in an issue title.
+
+The format for converting dashes to spaces and vice versa needs
+a little more nuance.

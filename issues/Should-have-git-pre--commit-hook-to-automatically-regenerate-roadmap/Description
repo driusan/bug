@@ -1,0 +1,4 @@
+It would be useful (and easy) to autogenerate a static
+copy of the "bug roadmap" output and put it in the issues/
+directory, so that it can be viewed without the bug command
+(ie. just by browsing the filessystem, or on github)

@@ -1,7 +1,0 @@
-There should be a command to add a milestone to issues, and
-another command to display all issues sorted by milestone
-(and subsorted by priority?) in markdown (or other easy, human
-readable) format.
-
-Then there can be a git hook to generate a roadmap automatically
-on commit.

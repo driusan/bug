@@ -1,0 +1,7 @@
+There's a few cases where "bug commit" will crash
+and can mess up the index. In particular:
+
+1. If a file in the $(bug pwd) directory has been
+   manually staged in git and not commited
+2. If a new/untracked file anywhere has been staged
+   but not commited
