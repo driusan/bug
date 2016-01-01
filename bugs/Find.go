@@ -9,7 +9,7 @@ import (
 type BugNotFoundError string
 
 func (b BugNotFoundError) Error() string {
-	return "Bug not found"
+	return string(b)
 }
 func FindBugsByTag(tags []string) []Bug {
 	return []Bug{}

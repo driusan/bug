@@ -2,3 +2,5 @@ There is currently no way to update a bug's title. There
 should be a relabel command to make it easier to change
 the title of a bug without manually doing a mv and commiting
 to source control
+
+Currently implemented but missing help

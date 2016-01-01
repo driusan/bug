@@ -18,11 +18,14 @@ type Priority string
 type Milestone string
 type Tag string
 
-func (b Bug) GetDirectory() (Directory, error) {
+func TitleToDir(title string) Directory {
 	re := regexp.MustCompile("(-+)")
-	s := re.ReplaceAllString(b.Title, "-$1")
+	s := re.ReplaceAllString(title, "-$1")
 	s = strings.Replace(s, " ", "-", -1)
-	return GetRootDir() + "/issues/" + Directory(s), nil
+    return Directory(s)
+}
+func (b Bug) GetDirectory() (Directory, error) {
+	return GetRootDir() + "/issues/" + TitleToDir(b.Title), nil
 }
 
 func (b *Bug) LoadBug(dir Directory) {
