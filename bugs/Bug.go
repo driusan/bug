@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	//"regex"
+	"regexp"
 	"strings"
 )
 
@@ -14,12 +14,10 @@ type Bug struct {
 }
 
 func (b Bug) GetDirectory() (Directory, error) {
-	//re := regexp.MustCompile("-[-*]
-	s := strings.Replace(b.Title, "-", "--", -1)
-
-	tokens := strings.Split(s, " ")
-
-	return GetRootDir() + "/issues/" + Directory(strings.Join(tokens, "-")), nil
+	re := regexp.MustCompile("(-+)")
+	s := re.ReplaceAllString(b.Title, "-$1")
+	s = strings.Replace(s, " ", "-", -1)
+	return GetRootDir() + "/issues/" + Directory(s), nil
 }
 
 func (b *Bug) LoadBug(dir Directory) {

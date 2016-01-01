@@ -2,6 +2,7 @@ package bugs
 
 import (
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -38,6 +39,11 @@ func (d Directory) GetShortName() Directory {
 }
 
 func (d Directory) ToTitle() string {
-	tokens := strings.Split(string(d), "-")
-	return strings.Join(tokens, " ")
+	multidash := regexp.MustCompile("-(-*)")
+	return multidash.ReplaceAllStringFunc(string(d), func(match string) string {
+		if match == "-" {
+			return " "
+		}
+		return match[1:]
+	})
 }
