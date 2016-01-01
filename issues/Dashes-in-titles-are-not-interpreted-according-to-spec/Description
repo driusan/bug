@@ -1,5 +1,0 @@
-According to the spec, n > 1 dashes should be interpreted
-as n-1 dashes in titles, but instead they're currently
-interpreted as n spaces
-
-Created some tests in Bug_test, but they're currently failing
