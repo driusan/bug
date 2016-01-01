@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"sort"
 	"strconv"
 	//"regex"
 	"github.com/driusan/bug/bugs"
@@ -225,7 +226,7 @@ func (a BugApplication) Milestone(args []string) {
 		return
 	}
 	if len(args) > 1 {
-		newMilestone:= strings.Join(args[1:], " ")
+		newMilestone := strings.Join(args[1:], " ")
 		err := b.SetMilestone(newMilestone)
 		if err != nil {
 			fmt.Printf("Error setting priority: %s", err.Error())
@@ -378,5 +379,39 @@ func (a BugApplication) Commit() {
 			// If nothing was stashed, it's not the end of the world.
 			//fmt.Printf("Could not pop from stash\n")
 		}
+	}
+}
+
+type BugListByMilestone [](bugs.Bug)
+
+func (a BugListByMilestone) Len() int           { return len(a) }
+func (a BugListByMilestone) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a BugListByMilestone) Less(i, j int) bool { return a[i].Milestone() < a[j].Milestone() }
+
+func (a BugApplication) Roadmap() {
+	issues, _ := ioutil.ReadDir(string(bugs.GetRootDir()) + "/issues")
+	var bgs [](bugs.Bug)
+	for idx, _ := range issues {
+		b := bugs.Bug{}
+		b.LoadBug(bugs.Directory(bugs.GetRootDir() + "/issues/" + bugs.Directory(issues[idx].Name())))
+		bgs = append(bgs, b)
+	}
+	sort.Sort(BugListByMilestone(bgs))
+
+    fmt.Printf("# Roadmap for %s\n", bugs.GetRootDir().GetShortName().ToTitle())
+	milestone := ""
+	for i := len(bgs) - 1; i >= 0; i -= 1 {
+		b := bgs[i]
+		newMilestone := b.Milestone()
+		if milestone != newMilestone {
+			if newMilestone == "" {
+                fmt.Printf("\nNo milestone set:\n")
+			} else {
+                fmt.Printf("\n%s:\n", newMilestone)
+			}
+		}
+		fmt.Printf("- %s\n", b.Title)
+		milestone = newMilestone
+
 	}
 }

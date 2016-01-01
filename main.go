@@ -41,7 +41,7 @@ func main() {
 			app.Priority(os.Args[2:])
 		case "status":
 			app.Status(os.Args[2:])
-        case "milestone":
+		case "milestone":
 			app.Milestone(os.Args[2:])
 		case "tag":
 			app.Tag(os.Args[2:])
@@ -61,6 +61,8 @@ func main() {
 			app.Dir()
 		case "commit":
 			app.Commit()
+		case "roadmap":
+			app.Roadmap()
 		case "help":
 			fallthrough
 		default:
