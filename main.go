@@ -45,6 +45,12 @@ func main() {
 			app.Milestone(os.Args[2:])
 		case "tag":
 			app.Tag(os.Args[2:])
+		case "mv":
+			fallthrough
+		case "rename":
+			fallthrough
+		case "retitle":
+			fallthrough
 		case "relabel":
 			app.Relabel(os.Args[2:])
 		case "purge":
