@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/driusan/bug/bugs"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"sort"
 	"strconv"
-	//"regex"
-	"github.com/driusan/bug/bugs"
 	"strings"
 )
 
@@ -443,4 +442,9 @@ func (a BugApplication) Relabel(Args []string) {
 	if err != nil {
 		fmt.Printf("Error moving directory\n")
 	}
+}
+
+func (a BugApplication) Version() {
+	fmt.Printf("%s version 0.1\n", os.Args[0])
+
 }

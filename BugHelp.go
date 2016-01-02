@@ -184,6 +184,16 @@ Tags can be any string which would make a valid file name.
 			`This will print a markdown formatted list of all open
 issues, grouped by milestone.
 `)
+	case "about":
+		fallthrough
+	case "version":
+		fmt.Printf("Usage: " + os.Args[0] + " version\n\n")
+		fmt.Printf(
+			`This will print information about the version of %s being
+invoked.
+
+"%s about" is an alias for "version".
+`, os.Args[0], os.Args[0])
 
 	case "help":
 		fallthrough
@@ -210,6 +220,7 @@ issues, grouped by milestone.
 		fmt.Printf("\tenv\t Show settings that bug will use if invoked from this directory\n")
 		fmt.Printf("\tpwd\t Prints the issues directory to stdout (useful subcommand in the shell)\n")
 		fmt.Printf("\troadmap\t Print list of open issues sorted by milestone\n")
+		fmt.Printf("\tversion\t Print the version of this software\n")
 		fmt.Printf("\thelp\t Show this screen\n")
 	}
 }

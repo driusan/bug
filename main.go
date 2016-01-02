@@ -61,6 +61,10 @@ func main() {
 			app.Close(os.Args[2:])
 		case "edit":
 			app.Edit(os.Args[2:])
+		case "--version":
+			fallthrough
+		case "version":
+			app.Version()
 		case "env":
 			app.Env()
 		case "dir":
