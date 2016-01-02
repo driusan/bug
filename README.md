@@ -23,6 +23,17 @@ Because issues are stored as human readable plaintext files, they branch
 and merge along with the rest of your code, and you can resolve conflicts 
 using your standard tools.
 
+# Installation
+If you have go installed, install the latest development version with:
+
+`go get github.com/driusan/bug`
+
+Make sure `$GOPATH/bin` or `$GOBIN` are in your path (or copy
+the "bug" binary somewhere that is.)
+
+Otherwise, you can download a 64-bit release for OS X or Linux on the 
+[releases](https://github.com/driusan/bug/releases/) page.
+
 # Sample Usage
 
 If an environment variable named PMIT is set, that directory will be
@@ -43,14 +54,15 @@ Use "bug help [command]" for more information about any command below
 Valid commands
 
 Issue editing commands:
-	create	 File a new bug
-	list	 List existing bugs
-	edit	 Edit an existing bug
-	tag	 Tag a bug with a category
-	close	 Delete an existing bug
-	rm	 Alias of close
-	status	 View or edit a bug's status
-	priority View or edit a bug's priority
+	create	  File a new bug
+	list	  List existing bugs
+	edit	  Edit an existing bug
+	tag	      Tag a bug with a category
+	relabel	  Rename the title of a bug
+	close	  Delete an existing bug
+	status	  View or edit a bug's status
+	priority  View or edit a bug's priority
+	milestone View or edit a bug's milestone
 
 Source control commands:
 	commit	 Commit any new, changed or deleted bug to git
@@ -58,27 +70,27 @@ Source control commands:
 
 Other commands:
 	env	 Show settings that bug will use if invoked from this directory
-	dir	 Prints the issues directory to stdout (useful subcommand in the shell)
-	pwd	 Alias of dir
+	pwd	 Prints the issues directory to stdout (useful subcommand in the shell)
+	roadmap	 Print list of open issues sorted by milestone
+	version	 Print the version of this software
 	help	 Show this screen
 
-$ bug create I don't know what I'm doing
-# (Your standard editor will open here for you to enter a description, save it when you're done)
+$ bug create Need better help
+(Your editor opens here to enter a description)
 
 $ bug list
-Issue 1: I don't know what I'm doing
+Issue 1: Need better help
 
 $ bug list 1
-Title: I don't know what I'm doing
+Title: Need better help
 
 Description:
 The description that I entered
 
 $ bug purge
-Removing issues/I-don't-know-what-I'm-doing
+Removing issues/Need-better-help
 
-$ bug create Need better formating for README
-# (Your editor opens again)
+$ bug create -n Need better formating for README
 
 $ bug list
 Issue 1: Need better formating for README
@@ -86,15 +98,4 @@ Issue 1: Need better formating for README
 $ bug commit
 $ git push
 ```
-
-# Installation
-If you have go installed, install the latest development version with:
-
-`go get github.com/driusan/bug`
-
-Make sure `$GOPATH/bin` or `$GOBIN` are in your path (or copy
-the "bug" binary somewhere that is.)
-
-Otherwise, you can download a 64 bit release for OS X or Linux on the 
-[releases](https://github.com/driusan/bug/releases/) page.
 
