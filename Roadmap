@@ -1,17 +1,16 @@
 # Roadmap for bug
 
 v0.3:
-- Include method of defining stable identifiers
 - More options for bug create
+- Include method of defining stable identifiers
 
 v0.2:
+- Roadmap should indicate status and priority
+- Should have git pre-commit hook to automatically regenerate roadmap
 - Roadmap sorting should collate better
 - Add support for other source control engines
-- Should have git pre-commit hook to automatically regenerate roadmap
-- Better handling of whitespace in issue titles
-- Roadmap should indicate status and priority
 - Description should be loaded lazily
+- Better handling of whitespace in issue titles
 
 v0.1:
 - help missing relabel, milestone, and roadmap
-- bug close error not consistent

@@ -57,10 +57,10 @@ func main() {
 			app.Edit(os.Args[2:])
 		case "env":
 			app.Env()
-		case "pwd":
-			fallthrough
 		case "dir":
-			app.Dir()
+			fallthrough
+		case "pwd":
+			app.Pwd()
 		case "commit":
 			app.Commit()
 		case "roadmap":

@@ -110,7 +110,7 @@ func (a BugApplication) Close(args []string) {
 
 	// No parameters, print a list of all bugs
 	if len(args) == 0 {
-		fmt.Printf("Must provide bug to close as parameter\n")
+		fmt.Printf("Usage: %s close IssueNumber\n\nMust provide an IssueNumber to close as parameter\n", os.Args[0])
 		return
 	}
 
@@ -266,7 +266,7 @@ func (a BugApplication) Milestone(args []string) {
 	a.fieldHandler("milestone", args, bugs.Bug.SetMilestone, bugs.Bug.Milestone)
 }
 
-func (a BugApplication) Dir() {
+func (a BugApplication) Pwd() {
 	fmt.Printf("%s", bugs.GetRootDir()+"/issues")
 }
 
