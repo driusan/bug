@@ -31,6 +31,10 @@ func GetRootDir() Directory {
 	return ""
 }
 
+func GetIssuesDir() Directory {
+	return GetRootDir() + "/issues/"
+}
+
 type Directory string
 
 func (d Directory) GetShortName() Directory {

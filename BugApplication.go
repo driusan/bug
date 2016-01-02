@@ -276,12 +276,58 @@ func (a BugApplication) Dir() {
 // 						this is necessary for 5b to work.)
 // 5b. "git stash apply --index" the stash from step 1
 func (a BugApplication) Commit() {
+	type FileStatus struct {
+		IndexStatus      string
+		WorkingDirStatus string
+		Filename         string
+	}
+	statusOutput := func(dir bugs.Directory) []FileStatus {
+		cmd := exec.Command("git", "status", "--porcelain", "-z", string(dir))
+		output, err := cmd.Output()
+		if err != nil {
+			fmt.Printf("Could not check git status")
+			return nil
+		}
+		fileStatusLines := strings.Split(string(output), "\000")
+		var files []FileStatus
+		for _, line := range fileStatusLines {
+			if len(line) == 0 {
+				continue
+			}
+			files = append(files, FileStatus{
+				IndexStatus:      line[0:1],
+				WorkingDirStatus: line[1:2],
+				Filename:         line[2:],
+			})
+		}
+		return files
+	}
+	// Before doing anything, check git status to see if
+	// the index is in a state that's going to cause an
+	// error
+	sOutput := statusOutput(bugs.GetIssuesDir())
+	for _, file := range sOutput {
+		if file.IndexStatus == "D" {
+			fmt.Printf("You have manually staged changes in your issue directory which will conflict with %s commit.\n", os.Args[0])
+			return
+		}
+	}
+
+	sOutput = statusOutput(bugs.GetRootDir())
+	for _, file := range sOutput {
+		if file.IndexStatus == "A" {
+			fmt.Printf("You have a new file staged in your git index, which will cause conflicts with %s commit. Please either commit your changes or unstage %s.\n", os.Args[0], file.Filename)
+			return
+		}
+	}
+
 	cmd := exec.Command("git", "stash", "create")
 
 	output, err := cmd.Output()
 
 	if err != nil {
 		fmt.Printf("Could not execute git stash create")
+		return
 	}
 	var stashHash string = strings.Trim(string(output), "\n")
 

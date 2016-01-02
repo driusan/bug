@@ -22,7 +22,7 @@ func TitleToDir(title string) Directory {
 	re := regexp.MustCompile("(-+)")
 	s := re.ReplaceAllString(title, "-$1")
 	s = strings.Replace(s, " ", "-", -1)
-    return Directory(s)
+	return Directory(s)
 }
 func (b Bug) GetDirectory() (Directory, error) {
 	return GetRootDir() + "/issues/" + TitleToDir(b.Title), nil
