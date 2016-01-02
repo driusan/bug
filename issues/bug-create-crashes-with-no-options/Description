@@ -1,2 +1,0 @@
-Bug create with no parameters crashes. It should
-instead print an error/usage information

@@ -181,6 +181,11 @@ func (a BugApplication) Tag(Args []string) {
 
 }
 func (a BugApplication) Create(Args []string) {
+	if len(Args) < 1 || (len(Args) < 2 && Args[0] == "-n") {
+		fmt.Printf("Usage: %s create [-n] Bug Description\n", os.Args[0])
+		fmt.Printf("\nNo Bug Description provided.\n")
+		return
+	}
 	var noDesc bool = false
 
 	if Args != nil && Args[0] == "-n" {
