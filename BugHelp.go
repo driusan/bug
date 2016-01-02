@@ -19,33 +19,44 @@ func (a BugApplication) Help(args ...string) {
 	switch cmd {
 	case "create":
 		fmt.Printf("Usage: " + os.Args[0] + " create [-n] Issue Title\n\n")
-		fmt.Printf("This will create an issue with the title Issue Title\n\n")
-		fmt.Printf("An editor will be opened automatically for you to enter\n")
-		fmt.Printf("a more detailed description.\n\n")
-		fmt.Printf("If your EDITOR environment variable is set, it will be\n")
-		fmt.Printf("used, otherwise the default is vim.\n")
-		fmt.Printf("If the first argument to create is \"-n\", then " + os.Args[0] + " will not open any editor and create an empty Description\n\n")
+		fmt.Printf(
+			`This will create an issue with the title Issue Title.  An editor 
+will be opened automatically for you to enter a more detailed 
+description. If your EDITOR environment variable is set, it 
+will be used, otherwise the default editor is vim.
+
+If the first argument to create is "-n", then %s will not open 
+any editor and create an empty Description
+`, os.Args[0])
 	case "list":
 		fmt.Printf("Usage: " + os.Args[0] + " list [issue numbers]\n")
 		fmt.Printf("       " + os.Args[0] + " list [tags]\n\n")
-		fmt.Printf(`This will list the issues found in the current environment
+		fmt.Printf(
+			`This will list the issues found in the current environment
 
-With no arguments, titles will be printed to the screen along with the issue
-number that can be used to reference this issue on the command line.
+With no arguments, titles will be printed to the screen along
+with the issue number that can be used to reference this issue
+on the command line.
 
-If 1 or more issue numbers are provided, the whole issue including description
-will be printed to stdout.
+If 1 or more issue numbers are provided, the whole issue including
+description will be printed to stdout.
 
-If, instead of issue numbers, you provide list with 1 or more tags, it will
-print any issues which have that tag (in short form)
+If, instead of issue numbers, you provide list with 1 or more tags, 
+it will print any issues which have that tag (in short form).
+
+Note that issue numbers are not intended to be stable, but only
+to provide a quick way to reference issues on the command line.
+They will change as you create, edit, and close other issues.
+
+The subcommand "view" is an alias for "list".
 `)
 
 	case "edit":
 		fmt.Printf("Usage: " + os.Args[0] + " edit IssueNumber\n\n")
 		fmt.Printf(
-			`This will launch your standard editor to edit the description of the bug numbered 
-IssueNumber, where IssueNumber is a reference to same index provided with a
-"bug list" command.
+			`This will launch your standard editor to edit the description 
+of the bug numbered IssueNumber, where IssueNumber is a reference
+to same index provided with a "bug list" command.
 `)
 	case "status":
 		fmt.Printf("Usage: " + os.Args[0] + " status IssueNumber [NewStatus]\n\n")
@@ -79,32 +90,34 @@ This command will preserve the explanation when updating a priority.
 	case "rm":
 		fallthrough
 	case "close":
-		fmt.Printf("Usage: " + os.Args[0] + " close IssueNumber\n\n")
-		fmt.Printf(`This will delete the issue numbered IssueNumber. IssueNumbers
+		fmt.Printf("Usage: " + os.Args[0] + " close IssueNumber\n")
+		fmt.Printf("       " + os.Args[0] + " rm IssueNumber\n\n")
+		fmt.Printf(
+			`This will delete the issue numbered IssueNumber. IssueNumbers
 correspond to the number in the "bug list" command.
 
-Note that closing a bug will cause all existing bugs to be be renumbered and
-IssueNumbers are not intended to be stable.
+Note that closing a bug will cause all existing bugs to be
+renumbered and IssueNumbers are not intended to be stable.
 
-Also note that this does not remove the issue from git, but only from the file
-system. If you want to remove an issue that is tracked by git, you'll have to
-manually "git rm -r" the directory from the directory that's printed to the
-screen if you execute "bug dir".`)
-		fmt.Printf("\n\n\"%s rm\" is an alias for this \"%s close\"\n", os.Args[0], os.Args[0])
+Also note that this does not remove the issue from git, but only 
+from the file system. You'll need to execute "bug commit" to
+remove the bug from source control.
+
+"%s rm" is an alias for this "%s close"
+`, os.Args[0], os.Args[0])
 	case "purge":
 		fmt.Printf("Usage: " + os.Args[0] + " purge\n\n")
-		fmt.Printf(`This will delete any bugs that are not currently tracked by
+		fmt.Printf(
+			`This will delete any bugs that are not currently tracked by
 git.
-
-It is an alias for "git clean -fd $(bug dir)"
 `)
 	case "commit":
 		fmt.Printf("Usage: " + os.Args[0] + " commit\n\n")
 		fmt.Printf(`This will commit any new, modified, or removed issues to
 git.
 
-Your working tree and staging area should be otherwise unaffected by using
-this command.
+Your working tree and staging area should be otherwise
+unaffected by using this command.
 `)
 	case "env":
 		fmt.Printf("Usage: " + os.Args[0] + " env\n\n")
@@ -114,15 +127,17 @@ Use this command if you want to see what directory bug create is
 using to store bugs, or what editor will be invoked by bug create/edit.
 `)
 
-	case "pwd":
-		fallthrough
 	case "dir":
+		fallthrough
+	case "pwd":
 		fmt.Printf("Usage: " + os.Args[0] + " dir\n\n")
-		fmt.Printf(`This will bug directory to stdout, so you can use it as a subcommand
-for arguments to any arbitrary shell commands. For example "cd $(bug dir)" or 
-"git rm -r $(bug dir)/Issue-Title"
-`)
-		fmt.Printf("\n\n\"%s pwd\" is an alias for this \"%s dir\"\n", os.Args[0], os.Args[0])
+		fmt.Printf(
+			`This will print the undecorated bug directory to stdout, 
+so you can use it as a subcommand for arguments to any 
+arbitrary shell commands. For example "cd $(bug dir)"
+
+"%s dir" is an alias for "%s pwd"
+`, os.Args[0], os.Args[0])
 	case "tag":
 		fmt.Printf("Usage: " + os.Args[0] + " tag IssueNumber [tags]\n\n")
 		fmt.Printf(`This will tag the given IssueNumber with the tags
