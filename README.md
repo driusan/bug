@@ -3,6 +3,26 @@
 Bug is an implementation of a distributed issue tracker using
 git to manage issues on the filesystem following [poor man's issue tracker](https://github.com/driusan/PoormanIssueTracker) conventions.
 
+The goal is to use the filesystem in a human readable way, similar to
+how an organized person without any bug tracking software might, 
+by keeping track of bugs in an `issues/` directory, one (descriptive)
+subdirectory per issue. bug provides a tool to maintain the nearest 
+`issues/` directory to your current working directory and provides hooks 
+to commit (or remove) the issues from source control.
+
+This differs from other distributed bug tracking tools, (which usually 
+store a database in a hidden directory) in that you can still easily 
+view, edit, or understand bugs even without access to the bug tool. bug
+only acts as a way to streamline the process of maintaining them. Another 
+benefit is that you can also have multiple `issues/` directories at 
+different places in your directory tree to, for instance, keep separate 
+bug repositories for different submodules or packages contained in a 
+single git repository.
+
+Because issues are stored as human readable plaintext files, they branch
+and merge along with the rest of your code, and you can resolve conflicts 
+using your standard tools.
+
 # Sample Usage
 
 If an environment variable named PMIT is set, that directory will be
@@ -67,14 +87,8 @@ $ bug commit
 $ git push
 ```
 
-You can use this tool to keep track of the state of different branches
-and manage your tasks without needing any server-side project management
-software. Since issues are just plain text files tracked by git, they'll
-merge and branch as expected along with the rest of your code when you
-`bug commit` things that have been added or removed.
-
 # Installation
-If you have go installed, install the latest version with:
+If you have go installed, install the latest development version with:
 
 `go get github.com/driusan/bug`
 
@@ -82,7 +96,5 @@ Make sure `$GOPATH/bin` or `$GOBIN` are in your path (or copy
 the "bug" binary somewhere that is.)
 
 Otherwise, you can download a 64 bit release for OS X or Linux on the 
-[releases](https://github.com/driusan/bug/releases/) page. Just rename
-the binary downloaded to "bug" (or anything command line name you like)
-and make it executable.
+[releases](https://github.com/driusan/bug/releases/) page.
 
