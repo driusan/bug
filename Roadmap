@@ -10,7 +10,8 @@ v0.2:
 - Should have git pre-commit hook to automatically regenerate roadmap
 - Better handling of whitespace in issue titles
 - Roadmap should indicate status and priority
+- Description should be loaded lazily
 
 v0.1:
-- bug commit is fickle
-- Should have bug relabel command
+- help missing relabel, milestone, and roadmap
+- bug close error not consistent
