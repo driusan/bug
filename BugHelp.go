@@ -87,6 +87,39 @@ Note that you can manually edit the Priority file in the issues/ directory
 to provide further explanation (for instance, why that priority is set.)
 This command will preserve the explanation when updating a priority.
 `)
+	case "milestone":
+		fmt.Printf("Usage: " + os.Args[0] + " milestone IssueNumber [NewMilestone]\n\n")
+		fmt.Printf(
+			`This will edit or display the milestone of the bug numbered IssueNumber.
+
+There are no restrictions on how milestones must be named, but
+semantic versioning is a good convention to adopt. Failing that,
+it's a good idea to use milestones that collate properly when
+sorted as strings so that they appear properly in "%s roadmap".
+
+If NewMilestone is provided, it will update the first line of the
+Milestone file for the issue (creating the file as necessary). 
+If not provided, it will display the first line of the Milestone 
+file to STDOUT.
+
+Note that you can manually edit the Milestone file in the issues/
+directory to provide further explanation (for instance, why that 
+milestone is set.)
+
+This command will preserve the explanation when updating a priority.
+`, os.Args[0])
+	case "retitle":
+		fallthrough
+	case "mv":
+		fallthrough
+	case "relabel":
+		fmt.Printf("Usage: " + os.Args[0] + " relabel IssueNumber New Title\n\n")
+		fmt.Printf(
+			`This will change the title of IssueNumber to "New Title". Use this
+to rename an issue.
+
+"%s mv", "%s retitle", and "%s rename" are all aliases for "%s relabel".
+`, os.Args[0], os.Args[0], os.Args[0], os.Args[0])
 	case "rm":
 		fallthrough
 	case "close":
@@ -145,6 +178,13 @@ given as parameters. At least one tag is required.
 
 Tags can be any string which would make a valid file name.
 `)
+	case "roadmap":
+		fmt.Printf("Usage: " + os.Args[0] + " roadmap\n\n")
+		fmt.Printf(
+			`This will print a markdown formatted list of all open
+issues, grouped by milestone.
+`)
+
 	case "help":
 		fallthrough
 	default:

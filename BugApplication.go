@@ -412,9 +412,9 @@ func (a BugApplication) Roadmap() {
 		newMilestone := b.Milestone()
 		if milestone != newMilestone {
 			if newMilestone == "" {
-				fmt.Printf("\nNo milestone set:\n")
+				fmt.Printf("\n## No milestone set:\n")
 			} else {
-				fmt.Printf("\n%s:\n", newMilestone)
+				fmt.Printf("\n## %s:\n", newMilestone)
 			}
 		}
 		fmt.Printf("- %s\n", b.Title)
@@ -425,7 +425,7 @@ func (a BugApplication) Roadmap() {
 
 func (a BugApplication) Relabel(Args []string) {
 	if len(Args) < 2 {
-		fmt.Printf("Usage: %s relabel issuenum New Description\n", os.Args[0])
+		fmt.Printf("Usage: %s relabel issuenum New Title\n", os.Args[0])
 		return
 	}
 
