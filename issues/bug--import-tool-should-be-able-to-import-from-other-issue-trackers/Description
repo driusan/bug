@@ -1,0 +1,16 @@
+Currently, you can manage issues and it would be easy
+for other software to script an import from bug, but there
+is no way to import issues in batch form into a bug repo.
+
+There should be a separate bug-import tool. It should
+create an issues/ directory of issues from another source
+to encourage people to play with bug.
+
+It should support, at a minimum, bugs everywhere and
+github issues, since those are the two sources of users
+most likely to be interested in trying bug.
+
+After that, an issues/ directory under bug-import can
+track the status of other sources (Bugzilla? Jira?
+Mantis? Too many to keep track of without a community
+of interested users..) 
