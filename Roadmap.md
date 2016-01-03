@@ -10,6 +10,5 @@
 - Should have git pre-commit hook to automatically regenerate roadmap
 - Roadmap sorting should collate better
 - Roadmap should indicate status and priority
-- Description should be loaded lazily
 - Better handling of whitespace in issue titles
 - Add support for other source control engines

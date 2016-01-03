@@ -1,6 +1,0 @@
-The Description of a bug is really only used for "bug list",
-so it should be loaded lazily with a Description() function 
-instead of on every LoadBug call.
-
-There's really no reason for the Bug struct to contain anything
-other than the title

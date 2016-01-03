@@ -9,8 +9,7 @@ import (
 )
 
 type Bug struct {
-	Title       string
-	Description string
+	Title string
 }
 
 type Status string
@@ -31,16 +30,18 @@ func (b Bug) GetDirectory() (Directory, error) {
 func (b *Bug) LoadBug(dir Directory) {
 	b.Title = dir.GetShortName().ToTitle()
 
+}
+
+func (b Bug) Description() string {
+	dir, _ := b.GetDirectory()
 	desc, err := ioutil.ReadFile(string(dir) + "/Description")
 
 	if err != nil {
-		b.Description = "No description provided"
-		return
+		return "No description provided"
 	}
 
-	b.Description = string(desc)
+	return string(desc)
 }
-
 func (b *Bug) TagBug(tag Tag) {
 	if dir, err := b.GetDirectory(); err == nil {
 		os.Mkdir(string(dir)+"/tags/", 0755)
@@ -51,7 +52,7 @@ func (b *Bug) TagBug(tag Tag) {
 }
 func (b Bug) ViewBug() {
 	fmt.Printf("Title: %s\n\n", b.Title)
-	fmt.Printf("Description:\n%s", b.Description)
+	fmt.Printf("Description:\n%s", b.Description())
 
 	status := b.Status()
 	if status != "" {
