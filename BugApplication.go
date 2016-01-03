@@ -445,6 +445,6 @@ func (a BugApplication) Relabel(Args []string) {
 }
 
 func (a BugApplication) Version() {
-	fmt.Printf("%s version 0.1\n", os.Args[0])
+	fmt.Printf("%s version 0.2-dev\n", os.Args[0])
 
 }
