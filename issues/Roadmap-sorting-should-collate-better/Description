@@ -1,6 +1,0 @@
-The bug roadmap command sorts by milestones, but the
-milestones are just sorted with a simple string comparison.
-
-The collation should be smart enough to deal with semantic
-version numbers (ie v1.10.0 > v1.9.99), instead of a dumb
-string comparison
