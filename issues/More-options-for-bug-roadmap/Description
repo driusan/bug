@@ -1,0 +1,9 @@
+There should be options to the "bug roadmap" command
+to change the output format. In particular, there should
+be options to:
+
+1. Only show certain tags
+2. Sort (or subsort) by different attributes than milestone,
+   or reverse the sorting order
+3. Include the "bug list" identifier 
+4. Include tags in the output
