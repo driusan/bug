@@ -74,7 +74,7 @@ func main() {
 		case "commit":
 			app.Commit()
 		case "roadmap":
-			app.Roadmap()
+			app.Roadmap(os.Args[2:])
 		case "help":
 			fallthrough
 		default:
