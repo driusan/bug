@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/driusan/bug/bugs"
+	"github.com/driusan/bug/scm"
 	"io/ioutil"
 	"log"
 	"os"
@@ -25,9 +26,18 @@ func (args ArgumentList) HasArgument(arg string) bool {
 type BugApplication struct{}
 
 func (a BugApplication) Env() {
+	scm, scmdir, scmerr := scm.DetectSCM()
 	fmt.Printf("Settings used by this command:\n")
-	fmt.Printf("\nIssues directory:\t%s\n", bugs.GetIssuesDir())
-	fmt.Printf("\nEditor:\t%s", getEditor())
+	fmt.Printf("\nEditor: %s", getEditor())
+	fmt.Printf("\nIssues directory: %s", bugs.GetIssuesDir())
+
+	if scmerr == nil {
+		fmt.Printf("\n\nSCM Type:\t%s", scm.GetSCMType())
+		fmt.Printf("\n%s directory:\t%s", scm.GetSCMType(), scmdir)
+	} else {
+		fmt.Printf("\n\nSCM Type: None (purge and commit commands unavailable)")
+	}
+
 	fmt.Printf("\n")
 }
 
@@ -131,15 +141,17 @@ func (a BugApplication) Close(args ArgumentList) {
 }
 
 func (a BugApplication) Purge() {
-	cmd := exec.Command("git", "clean", "-fd", string(bugs.GetIssuesDir()))
-
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
+	scm, _, err := scm.DetectSCM()
 
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("Error: %s\n", err.Error())
+		return
+	}
+
+	err = scm.Purge(bugs.GetIssuesDir())
+	if err != nil {
+		fmt.Printf("Error: %s\n", err.Error())
+		return
 	}
 }
 
@@ -281,111 +293,17 @@ func (a BugApplication) Pwd() {
 // 						this is necessary for 5b to work.)
 // 5b. "git stash apply --index" the stash from step 1
 func (a BugApplication) Commit() {
-	type FileStatus struct {
-		IndexStatus      string
-		WorkingDirStatus string
-		Filename         string
-	}
-	statusOutput := func(dir bugs.Directory) []FileStatus {
-		cmd := exec.Command("git", "status", "--porcelain", "-z", string(dir))
-		output, err := cmd.Output()
-		if err != nil {
-			fmt.Printf("Could not check git status")
-			return nil
-		}
-		fileStatusLines := strings.Split(string(output), "\000")
-		var files []FileStatus
-		for _, line := range fileStatusLines {
-			if len(line) == 0 {
-				continue
-			}
-			files = append(files, FileStatus{
-				IndexStatus:      line[0:1],
-				WorkingDirStatus: line[1:2],
-				Filename:         line[2:],
-			})
-		}
-		return files
-	}
-	// Before doing anything, check git status to see if
-	// the index is in a state that's going to cause an
-	// error
-	sOutput := statusOutput(bugs.GetIssuesDir())
-	for _, file := range sOutput {
-		if file.IndexStatus == "D" {
-			fmt.Printf("You have manually staged changes in your issue directory which will conflict with %s commit.\n", os.Args[0])
-			return
-		}
-	}
-
-	sOutput = statusOutput(bugs.GetRootDir())
-	for _, file := range sOutput {
-		if file.IndexStatus == "A" {
-			fmt.Printf("You have a new file staged in your git index, which will cause conflicts with %s commit. Please either commit your changes or unstage %s.\n", os.Args[0], file.Filename)
-			return
-		}
-	}
-
-	cmd := exec.Command("git", "stash", "create")
-
-	output, err := cmd.Output()
-
+	scm, _, err := scm.DetectSCM()
 	if err != nil {
-		fmt.Printf("Could not execute git stash create")
+		fmt.Printf("Error: %s\n", err.Error())
 		return
 	}
-	var stashHash string = strings.Trim(string(output), "\n")
 
-	// Unstage everything, if there was anything stashed, so that
-	// we don't commit things that the user has staged that aren't
-	// issues
-	if stashHash != "" {
-		cmd = exec.Command("git", "reset", "--mixed")
-		err = cmd.Run()
+	err = scm.Commit(bugs.GetIssuesDir(), "Added or removed issues with the tool \"bug\"")
 
-		if err != nil {
-		}
-	}
-
-	// Commit the issues directory
-	// git add $(bug pwd)
-	// git commit -m "Added new issues" -q
-	cmd = exec.Command("git", "add", "-A", string(bugs.GetIssuesDir()))
-	err = cmd.Run()
 	if err != nil {
-		fmt.Printf("Could not add to index?\n")
-	}
-	cmd = exec.Command("git", "commit", "-m", "Added or removes issues with the tool \"bug\"", "-q")
-	err = cmd.Run()
-	if err != nil {
-		// If nothing was added commit will have an error,
-		// but we don't care it just means there's nothing
-		// to commit.
-		fmt.Printf("No new issues commited\n")
-	}
-
-	// There were changes that had been stashed, so we need
-	// to restore them with git stash apply.. first, we
-	// need to do a "git reset --hard" so that the dirty working
-	// tree doesn't cause an error. This isn't as scary as it
-	// sounds, since immediately after git reset --hard we apply
-	// a stash which has the exact same changes that we just threw
-	// away.
-	if stashHash != "" {
-		cmd = exec.Command("git", "reset", "--hard")
-		err = cmd.Run()
-		if err != nil {
-			fmt.Printf("Error resetting the git working tree\n")
-			fmt.Printf("The stash which should have your changes is: %s\n", stashHash)
-		}
-		cmd = exec.Command("git", "stash", "apply", "--index", stashHash)
-		err = cmd.Run()
-		if err != nil {
-			fmt.Printf("Error restoring the git working tree")
-			fmt.Printf("The stash which should have your changes is: %s\n", stashHash)
-			// If nothing was stashed, it's not the end of the world.
-			//fmt.Printf("Could not pop from stash\n")
-		}
+		fmt.Printf("Could not commit: %s\n", err.Error())
+		return
 	}
 }
 
