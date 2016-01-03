@@ -99,3 +99,11 @@ $ bug commit
 $ git push
 ```
 
+# Feedback
+
+Currently, there aren't enough users to set up a mailing list, but 
+I'd nonetheless appreciate any feedback at 
+"Dave MacFarlane <driusan+bug@gmail.com>". 
+
+You can report any bugs either by email, via GitHub issues, or by sending
+a pull request to this repo.
