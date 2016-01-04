@@ -179,10 +179,13 @@ given as parameters. At least one tag is required.
 Tags can be any string which would make a valid file name.
 `)
 	case "roadmap":
-		fmt.Printf("Usage: " + os.Args[0] + " roadmap\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " roadmap [--simple]\n\n")
 		fmt.Printf(
 			`This will print a markdown formatted list of all open
 issues, grouped by milestone.
+
+If the argument --simple is provided, only the titles will be displayed.
+Otherwise, the Status and Priority will be included as well as the title
 `)
 	case "about":
 		fallthrough

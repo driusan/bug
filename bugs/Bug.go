@@ -9,12 +9,9 @@ import (
 )
 
 type Bug struct {
-	Title string
+	Dir Directory
 }
 
-type Status string
-type Priority string
-type Milestone string
 type Tag string
 
 func TitleToDir(title string) Directory {
@@ -24,14 +21,39 @@ func TitleToDir(title string) Directory {
 	return Directory(s)
 }
 func (b Bug) GetDirectory() (Directory, error) {
-	return GetRootDir() + "/issues/" + TitleToDir(b.Title), nil
+	return b.Dir, nil
 }
 
 func (b *Bug) LoadBug(dir Directory) {
-	b.Title = dir.GetShortName().ToTitle()
+	b.Dir = dir
 
 }
 
+func (b Bug) Title(options string) string {
+	title := b.Dir.GetShortName().ToTitle()
+	if strings.Contains(options, "tags") {
+		tags := b.StringTags()
+		if len(tags) > 0 {
+			title += fmt.Sprintf(" (%s)", strings.Join(tags, ", "))
+		}
+	}
+
+    priority := strings.Contains(options, "priority") && b.Priority() != ""
+    status := strings.Contains(options, "status") && b.Status() != ""
+    if options == "" {
+        priority = false
+        status = false
+    }
+
+    if priority && status {
+        title += fmt.Sprintf(" (Status: %s; Priority: %s)", b.Status(), b.Priority())
+	} else if priority {
+        title += fmt.Sprintf(" (Priority: %s)", b.Priority())
+    } else if status {
+        title += fmt.Sprintf(" (Status: %s)", b.Status())
+    }
+	return title
+}
 func (b Bug) Description() string {
 	dir, _ := b.GetDirectory()
 	desc, err := ioutil.ReadFile(string(dir) + "/Description")
@@ -51,7 +73,7 @@ func (b *Bug) TagBug(tag Tag) {
 	}
 }
 func (b Bug) ViewBug() {
-	fmt.Printf("Title: %s\n\n", b.Title)
+	fmt.Printf("Title: %s\n\n", b.Title(""))
 	fmt.Printf("Description:\n%s", b.Description())
 
 	status := b.Status()
@@ -86,6 +108,16 @@ func (b Bug) StringTags() []string {
 		tags = append(tags, issue.Name())
 	}
 	return tags
+}
+
+func (b Bug) HasTag(tag Tag) bool {
+	allTags := b.Tags()
+	for _, bugTag := range allTags {
+		if bugTag == tag {
+			return true
+		}
+	}
+	return false
 }
 func (b Bug) Tags() []Tag {
 	dir, _ := b.GetDirectory()

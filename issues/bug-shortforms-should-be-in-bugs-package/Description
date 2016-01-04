@@ -1,5 +1,0 @@
-"bug list" with tags and "bug roadmap" both take a basic issue
-title and add some metadata formatting.
-
-This should be done in the bugs package to ease maintainability
-of the main application codebase

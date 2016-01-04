@@ -43,7 +43,7 @@ func (a BugListByMilestone) Less(i, j int) bool {
 	return iMS < jMS
 }
 
-func (a BugApplication) Roadmap(args []string) {
+func (a BugApplication) Roadmap(args ArgumentList) {
 	bgs := bugs.GetAllBugs()
 	sort.Sort(BugListByMilestone(bgs))
 
@@ -59,25 +59,11 @@ func (a BugApplication) Roadmap(args []string) {
 				fmt.Printf("\n## %s:\n", newMilestone)
 			}
 		}
-		fmt.Printf("- %s", b.Title)
-		if len(args) == 0 || (len(args) > 0 && args[0] != "--simple") {
-			priority := b.Priority()
-			status := b.Status()
-			if priority != "" || status != "" {
-				fmt.Printf(" (")
-				if status != "" {
-					fmt.Printf("Status: %s", status)
-				}
-				if priority != "" {
-					if status != "" {
-						fmt.Printf("; ")
-					}
-					fmt.Printf("Priority: %s", priority)
-				}
-				fmt.Printf(")")
-			}
+		if args.HasArgument("--simple") == false {
+			fmt.Printf("- %s\n", b.Title("status priority"))
+		} else {
+			fmt.Printf("- %s\n", b.Title(""))
 		}
-		fmt.Printf("\n")
 		milestone = newMilestone
 
 	}

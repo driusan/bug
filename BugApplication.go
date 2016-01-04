@@ -11,6 +11,17 @@ import (
 	"strings"
 )
 
+type ArgumentList []string
+
+func (args ArgumentList) HasArgument(arg string) bool {
+	for _, argCandidate := range args {
+		if arg == argCandidate {
+			return true
+		}
+	}
+	return false
+}
+
 type BugApplication struct{}
 
 func (a BugApplication) Env() {
@@ -20,28 +31,19 @@ func (a BugApplication) Env() {
 	fmt.Printf("\n")
 }
 
-func listTags(files []os.FileInfo, args []string) {
-	hasTag := func(tags []string, tag string) bool {
-		for _, candidate := range tags {
-			if candidate == tag {
-				return true
-			}
-		}
-		return false
-	}
+func listTags(files []os.FileInfo, args ArgumentList) {
 	b := bugs.Bug{}
 	for idx, _ := range files {
 		b.LoadBug(bugs.Directory(bugs.GetIssuesDir() + bugs.Directory(files[idx].Name())))
 
-		tags := b.StringTags()
 		for _, tag := range args {
-			if hasTag(tags, tag) {
-				fmt.Printf("Issue %d: %s (%s)\n", idx+1, b.Title, strings.Join(tags, ", "))
+			if b.HasTag(bugs.Tag(tag)) {
+				fmt.Printf("Issue %d: %s\n", idx+1, b.Title("tags"))
 			}
 		}
 	}
 }
-func (a BugApplication) List(args []string) {
+func (a BugApplication) List(args ArgumentList) {
 	issues, _ := ioutil.ReadDir(string(bugs.GetIssuesDir()))
 
 	// No parameters, print a list of all bugs
@@ -77,7 +79,7 @@ func (a BugApplication) List(args []string) {
 	fmt.Printf("\n")
 }
 
-func (a BugApplication) Edit(args []string) {
+func (a BugApplication) Edit(args ArgumentList) {
 	issues, _ := ioutil.ReadDir(string(bugs.GetIssuesDir()))
 
 	// No parameters, print a list of all bugs
@@ -103,7 +105,7 @@ func (a BugApplication) Edit(args []string) {
 		fmt.Printf("\nNo issue number specified\n")
 	}
 }
-func (a BugApplication) Close(args []string) {
+func (a BugApplication) Close(args ArgumentList) {
 	issues, _ := ioutil.ReadDir(string(bugs.GetIssuesDir()))
 
 	// No parameters, print a list of all bugs
@@ -159,7 +161,7 @@ func getAllTags() []string {
 	}
 	return keys
 }
-func (a BugApplication) Tag(Args []string) {
+func (a BugApplication) Tag(Args ArgumentList) {
 	if len(Args) < 2 {
 		fmt.Printf("Usage: %s tag issuenum tagname [more tagnames]\n", os.Args[0])
 		fmt.Printf("\nBoth issue number and tagname to set are required.\n")
@@ -178,7 +180,7 @@ func (a BugApplication) Tag(Args []string) {
 	}
 
 }
-func (a BugApplication) Create(Args []string) {
+func (a BugApplication) Create(Args ArgumentList) {
 	if len(Args) < 1 || (len(Args) < 2 && Args[0] == "-n") {
 		fmt.Printf("Usage: %s create [-n] Bug Description\n", os.Args[0])
 		fmt.Printf("\nNo Bug Description provided.\n")
@@ -186,14 +188,14 @@ func (a BugApplication) Create(Args []string) {
 	}
 	var noDesc bool = false
 
-	if Args != nil && Args[0] == "-n" {
+	if Args.HasArgument("-n") {
 		noDesc = true
 		Args = Args[1:]
 	}
 
 	var bug bugs.Bug
 	bug = bugs.Bug{
-		Title: strings.Join(Args, " "),
+		Dir: bugs.GetIssuesDir() + bugs.TitleToDir(strings.Join(Args, " ")),
 	}
 
 	dir, _ := bug.GetDirectory()
@@ -220,7 +222,7 @@ func (a BugApplication) Create(Args []string) {
 	}
 }
 
-func (a BugApplication) fieldHandler(command string, args []string,
+func (a BugApplication) fieldHandler(command string, args ArgumentList,
 	setCallback func(bugs.Bug, string) error, retrieveCallback func(bugs.Bug) string) {
 	if len(args) < 1 {
 		fmt.Printf("Usage: %s %s issuenum [set %s]\n", os.Args[0], command, command)
@@ -254,13 +256,13 @@ func (a BugApplication) fieldHandler(command string, args []string,
 		}
 	}
 }
-func (a BugApplication) Priority(args []string) {
+func (a BugApplication) Priority(args ArgumentList) {
 	a.fieldHandler("priority", args, bugs.Bug.SetPriority, bugs.Bug.Priority)
 }
-func (a BugApplication) Status(args []string) {
+func (a BugApplication) Status(args ArgumentList) {
 	a.fieldHandler("status", args, bugs.Bug.SetStatus, bugs.Bug.Status)
 }
-func (a BugApplication) Milestone(args []string) {
+func (a BugApplication) Milestone(args ArgumentList) {
 	a.fieldHandler("milestone", args, bugs.Bug.SetMilestone, bugs.Bug.Milestone)
 }
 
@@ -387,7 +389,7 @@ func (a BugApplication) Commit() {
 	}
 }
 
-func (a BugApplication) Relabel(Args []string) {
+func (a BugApplication) Relabel(Args ArgumentList) {
 	if len(Args) < 2 {
 		fmt.Printf("Usage: %s relabel issuenum New Title\n", os.Args[0])
 		return
