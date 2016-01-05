@@ -1,6 +1,7 @@
 package bugs
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -15,22 +16,24 @@ func TestDirectoryToTitle(t *testing.T) {
 	assertTitle("Test-Multiword", "Test Multiword")
 	assertTitle("Test--Dash", "Test-Dash")
 	assertTitle("Test---Dash", "Test--Dash")
+	assertTitle("Test_--TripleDash", "Test --TripleDash")
+	assertTitle("Test_-_What", "Test - What")
 }
 
-func TestBugGetDirectory(t *testing.T) {
-	b := Bug{}
+func TestTitleToDirectory(t *testing.T) {
 	var assertDirectory = func(title, directory string) {
-		b.Title = title
-		dir, _ := b.GetDirectory()
-		dirStr := string(dir.GetShortName())
+		titleStr := TitleToDir(title)
+		dirStr := Directory(directory).GetShortName()
 
-		if directory != dirStr {
-			t.Error("Failed on " + title + ": got " + dirStr + " but expected " + directory)
+		if titleStr != dirStr {
+			t.Error(fmt.Sprintf("Failed on %s: got %s but expected %s\n", title, titleStr, dirStr))
 		}
 	}
+
 	assertDirectory("Test", "Test")
 	assertDirectory("Test Space", "Test-Space")
 	assertDirectory("Test-Dash", "Test--Dash")
 	assertDirectory("Test--TripleDash", "Test---TripleDash")
-
+	assertDirectory("Test --WithSpace", "Test_--WithSpace")
+	assertDirectory("Test - What", "Test_-_What")
 }

@@ -15,8 +15,30 @@ type Bug struct {
 type Tag string
 
 func TitleToDir(title string) Directory {
-	re := regexp.MustCompile("(-+)")
-	s := re.ReplaceAllString(title, "-$1")
+	replaceWhitespaceWithUnderscore := func(match string) string {
+		return strings.Replace(match, " ", "_", -1)
+	}
+	replaceDashWithMore := func(match string) string {
+		if strings.Count(match, " ") > 0 {
+			return match
+		}
+		return "-" + match
+	}
+
+	// Replace sequences of dashes with 1 more dash,
+	// as long as there's no whitespace around them
+	re := regexp.MustCompile("([\\s]*)(-+)([\\s]*)")
+	s := re.ReplaceAllStringFunc(title, replaceDashWithMore)
+	// If there are dashes with whitespace around them,
+	// replace the whitespace with underscores
+	// This is a two step process, because the whitespace
+	// can independently be on either side, so it's difficult
+	// to do with 1 regex..
+	re = regexp.MustCompile("([\\s]+)(-+)")
+	s = re.ReplaceAllStringFunc(s, replaceWhitespaceWithUnderscore)
+	re = regexp.MustCompile("(-+)([\\s]+)")
+	s = re.ReplaceAllStringFunc(s, replaceWhitespaceWithUnderscore)
+
 	s = strings.Replace(s, " ", "-", -1)
 	return Directory(s)
 }
@@ -38,20 +60,20 @@ func (b Bug) Title(options string) string {
 		}
 	}
 
-    priority := strings.Contains(options, "priority") && b.Priority() != ""
-    status := strings.Contains(options, "status") && b.Status() != ""
-    if options == "" {
-        priority = false
-        status = false
-    }
+	priority := strings.Contains(options, "priority") && b.Priority() != ""
+	status := strings.Contains(options, "status") && b.Status() != ""
+	if options == "" {
+		priority = false
+		status = false
+	}
 
-    if priority && status {
-        title += fmt.Sprintf(" (Status: %s; Priority: %s)", b.Status(), b.Priority())
+	if priority && status {
+		title += fmt.Sprintf(" (Status: %s; Priority: %s)", b.Status(), b.Priority())
 	} else if priority {
-        title += fmt.Sprintf(" (Priority: %s)", b.Priority())
-    } else if status {
-        title += fmt.Sprintf(" (Status: %s)", b.Status())
-    }
+		title += fmt.Sprintf(" (Priority: %s)", b.Priority())
+	} else if status {
+		title += fmt.Sprintf(" (Status: %s)", b.Status())
+	}
 	return title
 }
 func (b Bug) Description() string {
