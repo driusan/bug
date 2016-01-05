@@ -211,7 +211,7 @@ func (a BugApplication) Create(Args ArgumentList) {
 	}
 
 	dir, _ := bug.GetDirectory()
-	fmt.Printf("Created issue: %s\n", bug.Title)
+	fmt.Printf("Created issue: %s\n", bug.Title(""))
 
 	var mode os.FileMode
 	mode = 0775
