@@ -13,7 +13,7 @@ func (a HgManager) Purge(dir bugs.Directory) error {
 }
 
 func (a HgManager) Commit(dir bugs.Directory, commitMsg string) error {
-	cmd := exec.Command("hg", "add", string(dir))
+	cmd := exec.Command("hg", "addremove", string(dir))
 	if err := cmd.Run(); err != nil {
 		fmt.Printf("Could not add issues to be commited: %s?\n", err.Error())
 		return err
