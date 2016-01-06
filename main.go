@@ -27,15 +27,9 @@ func main() {
 	}
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
-		case "add":
-			fallthrough
-		case "new":
-			fallthrough
-		case "create":
+		case "add", "new", "create":
 			app.Create(os.Args[2:])
-		case "view":
-			fallthrough
-		case "list":
+		case "view", "list":
 			app.List(os.Args[2:])
 		case "priority":
 			app.Priority(os.Args[2:])
@@ -45,31 +39,19 @@ func main() {
 			app.Milestone(os.Args[2:])
 		case "tag":
 			app.Tag(os.Args[2:])
-		case "mv":
-			fallthrough
-		case "rename":
-			fallthrough
-		case "retitle":
-			fallthrough
-		case "relabel":
+		case "mv", "rename", "retitle", "relabel":
 			app.Relabel(os.Args[2:])
 		case "purge":
 			app.Purge()
-		case "rm":
-			fallthrough
-		case "close":
+		case "rm", "close":
 			app.Close(os.Args[2:])
 		case "edit":
 			app.Edit(os.Args[2:])
-		case "--version":
-			fallthrough
-		case "version":
+		case "--version", "version":
 			app.Version()
 		case "env":
 			app.Env()
-		case "dir":
-			fallthrough
-		case "pwd":
+		case "dir", "pwd":
 			app.Pwd()
 		case "commit":
 			app.Commit()
