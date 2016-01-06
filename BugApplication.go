@@ -59,6 +59,9 @@ func (a BugApplication) List(args ArgumentList) {
 	// No parameters, print a list of all bugs
 	if len(args) == 0 {
 		for idx, issue := range issues {
+			if issue.IsDir() != true {
+				continue
+			}
 			var dir bugs.Directory = bugs.Directory(issue.Name())
 			fmt.Printf("Issue %d: %s\n", idx+1, dir.ToTitle())
 		}
