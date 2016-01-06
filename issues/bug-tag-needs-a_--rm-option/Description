@@ -1,3 +1,0 @@
-There is currently no way to remove a tag from an issue
-other than manually deleting it with git rm. There should
-be a commandline way of doing this..

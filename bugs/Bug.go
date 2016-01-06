@@ -86,6 +86,13 @@ func (b Bug) Description() string {
 
 	return string(desc)
 }
+func (b *Bug) RemoveTag(tag Tag) {
+	if dir, err := b.GetDirectory(); err == nil {
+		os.Remove(string(dir) + "/tags/" + string(tag))
+	} else {
+		fmt.Printf("Error removing tag: %s", err.Error())
+	}
+}
 func (b *Bug) TagBug(tag Tag) {
 	if dir, err := b.GetDirectory(); err == nil {
 		os.Mkdir(string(dir)+"/tags/", 0755)

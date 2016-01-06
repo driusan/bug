@@ -49,11 +49,11 @@ func GetAllBugs() []Bug {
 
 	var bugs []Bug
 	for idx, file := range issues {
-        if file.IsDir() == true {
-            bug := Bug{}
-            bug.LoadBug(Directory(GetRootDir() + "/issues/" + Directory(issues[idx].Name())))
-            bugs = append(bugs, bug)
-        }
+		if file.IsDir() == true {
+			bug := Bug{}
+			bug.LoadBug(Directory(GetRootDir() + "/issues/" + Directory(issues[idx].Name())))
+			bugs = append(bugs, bug)
+		}
 	}
 	return bugs
 }

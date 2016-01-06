@@ -172,11 +172,14 @@ arbitrary shell commands. For example "cd $(bug dir)"
 "%s dir" is an alias for "%s pwd"
 `, os.Args[0], os.Args[0])
 	case "tag":
-		fmt.Printf("Usage: " + os.Args[0] + " tag IssueNumber [tags]\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " tag [--rm] IssueNumber [tags]\n\n")
 		fmt.Printf(`This will tag the given IssueNumber with the tags
 given as parameters. At least one tag is required.
 
 Tags can be any string which would make a valid file name.
+
+If the --rm option is provided before the IssueNumber, all tags will
+be removed instead of added.
 `)
 	case "roadmap":
 		fmt.Printf("Usage: " + os.Args[0] + " roadmap [--simple]\n\n")
