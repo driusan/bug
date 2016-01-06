@@ -19,6 +19,12 @@ func (a ExecutionFailed) Error() string {
 	return string(a)
 }
 
+type UnsupportedType string
+
+func (a UnsupportedType) Error() string {
+	return string(a)
+}
+
 type GitManager struct{}
 
 func (a GitManager) Purge(dir bugs.Directory) error {
@@ -38,7 +44,7 @@ func (a GitManager) Purge(dir bugs.Directory) error {
 func (a GitManager) Commit(dir bugs.Directory, commitMsg string) error {
 	cmd := exec.Command("git", "add", "-A", string(dir))
 	if err := cmd.Run(); err != nil {
-        fmt.Printf("Could not add issues to be commited: %s?\n", err.Error())
+		fmt.Printf("Could not add issues to be commited: %s?\n", err.Error())
 		return err
 
 	}
