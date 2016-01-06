@@ -47,9 +47,13 @@ func LoadBugByIndex(idx int) (*Bug, error) {
 func GetAllBugs() []Bug {
 	issues, _ := ioutil.ReadDir(string(GetRootDir()) + "/issues")
 
-	bugs := make([]Bug, len(issues))
-	for idx, _ := range issues {
-		bugs[idx].LoadBug(Directory(GetRootDir() + "/issues/" + Directory(issues[idx].Name())))
+	var bugs []Bug
+	for idx, file := range issues {
+        if file.IsDir() == true {
+            bug := Bug{}
+            bug.LoadBug(Directory(GetRootDir() + "/issues/" + Directory(issues[idx].Name())))
+            bugs = append(bugs, bug)
+        }
 	}
 	return bugs
 }
