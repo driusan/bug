@@ -32,8 +32,8 @@ type BugRenderer struct {
 
 func (s SettingsHandler) Get(r *http.Request, p map[string]interface{}) (string, error) {
 	settings := struct {
-		Title string
-        Directory string
+		Title     string
+		Directory string
 	}{bugs.GetRootDir().GetShortName().ToTitle(), string(bugs.GetRootDir())}
 	retVal, _ := json.Marshal(settings)
 	return string(retVal), nil
@@ -88,7 +88,7 @@ func (m BugPageHandler) Get(r *http.Request, extras map[string]interface{}) (str
 	default:
 		page := BugRenderer{Bug: b}
 		page.RootElement = "RBugPage"
-		page.Title = b.Title
+		page.Title = b.Title("")
 		page.JSFiles = []string{
 			// Bootstrap JS
 			//"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js",
@@ -112,3 +112,6 @@ func main() {
 	URLHandler.RegisterStaticHandler("/js/", "./js")
 	http.ListenAndServe(":8080", nil)
 }
+
+//go:generate FileConstGenerator main js/BugApp.js BugListConst.go BugListJS
+//go:generate FileConstGenerator main js/BugApp.js BugListConst.go BugListJS
