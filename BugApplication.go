@@ -56,14 +56,24 @@ func listTags(files []os.FileInfo, args ArgumentList) {
 func (a BugApplication) List(args ArgumentList) {
 	issues, _ := ioutil.ReadDir(string(bugs.GetIssuesDir()))
 
+	var wantTags bool = false
+	if args.HasArgument("--tags") {
+		wantTags = true
+	}
+
 	// No parameters, print a list of all bugs
-	if len(args) == 0 {
+	if len(args) == 0 || (wantTags && len(args) == 1) {
 		for idx, issue := range issues {
 			if issue.IsDir() != true {
 				continue
 			}
-			var dir bugs.Directory = bugs.Directory(issue.Name())
-			fmt.Printf("Issue %d: %s\n", idx+1, dir.ToTitle())
+			var dir bugs.Directory = bugs.GetIssuesDir() + bugs.Directory(issue.Name())
+			b := bugs.Bug{dir}
+			if wantTags == false {
+				fmt.Printf("Issue %d: %s\n", idx+1, b.Title(""))
+			} else {
+				fmt.Printf("Issue %d: %s\n", idx+1, b.Title("tags"))
+			}
 		}
 		return
 	}
