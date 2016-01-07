@@ -1,7 +1,9 @@
 # Roadmap for bug
 
-## v0.3:
+## v0.4:
 - bug-serve should have feature parity with bug
+
+## v0.3:
 - bug-import tool should be able to import from other issue trackers
 - More options for bug roadmap
 - More options for bug create
@@ -9,4 +11,4 @@
 
 ## v0.2:
 - bug list should have option to display tags
-- Need tests for commit managers
+- Should have tests to ensure staged changes outside of issues do not get commited

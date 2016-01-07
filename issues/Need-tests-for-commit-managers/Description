@@ -1,8 +1,0 @@
-The GitManager and HgManager are (were?) the most
-fickle part of the codebase because they depend
-on third party tool invocation. 
-
-There should be automated tests for them that
-try working some magic in a /tmp directory, because
-they're also the most dangerous commands if they go
-wrong..
