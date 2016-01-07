@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# An example hook script to automatically regenerate a static
+# version of the Roadmap on every commit. It will add it to
+# the issues/ directory
+#
+# To use this file, rename it to pre-commit and put it in your
+# .git/hooks directory.
+bug roadmap > $(bug pwd)/../Roadmap.md
+git add $(bug pwd)/../Roadmap.md

@@ -1,0 +1,65 @@
+#compdef bug
+# This script defines zsh autocompletion for the bug distributed
+# bug tracker available at https://github.com/driusan/bug
+#
+# To use it, put it somewhere in your fpath
+#
+# ie. in your .zshrc add "fpath=(~/.bug $fpath)" and then
+# put this file in ~/.bug
+
+__bug_get_bugs() {
+    local issues 
+    # call bug list and pipe it to sed to convert it to
+    # issuenumber:description format, so that we can
+    # pass it to _describe for autocompletion with the
+    # bug title as a hint
+    issues=(${(f)"$(_call_program commands bug list | sed 's/^Issue \([0-9]\)*: \(.*\)/\1:\2/')"})
+    _describe 'Issues' issues
+}
+
+# These all tag issue numbers as the first parameter, so just
+# use __bug_get_bugs
+_bug_list() {
+    __bug_get_bugs
+    _arguments '2:Arguments:((--tags:"Include tag list in output"))'
+}
+_bug_edit () {
+    if ((CURRENT == 3)); then
+        __bug_get_bugs
+    fi
+}
+_bug_tag() {
+    __bug_get_bugs
+}
+_bug_relabel () {
+    __bug_get_bugs
+}
+_bug_close() {
+    __bug_get_bugs
+}
+_bug_status() {
+    __bug_get_bugs
+}
+_bug_priority() {
+    __bug_get_bugs
+}
+_bug_milestone() {
+    __bug_get_bugs
+}
+
+# Help can take a command as a parameter to, so add them to
+# the list of completion suggestions 
+_bug_help() {
+        compadd create list edit tag relabel close status priority milestone env pwd roadmap version help
+}
+
+_bug() {
+    if (( CURRENT > 2)); then
+        _call_function 1 _bug_$words[2]
+    else 
+        compadd create list edit tag relabel close status priority milestone env pwd roadmap version help
+    fi
+
+}
+
+#_bug
