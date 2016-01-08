@@ -1,4 +1,4 @@
-package main
+package bugapp
 
 import (
 	"fmt"
@@ -43,7 +43,7 @@ func (a BugListByMilestone) Less(i, j int) bool {
 	return iMS < jMS
 }
 
-func (a BugApplication) Roadmap(args ArgumentList) {
+func Roadmap(args ArgumentList) {
 	bgs := bugs.GetAllBugs()
 	sort.Sort(BugListByMilestone(bgs))
 

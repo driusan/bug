@@ -1,11 +1,11 @@
-package main
+package bugapp
 
 import (
 	"fmt"
 	"os"
 )
 
-func (a BugApplication) Help(args ...string) {
+func Help(args ...string) {
 	var cmd string
 	if args == nil {
 		cmd = "help"
