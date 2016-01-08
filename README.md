@@ -1,7 +1,8 @@
 # Bug
 
 Bug is an implementation of a distributed issue tracker using
-git to manage issues on the filesystem following [poor man's issue tracker](https://github.com/driusan/PoormanIssueTracker) conventions.
+git (or hg) to manage issues on the filesystem following [poor man's
+issue tracker](https://github.com/driusan/PoormanIssueTracker) conventions.
 
 The goal is to use the filesystem in a human readable way, similar to
 how an organized person without any bug tracking software might, 
@@ -24,7 +25,7 @@ and merge along with the rest of your code, and you can resolve conflicts
 using your standard tools.
 
 # Installation
-If you have go installed, install the latest development version with:
+If you have go installed, install the latest released version with:
 
 `go get github.com/driusan/bug`
 
@@ -33,6 +34,8 @@ the "bug" binary somewhere that is.)
 
 Otherwise, you can download a 64-bit release for OS X or Linux on the 
 [releases](https://github.com/driusan/bug/releases/) page.
+
+(The latest development version is on the latest v0.x-dev branch)
 
 # Sample Usage
 
