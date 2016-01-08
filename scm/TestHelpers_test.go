@@ -2,6 +2,7 @@ package scm
 
 import (
 	"github.com/driusan/bug/bugs"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"testing"
@@ -13,12 +14,19 @@ type Commit interface {
 	Diff() (string, error)
 }
 
+type FileStatus struct {
+	Filename      string
+	IndexStatus   string
+	WorkingStatus string
+}
 type ManagerTester interface {
 	GetLogs() ([]Commit, error)
 	Setup() error
 	GetWorkDir() string
 	TearDown()
+	StageFile(string) error
 	AssertCleanTree(t *testing.T)
+	AssertStagingIndex(*testing.T, []FileStatus)
 	GetManager() SCMHandler
 }
 
@@ -81,4 +89,38 @@ func runtestRenameCommitsHelper(tester ManagerTester, t *testing.T, expectedDiff
 
 	assertLogs(tester, t, []string{"Initial commit", "This is a test rename"}, expectedDiffs)
 
+}
+func runtestCommitDirtyTree(tester ManagerTester, t *testing.T) {
+	err := tester.Setup()
+	if err != nil {
+		panic("Something went wrong trying to initialize git:" + err.Error())
+	}
+	defer tester.TearDown()
+	m := tester.GetManager()
+	if m == nil {
+		t.Error("Could not get manager")
+		return
+	}
+	os.Mkdir("issues", 0755)
+	runCmd("bug", "create", "-n", "Test bug")
+	if err = ioutil.WriteFile("donotcommit.txt", []byte(""), 0644); err != nil {
+		t.Error("Could not write file")
+		return
+	}
+	tester.AssertStagingIndex(t, []FileStatus{
+		FileStatus{"donotcommit.txt", "?", "?"},
+	})
+
+	m.Commit(bugs.Directory(tester.GetWorkDir()+"/issues"), "Initial commit")
+	tester.AssertStagingIndex(t, []FileStatus{
+		FileStatus{"donotcommit.txt", "?", "?"},
+	})
+	tester.StageFile("donotcommit.txt")
+	tester.AssertStagingIndex(t, []FileStatus{
+		FileStatus{"donotcommit.txt", "A", " "},
+	})
+	m.Commit(bugs.Directory(tester.GetWorkDir()+"/issues"), "Initial commit")
+	tester.AssertStagingIndex(t, []FileStatus{
+		FileStatus{"donotcommit.txt", "A", " "},
+	})
 }

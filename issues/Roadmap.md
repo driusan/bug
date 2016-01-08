@@ -8,7 +8,3 @@
 - More options for bug roadmap
 - More options for bug create
 - Include method of defining stable identifiers
-
-## v0.2:
-- bug list should have option to display tags
-- Should have tests to ensure staged changes outside of issues do not get commited

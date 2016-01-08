@@ -49,6 +49,26 @@ func (t HgTester) GetLogs() ([]Commit, error) {
 	return commits, nil
 }
 
+func (c HgTester) AssertStagingIndex(t *testing.T, f []FileStatus) {
+    for _, file := range f {
+        out, err := runCmd("hg", "status", file.Filename)
+        if err != nil {
+            t.Error("Could not get status of " + file.Filename)
+        }
+
+        // hg status doesn't include the working directory status
+        expected := file.IndexStatus + " " + file.Filename + "\n"
+        if out != expected {
+            t.Error("Unexpected status. Got " + out + " not " + expected)
+        }
+
+    }
+}
+
+func (c HgTester) StageFile(file string) error {
+	_, err := runCmd("hg", "add", file)
+	return err
+}
 func (c *HgTester) Setup() error {
 	if dir, err := ioutil.TempDir("", "hgbug"); err == nil {
 		c.workdir = dir
@@ -101,4 +121,9 @@ deleted file mode 100644
 
 `}
 	runtestRenameCommitsHelper(&tester, t, expectedDiffs)
+}
+func TestHgFilesOutsideOfBugNotCommited(t *testing.T) {
+	tester := HgTester{}
+	tester.handler = GitManager{}
+	runtestCommitDirtyTree(&tester, t)
 }

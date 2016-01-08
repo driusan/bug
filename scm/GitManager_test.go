@@ -48,6 +48,24 @@ func (t GitTester) GetLogs() ([]Commit, error) {
 	return commits, nil
 }
 
+func (g GitTester) AssertStagingIndex(t *testing.T, f []FileStatus) {
+	for _, file := range f {
+		out, err := runCmd("git", "status", "--porcelain", file.Filename)
+		if err != nil {
+			t.Error("Could not run git status")
+		}
+		expected := file.IndexStatus + file.WorkingStatus + " " + file.Filename + "\n"
+		if out != expected {
+			t.Error("Incorrect file status")
+			t.Error("Got" + out + " not " + expected)
+		}
+	}
+}
+
+func (g GitTester) StageFile(file string) error {
+	_, err := runCmd("git", "add", file)
+	return err
+}
 func (t *GitTester) Setup() error {
 	if dir, err := ioutil.TempDir("", "gitbug"); err == nil {
 		t.workdir = dir
@@ -104,4 +122,10 @@ index e69de29..0000000
 `}
 
 	runtestRenameCommitsHelper(&gm, t, expectedDiffs)
+}
+
+func TestGitFilesOutsideOfBugNotCommited(t *testing.T) {
+	gm := GitTester{}
+	gm.handler = GitManager{}
+	runtestCommitDirtyTree(&gm, t)
 }
