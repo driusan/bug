@@ -352,6 +352,6 @@ func (a BugApplication) Relabel(Args ArgumentList) {
 }
 
 func (a BugApplication) Version() {
-	fmt.Printf("%s version 0.2-dev\n", os.Args[0])
+	fmt.Printf("%s version 0.2\n", os.Args[0])
 
 }
