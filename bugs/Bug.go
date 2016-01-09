@@ -52,15 +52,15 @@ func (b *Bug) LoadBug(dir Directory) {
 }
 
 func (b Bug) Title(options string) string {
-    var checkOption = func (o string) bool {
-        return strings.Contains(options, o)
-    }
+	var checkOption = func(o string) bool {
+		return strings.Contains(options, o)
+	}
 
 	title := b.Dir.GetShortName().ToTitle()
 
-    if id := b.Identifier(); checkOption("identifier") && id != "" {
-        title = fmt.Sprintf("(%s) %s", id, title)
-    }
+	if id := b.Identifier(); checkOption("identifier") && id != "" {
+		title = fmt.Sprintf("(%s) %s", id, title)
+	}
 	if strings.Contains(options, "tags") {
 		tags := b.StringTags()
 		if len(tags) > 0 {
