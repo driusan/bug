@@ -1,7 +1,7 @@
 package bugapp
 
 import (
-    "os"
+	"os"
 )
 
 func getEditor() string {

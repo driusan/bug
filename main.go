@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"github.com/driusan/bug/bugapp"
 	"github.com/driusan/bug/bugs"
+	"os"
 )
 
 func getEditor() string {

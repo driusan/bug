@@ -1,10 +1,9 @@
 package bugapp
 
 import (
-    "fmt"
+	"fmt"
 	"github.com/driusan/bug/bugs"
 )
-
 
 func Pwd() {
 	fmt.Printf("%s", bugs.GetIssuesDir())

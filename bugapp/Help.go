@@ -52,11 +52,17 @@ The subcommand "view" is an alias for "list".
 `)
 
 	case "edit":
-		fmt.Printf("Usage: " + os.Args[0] + " edit IssueNumber\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " edit [Filename] IssueNumber\n\n")
 		fmt.Printf(
 			`This will launch your standard editor to edit the description 
 of the bug numbered IssueNumber, where IssueNumber is a reference
 to same index provided with a "bug list" command.
+
+If the Filename option is provided, bug will instead launch an editor
+to launch that file name within the bug directory. Files that have
+special meaning to bug (Status, Milestone, Priority, Identifier) are
+treated in a case insensitive manner, otherwise the filename is passed
+directly to your editor.
 `)
 	case "status":
 		fmt.Printf("Usage: " + os.Args[0] + " status IssueNumber [NewStatus]\n\n")
