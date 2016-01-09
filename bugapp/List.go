@@ -5,9 +5,15 @@ import (
 	"github.com/driusan/bug/bugs"
 	"io/ioutil"
 	"os"
-	"strconv"
 )
 
+func getBugName(b bugs.Bug, idx int) string {
+	if id := b.Identifier(); id != "" {
+		return fmt.Sprintf("Issue %s", id)
+	} else {
+		return fmt.Sprintf("Issue %d", idx+1)
+	}
+}
 func listTags(files []os.FileInfo, args ArgumentList) {
 	b := bugs.Bug{}
 	for idx, _ := range files {
@@ -15,7 +21,7 @@ func listTags(files []os.FileInfo, args ArgumentList) {
 
 		for _, tag := range args {
 			if b.HasTag(bugs.Tag(tag)) {
-				fmt.Printf("Issue %d: %s\n", idx+1, b.Title("tags"))
+				fmt.Printf("%s: %s\n", getBugName(b, idx), b.Title("tags"))
 			}
 		}
 	}
@@ -36,12 +42,7 @@ func List(args ArgumentList) {
 			}
 			var dir bugs.Directory = bugs.GetIssuesDir() + bugs.Directory(issue.Name())
 			b := bugs.Bug{dir}
-			var name string
-			if id := b.Identifier(); id != "" {
-				name = fmt.Sprintf("Issue %s", id)
-			} else {
-				name = fmt.Sprintf("Issue %d", idx+1)
-			}
+			name := getBugName(b, idx)
 			if wantTags == false {
 				fmt.Printf("%s: %s\n", name, b.Title(""))
 			} else {
@@ -51,25 +52,31 @@ func List(args ArgumentList) {
 		return
 	}
 
+	// getAllTags() is defined in Tag.go
+	// Get a list of tags, so that when we encounter
+	// an error we can check if it's because the user
+	// provided a tagname instead of a BugID. If they
+	// did, then list bugs matching that tag instead
+	// of full descriptions
+	tags := getAllTags()
 	// There were parameters, so show the full description of each
 	// of those issues
-	b := bugs.Bug{}
 	for i, length := 0, len(args); i < length; i += 1 {
-		idx, err := strconv.Atoi(args[i])
+		b, err := bugs.LoadBugByHeuristic(args[i])
 		if err != nil {
-			listTags(issues, args)
-			return
-		}
-		if idx > len(issues) || idx < 1 {
-			fmt.Printf("Invalid issue number %d\n", idx)
+			for _, tagname := range tags {
+				if tagname == args[i] {
+					listTags(issues, args)
+					return
+				}
+			}
+			fmt.Printf("%s\n", err.Error())
 			continue
 		}
-		if err == nil {
-			b.LoadBug(bugs.Directory(bugs.GetIssuesDir() + bugs.Directory(issues[idx-1].Name())))
-			b.ViewBug()
-			if i < length-1 {
-				fmt.Printf("\n--\n\n")
-			}
+
+		b.ViewBug()
+		if i < length-1 {
+			fmt.Printf("\n--\n\n")
 		}
 	}
 	fmt.Printf("\n")

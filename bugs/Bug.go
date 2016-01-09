@@ -42,8 +42,8 @@ func TitleToDir(title string) Directory {
 	s = strings.Replace(s, " ", "-", -1)
 	return Directory(s)
 }
-func (b Bug) GetDirectory() (Directory, error) {
-	return b.Dir, nil
+func (b Bug) GetDirectory() Directory {
+	return b.Dir
 }
 
 func (b *Bug) LoadBug(dir Directory) {
@@ -85,7 +85,7 @@ func (b Bug) Title(options string) string {
 	return title
 }
 func (b Bug) Description() string {
-	dir, _ := b.GetDirectory()
+	dir := b.GetDirectory()
 	desc, err := ioutil.ReadFile(string(dir) + "/Description")
 
 	if err != nil {
@@ -95,18 +95,18 @@ func (b Bug) Description() string {
 	return string(desc)
 }
 func (b *Bug) RemoveTag(tag Tag) {
-	if dir, err := b.GetDirectory(); err == nil {
+	if dir := b.GetDirectory(); dir != "" {
 		os.Remove(string(dir) + "/tags/" + string(tag))
 	} else {
-		fmt.Printf("Error removing tag: %s", err.Error())
+		fmt.Printf("Error removing tag: %s", tag)
 	}
 }
 func (b *Bug) TagBug(tag Tag) {
-	if dir, err := b.GetDirectory(); err == nil {
+	if dir := b.GetDirectory(); dir != "" {
 		os.Mkdir(string(dir)+"/tags/", 0755)
 		ioutil.WriteFile(string(dir)+"/tags/"+string(tag), []byte(""), 0644)
 	} else {
-		fmt.Printf("Error tagging bug: %s", err.Error())
+		fmt.Printf("Error tagging bug: %s", tag)
 	}
 }
 func (b Bug) ViewBug() {
@@ -133,7 +133,7 @@ func (b Bug) ViewBug() {
 }
 
 func (b Bug) StringTags() []string {
-	dir, _ := b.GetDirectory()
+	dir := b.GetDirectory()
 	dir += "/tags/"
 	issues, err := ioutil.ReadDir(string(dir))
 	if err != nil {
@@ -157,7 +157,7 @@ func (b Bug) HasTag(tag Tag) bool {
 	return false
 }
 func (b Bug) Tags() []Tag {
-	dir, _ := b.GetDirectory()
+	dir := b.GetDirectory()
 	dir += "/tags/"
 	issues, err := ioutil.ReadDir(string(dir))
 	if err != nil {
@@ -173,7 +173,7 @@ func (b Bug) Tags() []Tag {
 }
 
 func (b Bug) getField(fieldName string) string {
-	dir, _ := b.GetDirectory()
+	dir := b.GetDirectory()
 	field, err := ioutil.ReadFile(string(dir) + "/" + fieldName)
 	if err != nil {
 		return ""
@@ -186,7 +186,7 @@ func (b Bug) getField(fieldName string) string {
 }
 
 func (b Bug) setField(fieldName, value string) error {
-	dir, _ := b.GetDirectory()
+	dir := b.GetDirectory()
 	oldValue, err := ioutil.ReadFile(string(dir) + "/" + fieldName)
 	var oldLines []string
 	if err == nil {

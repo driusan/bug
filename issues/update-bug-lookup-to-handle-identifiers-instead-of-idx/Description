@@ -1,4 +1,0 @@
-All the places that take a IssueNumber as a parameter
-should also check if it's a valid identifier and return
-the proper bug for identifier or directory idx, not just
-directory idx

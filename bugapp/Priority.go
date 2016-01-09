@@ -4,27 +4,19 @@ import (
 	"fmt"
 	"github.com/driusan/bug/bugs"
 	"os"
-	"strconv"
 	"strings"
 )
 
 func fieldHandler(command string, args ArgumentList,
 	setCallback func(bugs.Bug, string) error, retrieveCallback func(bugs.Bug) string) {
 	if len(args) < 1 {
-		fmt.Printf("Usage: %s %s issuenum [set %s]\n", os.Args[0], command, command)
+		fmt.Printf("Usage: %s %s BugID [set %s]\n", os.Args[0], command, command)
 		return
 	}
 
-	idx, err := strconv.Atoi(args[0])
+	b, err := bugs.LoadBugByHeuristic(args[0])
 	if err != nil {
-		fmt.Printf("Invalid issue number. \"%s\" is not a number.\n\n", args[0])
-		fmt.Printf("Usage: %s %s issuenum [set %s]\n", os.Args[0], command, command)
-		return
-	}
-
-	b, err := bugs.LoadBugByIndex(idx)
-	if err != nil {
-		fmt.Printf("Invalid issue number %s\n", args[0])
+		fmt.Printf("Invalid BugID: %s\n", err.Error())
 		return
 	}
 	if len(args) > 1 {

@@ -37,7 +37,7 @@ time as creating it. Valid options are:
     --identifier Sets the identifier to the next parameter
 `, os.Args[0])
 	case "list":
-		fmt.Printf("Usage: " + os.Args[0] + " list [issue numbers]\n")
+		fmt.Printf("Usage: " + os.Args[0] + " list [BugIDs]\n")
 		fmt.Printf("       " + os.Args[0] + " list [tags]\n\n")
 		fmt.Printf(
 			`This will list the issues found in the current environment
@@ -46,49 +46,55 @@ With no arguments, titles will be printed to the screen along
 with the issue number that can be used to reference this issue
 on the command line.
 
-If 1 or more issue numbers are provided, the whole issue including
-description will be printed to stdout.
+If 1 or more BugIDs are provided, the whole issue including
+description will be printed to STDOUT.  See "bug help identifiers"
+for a description of what makes a BugID.
 
-If, instead of issue numbers, you provide list with 1 or more tags, 
+If, instead of BugIDs, you provide list with 1 or more tags, 
 it will print any issues which have that tag (in short form).
 
-Note that issue numbers are not intended to be stable, but only
-to provide a quick way to reference issues on the command line.
-They will change as you create, edit, and close other issues.
+Note that BugIDs may change as you create, edit, and close other
+unless yo have defined a stable identifier for the issue. Again,
+see "bug help identifiers."
 
 The subcommand "view" is an alias for "list".
 `)
 
 	case "edit":
-		fmt.Printf("Usage: " + os.Args[0] + " edit [Filename] IssueNumber\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " edit [Filename] BugID\n\n")
 		fmt.Printf(
 			`This will launch your standard editor to edit the description 
-of the bug numbered IssueNumber, where IssueNumber is a reference
-to same index provided with a "bug list" command.
+of the bug identified by BugID.  See "bug help identifiers" for a 
+description of what makes a BugID.
 
 If the Filename option is provided, bug will instead launch an editor
-to launch that file name within the bug directory. Files that have
+to edit that file name within the bug directory. Files that have
 special meaning to bug (Status, Milestone, Priority, Identifier) are
 treated in a case insensitive manner, otherwise the filename is passed
 directly to your editor.
 `)
 	case "status":
-		fmt.Printf("Usage: " + os.Args[0] + " status IssueNumber [NewStatus]\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " status BugID [NewStatus]\n\n")
 		fmt.Printf(
-			`This will edit or display the status of the bug numbered IssueNumber.
+			`This will edit or display the status of the bug identified by BugID.
+See "bug help identifiers" for a description of what constitutes a BugID.
             
 If NewStatus is provided, it will update the first line of the Status file
 for the issue (creating the file as necessary). If not provided, it will 
 display the first line of the Status file to STDOUT.
 
-Note that you can manually edit the Status file in the issues/ directory
-to provide further explanation (for instance, why that status is set.)
-This command will preserve the explanation when updating a status.
-`)
+Note that you can edit the status in your standard editor with the
+command "%s edit status BugID". If you provide a longer than 1 line
+status with "bug edit status", "bug status" will preserve everything
+after the first line when editing a status. You can use this to provide
+further context on a status (for instance, why that status is setup.)
+`, os.Args[0])
 	case "priority":
-		fmt.Printf("Usage: " + os.Args[0] + " priority IssueNumber [NewPriority]\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " priority BugID [NewPriority]\n\n")
 		fmt.Printf(
-			`This will edit or display the priority of the bug numbered IssueNumber.
+			`This will edit or display the priority of BugID. See "bug help identifiers"
+for a description of what constitutes a BugID.
+
 By convention, priorities should be an integer number (higher is more 
 urgent), but that is not enforced by this command and NewPriority can
 be any free-form text if you prefer.
@@ -98,13 +104,15 @@ file for the issue (creating the file as necessary). If not provided, it
 will display the first line of the Priority file to STDOUT.
 
 Note that you can manually edit the Priority file in the issues/ directory
-to provide further explanation (for instance, why that priority is set.)
-This command will preserve the explanation when updating a priority.
-`)
+by running "%s edit priority BugID", to provide further explanation (for 
+instance, why that priority is set.) This command will preserve the 
+explanation when updating a priority.
+`, os.Args[0])
 	case "milestone":
-		fmt.Printf("Usage: " + os.Args[0] + " milestone IssueNumber [NewMilestone]\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " milestone BugID [NewMilestone]\n\n")
 		fmt.Printf(
-			`This will edit or display the milestone of the bug numbered IssueNumber.
+			`This will edit or display the milestone of the identified by BugID.
+See "%s help identifiers" for a description of what constitutes a BugID.
 
 There are no restrictions on how milestones must be named, but
 semantic versioning is a good convention to adopt. Failing that,
@@ -118,34 +126,35 @@ file to STDOUT.
 
 Note that you can manually edit the Milestone file in the issues/
 directory to provide further explanation (for instance, why that 
-milestone is set.)
+milestone is set) with the command "bug edit milestone BugID"
 
 This command will preserve the explanation when updating a priority.
 `, os.Args[0])
 	case "retitle", "mv", "rename", "relabel":
-		fmt.Printf("Usage: " + os.Args[0] + " relabel IssueNumber New Title\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " relabel BugID New Title\n\n")
 		fmt.Printf(
-			`This will change the title of IssueNumber to "New Title". Use this
+			`This will change the title of BugID to "New Title". Use this
 to rename an issue.
 
 "%s mv", "%s retitle", and "%s rename" are all aliases for "%s relabel".
 `, os.Args[0], os.Args[0], os.Args[0], os.Args[0])
 	case "rm", "close":
-		fmt.Printf("Usage: " + os.Args[0] + " close IssueNumber\n")
-		fmt.Printf("       " + os.Args[0] + " rm IssueNumber\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " close BugID\n")
+		fmt.Printf("       " + os.Args[0] + " rm BugID\n\n")
 		fmt.Printf(
-			`This will delete the issue numbered IssueNumber. IssueNumbers
-correspond to the number in the "bug list" command.
+			`This will delete the issue identifier by BugID. See
+"%s help identifiers" for details on what constitutes a BugID.
 
-Note that closing a bug will cause all existing bugs to be
-renumbered and IssueNumbers are not intended to be stable.
+Note that closing a bug may cause existing BugIDs to change if
+they do not have a stable identifier set (see "%s help identifiers",
+again.)
 
 Also note that this does not remove the issue from git, but only 
 from the file system. You'll need to execute "bug commit" to
 remove the bug from source control.
 
 "%s rm" is an alias for this "%s close"
-`, os.Args[0], os.Args[0])
+`, os.Args[0], os.Args[0], os.Args[0], os.Args[0])
 	case "purge":
 		fmt.Printf("Usage: " + os.Args[0] + " purge\n\n")
 		fmt.Printf(
@@ -155,7 +164,7 @@ git.
 	case "commit":
 		fmt.Printf("Usage: " + os.Args[0] + " commit\n\n")
 		fmt.Printf(`This will commit any new, modified, or removed issues to
-git.
+git or hg.
 
 Your working tree and staging area should be otherwise
 unaffected by using this command.
@@ -178,13 +187,13 @@ arbitrary shell commands. For example "cd $(bug dir)"
 "%s dir" is an alias for "%s pwd"
 `, os.Args[0], os.Args[0])
 	case "tag":
-		fmt.Printf("Usage: " + os.Args[0] + " tag [--rm] IssueNumber [tags]\n\n")
-		fmt.Printf(`This will tag the given IssueNumber with the tags
+		fmt.Printf("Usage: " + os.Args[0] + " tag [--rm] BugID [tags]\n\n")
+		fmt.Printf(`This will tag the given BugID with the tags
 given as parameters. At least one tag is required.
 
 Tags can be any string which would make a valid file name.
 
-If the --rm option is provided before the IssueNumber, all tags will
+If the --rm option is provided before the BugID, all tags provided will
 be removed instead of added.
 `)
 	case "roadmap":
@@ -225,6 +234,38 @@ invoked.
 
 "%s about" is an alias for "version".
 `, os.Args[0], os.Args[0])
+	case "identifiers":
+		fmt.Printf(
+			`Bugs can be referenced in 2 ways on the commandline, either by
+an index of where the bug directory is located inside the issues
+directory, or by an identifier. "BugID" can be either of these,
+and %s will try and intelligently guess which your command is
+referencing.
+
+By default, no identifiers are set for an issue. This means that
+the issue number provided in "%s list" is an index into the directory,
+and is unstable as bugs are created, modified, and closed. However,
+the benefit is that they are easy to reference and remember, at least
+in the short term.
+
+If you have longer lasting issues that need a stable identifier,
+they can be created by "%s identifier BugID NewIdentifier" to
+set the identifier of BugID to NewIdentifier. From that point
+forward, you can use NewIdentifier to reference the bug instead
+of the directory index.
+
+There are no rules for what constitutes a valid identifier, but
+you should try and ensure that they have at least 1 non-numeric
+character so that they don't conflict with directory indexes.
+
+If you just want an identifier but don't care what it is, you
+can use "%s identifier BugID --generate" to generate a new
+identifier for BugID.
+
+If there are no exact matches for the BugID provided, %s commands will
+also try and look up the bug by a substring match on all the valid 
+identifiers in the system before giving up.
+`, os.Args[0], os.Args[0], os.Args[0], os.Args[0], os.Args[0])
 
 	case "help":
 		fallthrough

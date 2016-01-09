@@ -30,12 +30,27 @@ func Create(Args ArgumentList) {
 	milestone := argVals[3]
 	identifier := argVals[4]
 
+	if Args.HasArgument("--generate-id") {
+		for i, token := range Args {
+			if token == "--generate-id" {
+				if i+1 < len(Args) {
+					Args = append(Args[:i], Args[i+1:]...)
+					break
+				} else {
+					Args = Args[:i]
+					break
+				}
+			}
+		}
+		identifier = generateID(strings.Join(Args, " "))
+	}
+
 	var bug bugs.Bug
 	bug = bugs.Bug{
 		Dir: bugs.GetIssuesDir() + bugs.TitleToDir(strings.Join(Args, " ")),
 	}
 
-	dir, _ := bug.GetDirectory()
+	dir := bug.GetDirectory()
 
 	var mode os.FileMode
 	mode = 0775

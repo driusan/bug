@@ -3,20 +3,15 @@ package bugapp
 import (
 	"fmt"
 	"github.com/driusan/bug/bugs"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
-	"strconv"
 	"strings"
 )
 
 func Edit(args ArgumentList) {
-	issues, _ := ioutil.ReadDir(string(bugs.GetIssuesDir()))
 
-	var file string
-	var idx int
-	var err error
+	var file, bugID string
 	switch len(args) {
 	case 1:
 		// If there's only 1 argument, it's an issue
@@ -24,7 +19,7 @@ func Edit(args ArgumentList) {
 		// So set the variables and fallthrough to the
 		// 2 argument (editing a specific fieldname)
 		// case
-		idx, err = strconv.Atoi(args[0])
+		bugID = args[0]
 		file = "Description"
 		fallthrough
 	case 2:
@@ -33,20 +28,23 @@ func Edit(args ArgumentList) {
 		// statement, so set them, but everything else
 		// is the same
 		if len(args) == 2 {
-			idx, err = strconv.Atoi(args[1])
+			bugID = args[1]
 			file = args[0]
 		}
 
-		if idx > len(issues) || idx < 1 {
-			fmt.Printf("Invalid issue number %d\n", idx)
+		b, err := bugs.LoadBugByHeuristic(bugID)
+		if err != nil {
+			fmt.Printf("Invalid BugID %s\n", bugID)
 			return
 		}
-		dir := bugs.Directory(bugs.GetIssuesDir()) + bugs.Directory(issues[idx-1].Name())
+
+		dir := b.GetDirectory()
 
 		switch title := strings.Title(file); title {
 		case "Milestone", "Status", "Priority", "Identifier":
 			file = title
 		}
+		fmt.Printf("Launching in %s/%s", dir, file)
 		cmd := exec.Command(getEditor(), string(dir)+"/"+file)
 
 		cmd.Stdin = os.Stdin
@@ -58,7 +56,7 @@ func Edit(args ArgumentList) {
 			log.Fatal(err)
 		}
 	default:
-		fmt.Printf("Usage: %s edit [fieldname] issuenum\n", os.Args[0])
-		fmt.Printf("\nNo issue number specified\n")
+		fmt.Printf("Usage: %s edit [fieldname] BugID\n", os.Args[0])
+		fmt.Printf("\nNo BugID specified\n")
 	}
 }
