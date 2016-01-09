@@ -1,6 +1,7 @@
 package bugs
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -8,8 +9,11 @@ import (
 	"strings"
 )
 
+var NoDescriptionError = errors.New("No description provided")
+
 type Bug struct {
-	Dir Directory
+	Dir      Directory
+	descFile *os.File
 }
 
 type Tag string
@@ -85,15 +89,42 @@ func (b Bug) Title(options string) string {
 	}
 	return title
 }
-func (b Bug) Description() string {
-	dir := b.GetDirectory()
-	desc, err := ioutil.ReadFile(string(dir) + "/Description")
 
-	if err != nil {
-		return "No description provided"
+func (b Bug) Close() error {
+	if b.descFile != nil {
+		err := b.descFile.Close()
+		b.descFile = nil
+		return err
+	}
+	return nil
+}
+func (b *Bug) Read(p []byte) (int, error) {
+	dir, _ := b.GetDirectory()
+	if b.descFile == nil {
+		fp, err := os.Open(string(dir) + "/Description")
+		b.descFile = fp
+		if err != nil {
+			fmt.Printf("err: " + err.Error())
+			return 0, NoDescriptionError
+		}
 	}
 
-	return string(desc)
+	return b.descFile.Read(p)
+}
+func (b Bug) Description() string {
+	value, err := ioutil.ReadAll(&b)
+
+	if err != nil {
+		if err == NoDescriptionError {
+			return "No description provided."
+		}
+		panic("Unhandled error" + err.Error())
+	}
+
+	if string(value) == "" {
+		return "No description provided."
+	}
+	return string(value)
 }
 func (b Bug) SetDescription(val string) error {
 	dir := b.GetDirectory()
