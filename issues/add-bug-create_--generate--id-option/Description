@@ -1,0 +1,4 @@
+There should be an option for bug create to
+automatically generate an id, instead of having
+to manually do bug identifier --generate after
+creating the bug.
