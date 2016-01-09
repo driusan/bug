@@ -36,10 +36,16 @@ func List(args ArgumentList) {
 			}
 			var dir bugs.Directory = bugs.GetIssuesDir() + bugs.Directory(issue.Name())
 			b := bugs.Bug{dir}
-			if wantTags == false {
-				fmt.Printf("Issue %d: %s\n", idx+1, b.Title(""))
+			var name string
+			if id := b.Identifier(); id != "" {
+				name = fmt.Sprintf("Issue %s", id)
 			} else {
-				fmt.Printf("Issue %d: %s\n", idx+1, b.Title("tags"))
+				name = fmt.Sprintf("Issue %d", idx+1)
+			}
+			if wantTags == false {
+				fmt.Printf("%s: %s\n", name, b.Title(""))
+			} else {
+				fmt.Printf("%s: %s\n", name, b.Title("tags"))
 			}
 		}
 		return
