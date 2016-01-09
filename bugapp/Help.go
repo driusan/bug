@@ -122,11 +122,7 @@ milestone is set.)
 
 This command will preserve the explanation when updating a priority.
 `, os.Args[0])
-	case "retitle":
-		fallthrough
-	case "mv":
-		fallthrough
-	case "relabel":
+	case "retitle", "mv", "rename", "relabel":
 		fmt.Printf("Usage: " + os.Args[0] + " relabel IssueNumber New Title\n\n")
 		fmt.Printf(
 			`This will change the title of IssueNumber to "New Title". Use this
@@ -134,9 +130,7 @@ to rename an issue.
 
 "%s mv", "%s retitle", and "%s rename" are all aliases for "%s relabel".
 `, os.Args[0], os.Args[0], os.Args[0], os.Args[0])
-	case "rm":
-		fallthrough
-	case "close":
+	case "rm", "close":
 		fmt.Printf("Usage: " + os.Args[0] + " close IssueNumber\n")
 		fmt.Printf("       " + os.Args[0] + " rm IssueNumber\n\n")
 		fmt.Printf(
@@ -174,9 +168,7 @@ Use this command if you want to see what directory bug create is
 using to store bugs, or what editor will be invoked by bug create/edit.
 `)
 
-	case "dir":
-		fallthrough
-	case "pwd":
+	case "dir", "pwd":
 		fmt.Printf("Usage: " + os.Args[0] + " dir\n\n")
 		fmt.Printf(
 			`This will print the undecorated bug directory to stdout, 
@@ -204,9 +196,28 @@ issues, grouped by milestone.
 If the argument --simple is provided, only the titles will be displayed.
 Otherwise, the Status and Priority will be included as well as the title
 `)
-	case "about":
-		fallthrough
-	case "version":
+	case "id", "identifier":
+		fmt.Printf("Usage: " + os.Args[0] + " identifier BugID [--generate] [value]\n\n")
+		fmt.Printf(
+			`This will either set of retrieve the identifier for the bug
+currently identified by BugID.
+
+If value is provided as an argument, the bug identifier will be set
+to the value passed in. You should take care to ensure that any
+identifier used has at least 1 non-numeric character, to ensure there
+are no conflicts with automatically generated issue numbers used for
+a bug that has no explicit identifier set.
+
+If the --generate option is passed instead of a static value, a
+short identifier will be generated derived from the issue's current
+title (however, the identifier will remain unchanged if the bug's title
+is changed.)
+
+If only a BugID is provided, the current identifier will be printed.
+
+"%s id" is an alias for "%s identifier"
+`, os.Args[0], os.Args[0])
+	case "about", "version":
 		fmt.Printf("Usage: " + os.Args[0] + " version\n\n")
 		fmt.Printf(
 			`This will print information about the version of %s being
@@ -222,15 +233,16 @@ invoked.
 		fmt.Printf("Use \"bug help [command]\" for more information about any command below\n\n")
 		fmt.Printf("Valid commands\n")
 		fmt.Printf("\nIssue editing commands:\n")
-		fmt.Printf("\tcreate\t  File a new bug\n")
-		fmt.Printf("\tlist\t  List existing bugs\n")
-		fmt.Printf("\tedit\t  Edit an existing bug\n")
-		fmt.Printf("\ttag\t  Tag a bug with a category\n")
-		fmt.Printf("\trelabel\t  Rename the title of a bug\n")
-		fmt.Printf("\tclose\t  Delete an existing bug\n")
-		fmt.Printf("\tstatus\t  View or edit a bug's status\n")
-		fmt.Printf("\tpriority  View or edit a bug's priority\n")
-		fmt.Printf("\tmilestone View or edit a bug's milestone\n")
+		fmt.Printf("\tcreate\t   File a new bug\n")
+		fmt.Printf("\tlist\t   List existing bugs\n")
+		fmt.Printf("\tedit\t   Edit an existing bug\n")
+		fmt.Printf("\ttag\t   Tag a bug with a category\n")
+		fmt.Printf("\tidentifier Set a stable identifier for the bug\n")
+		fmt.Printf("\trelabel\t   Rename the title of a bug\n")
+		fmt.Printf("\tclose\t   Delete an existing bug\n")
+		fmt.Printf("\tstatus\t   View or edit a bug's status\n")
+		fmt.Printf("\tpriority   View or edit a bug's priority\n")
+		fmt.Printf("\tmilestone  View or edit a bug's milestone\n")
 
 		fmt.Printf("\nSource control commands:\n")
 		fmt.Printf("\tcommit\t Commit any new, changed or deleted bug to git\n")

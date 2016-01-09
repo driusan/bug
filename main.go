@@ -7,16 +7,6 @@ import (
 	"os"
 )
 
-func getEditor() string {
-	editor := os.Getenv("EDITOR")
-
-	if editor != "" {
-		return editor
-	}
-	return "vim"
-
-}
-
 func main() {
 	if bugs.GetRootDir() == "" {
 		fmt.Printf("Could not find issues directory.\n")
@@ -36,6 +26,8 @@ func main() {
 			bugapp.Status(os.Args[2:])
 		case "milestone":
 			bugapp.Milestone(os.Args[2:])
+		case "id", "identifier":
+			bugapp.Identifier(os.Args[2:])
 		case "tag":
 			bugapp.Tag(os.Args[2:])
 		case "mv", "rename", "retitle", "relabel":

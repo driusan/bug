@@ -52,7 +52,15 @@ func (b *Bug) LoadBug(dir Directory) {
 }
 
 func (b Bug) Title(options string) string {
+    var checkOption = func (o string) bool {
+        return strings.Contains(options, o)
+    }
+
 	title := b.Dir.GetShortName().ToTitle()
+
+    if id := b.Identifier(); checkOption("identifier") && id != "" {
+        title = fmt.Sprintf("(%s) %s", id, title)
+    }
 	if strings.Contains(options, "tags") {
 		tags := b.StringTags()
 		if len(tags) > 0 {
@@ -60,8 +68,8 @@ func (b Bug) Title(options string) string {
 		}
 	}
 
-	priority := strings.Contains(options, "priority") && b.Priority() != ""
-	status := strings.Contains(options, "status") && b.Status() != ""
+	priority := checkOption("priority") && b.Priority() != ""
+	status := checkOption("status") && b.Status() != ""
 	if options == "" {
 		priority = false
 		status = false
@@ -102,23 +110,23 @@ func (b *Bug) TagBug(tag Tag) {
 	}
 }
 func (b Bug) ViewBug() {
+	if identifier := b.Identifier(); identifier != "" {
+		fmt.Printf("Identifier: %s\n", identifier)
+	}
+
 	fmt.Printf("Title: %s\n\n", b.Title(""))
 	fmt.Printf("Description:\n%s", b.Description())
 
-	status := b.Status()
-	if status != "" {
+	if status := b.Status(); status != "" {
 		fmt.Printf("\nStatus: %s", status)
 	}
-	priority := b.Priority()
-	if priority != "" {
+	if priority := b.Priority(); priority != "" {
 		fmt.Printf("\nPriority: %s", priority)
 	}
-	milestone := b.Milestone()
-	if milestone != "" {
+	if milestone := b.Milestone(); milestone != "" {
 		fmt.Printf("\nMilestone: %s", milestone)
 	}
-	tags := b.StringTags()
-	if tags != nil {
+	if tags := b.StringTags(); tags != nil {
 		fmt.Printf("\nTags: %s", strings.Join([]string(tags), ", "))
 	}
 
