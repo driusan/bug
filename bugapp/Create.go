@@ -23,13 +23,19 @@ func Create(Args ArgumentList) {
 		Args = Args[1:]
 	}
 
+	Args, argVals := Args.GetAndRemoveArguments([]string{"--tag", "--status", "--priority", "--milestone", "--identifier"})
+	tag := argVals[0]
+	status := argVals[1]
+	priority := argVals[2]
+	milestone := argVals[3]
+	identifier := argVals[4]
+
 	var bug bugs.Bug
 	bug = bugs.Bug{
 		Dir: bugs.GetIssuesDir() + bugs.TitleToDir(strings.Join(Args, " ")),
 	}
 
 	dir, _ := bug.GetDirectory()
-	fmt.Printf("Created issue: %s\n", bug.Title(""))
 
 	var mode os.FileMode
 	mode = 0775
@@ -50,4 +56,21 @@ func Create(Args ArgumentList) {
 			log.Fatal(err)
 		}
 	}
+
+	if tag != "" {
+		bug.TagBug(bugs.Tag(tag))
+	}
+	if status != "" {
+		bug.SetStatus(status)
+	}
+	if priority != "" {
+		bug.SetPriority(priority)
+	}
+	if milestone != "" {
+		bug.SetMilestone(milestone)
+	}
+	if identifier != "" {
+		bug.SetIdentifier(identifier)
+	}
+	fmt.Printf("Created issue: %s\n", bug.Title(""))
 }

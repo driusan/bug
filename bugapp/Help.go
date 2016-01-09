@@ -18,7 +18,7 @@ func Help(args ...string) {
 	}
 	switch cmd {
 	case "create":
-		fmt.Printf("Usage: " + os.Args[0] + " create [-n] Issue Title\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " create [-n] [options] Issue Title\n\n")
 		fmt.Printf(
 			`This will create an issue with the title Issue Title.  An editor 
 will be opened automatically for you to enter a more detailed 
@@ -26,7 +26,15 @@ description. If your EDITOR environment variable is set, it
 will be used, otherwise the default editor is vim.
 
 If the first argument to create is "-n", then %s will not open 
-any editor and create an empty Description
+any editor and create an empty Description.
+
+Options take a value and set a field on the bug at the same
+time as creating it. Valid options are:
+    --status     Sets the bug status to the next parameter
+    --tag        Tags the bug with a tag on creation
+    --priority   Sets the priority to the next parameter
+    --milestone  Sets the milestone to the next parameter
+    --identifier Sets the identifier to the next parameter
 `, os.Args[0])
 	case "list":
 		fmt.Printf("Usage: " + os.Args[0] + " list [issue numbers]\n")

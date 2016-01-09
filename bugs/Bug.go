@@ -222,3 +222,11 @@ func (b Bug) Milestone() string {
 func (b Bug) SetMilestone(newValue string) error {
 	return b.setField("Milestone", newValue)
 }
+
+func (b Bug) Identifier() string {
+	return b.getField("Identifier")
+}
+
+func (b Bug) SetIdentifier(newValue string) error {
+	return b.setField("Identifier", newValue)
+}
