@@ -7,3 +7,6 @@
 - bug-import tool should be able to import from other issue trackers
 - More options for bug roadmap
 - Include method of defining stable identifiers
+
+## No milestone set:
+- add identifier command

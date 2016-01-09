@@ -1,0 +1,4 @@
+There are ways to set and edit the identifier
+(bug create --identifier foo and bug edit identifier idx),
+but there is no first class "identifier" command yet
+like for other field types.
