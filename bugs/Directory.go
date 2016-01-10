@@ -44,7 +44,8 @@ func (d Directory) GetShortName() Directory {
 
 func (d Directory) ToTitle() string {
 	multidash := regexp.MustCompile("([_]*)-([-_]*)")
-	return multidash.ReplaceAllStringFunc(string(d), func(match string) string {
+	dashReplacement := strings.Replace(string(d), " ", "/", -1)
+	return multidash.ReplaceAllStringFunc(dashReplacement, func(match string) string {
 		if match == "-" {
 			return " "
 		}
