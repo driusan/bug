@@ -1,0 +1,4 @@
+When an issue is imported from GitHub, closing it should
+include "Closes org/repo#githubnumber" in the commit message,
+so that bug close can automatically close imported issues
+when they're resolved.
