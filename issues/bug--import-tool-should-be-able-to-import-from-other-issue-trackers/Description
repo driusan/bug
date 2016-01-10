@@ -10,7 +10,6 @@ It should support, at a minimum, bugs everywhere and
 github issues, since those are the two sources of users
 most likely to be interested in trying bug.
 
-After that, an issues/ directory under bug-import can
-track the status of other sources (Bugzilla? Jira?
-Mantis? Too many to keep track of without a community
-of interested users..) 
+If a bug is imported from GitHub, the commit message 
+after it's closed should include "Closes #x" so that
+the github issue is autoclosed.

@@ -40,6 +40,7 @@ func TitleToDir(title string) Directory {
 	s = re.ReplaceAllStringFunc(s, replaceWhitespaceWithUnderscore)
 
 	s = strings.Replace(s, " ", "-", -1)
+	s = strings.Replace(s, "/", " ", -1)
 	return Directory(s)
 }
 func (b Bug) GetDirectory() Directory {
@@ -93,6 +94,11 @@ func (b Bug) Description() string {
 	}
 
 	return string(desc)
+}
+func (b Bug) SetDescription(val string) error {
+	dir := b.GetDirectory()
+
+	return ioutil.WriteFile(string(dir)+"/Description", []byte(val), 0644)
 }
 func (b *Bug) RemoveTag(tag Tag) {
 	if dir := b.GetDirectory(); dir != "" {
