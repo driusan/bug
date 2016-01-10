@@ -3,8 +3,11 @@ package scm
 import (
 	"fmt"
 	"github.com/driusan/bug/bugs"
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"regexp"
+	"strings"
 )
 
 type PreconditionFailed string
@@ -41,6 +44,26 @@ func (a GitManager) Purge(dir bugs.Directory) error {
 	return nil
 }
 
+func (a GitManager) getDeletedIdentifiers(dir bugs.Directory) []string {
+	cmd := exec.Command("git", "status", "--porcelain", string(dir))
+	out, _ := cmd.CombinedOutput()
+	files := strings.Split(string(out), "\n")
+	retVal := []string{}
+	for _, file := range files {
+		if file == "" {
+			continue
+		}
+		if file[0:1] == "D" && strings.HasSuffix(file, "Identifier") {
+			ghRegex := regexp.MustCompile("-Github:(\\s*)(.*)")
+			diff := exec.Command("git", "diff", "--staged", "--", file[3:])
+			diffout, _ := diff.CombinedOutput()
+			if matches := ghRegex.FindStringSubmatch(string(diffout)); len(matches) > 2 {
+				retVal = append(retVal, matches[2])
+			}
+		}
+	}
+	return retVal
+}
 func (a GitManager) Commit(dir bugs.Directory, commitMsg string) error {
 	cmd := exec.Command("git", "add", "-A", string(dir))
 	if err := cmd.Run(); err != nil {
@@ -48,7 +71,22 @@ func (a GitManager) Commit(dir bugs.Directory, commitMsg string) error {
 		return err
 
 	}
-	cmd = exec.Command("git", "commit", "-o", string(dir), "-m", commitMsg, "-q")
+
+	deletedIdentifiers := a.getDeletedIdentifiers(dir)
+	if len(deletedIdentifiers) > 0 {
+		commitMsg = fmt.Sprintf("%s\n\nCloses %s\n", commitMsg, strings.Join(a.getDeletedIdentifiers(dir), ", closes "))
+	} else {
+		commitMsg = fmt.Sprintf("%s\n", commitMsg)
+	}
+	file, err := ioutil.TempFile("", "bugCommit")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Could not create file for commit message.\n")
+	}
+	defer func() {
+		os.Remove(file.Name())
+	}()
+	file.WriteString(commitMsg)
+	cmd = exec.Command("git", "commit", "-o", string(dir), "-F", file.Name(), "-q")
 	if err := cmd.Run(); err != nil {
 		// If nothing was added commit will have an error,
 		// but we don't care it just means there's nothing
