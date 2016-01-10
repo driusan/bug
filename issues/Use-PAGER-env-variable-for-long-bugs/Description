@@ -1,3 +1,0 @@
-If the $PAGER environment variable is set, it should
-be invoked to display long bugs that don't fit on
-one screen.

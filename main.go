@@ -5,6 +5,9 @@ import (
 	"github.com/driusan/bug/bugapp"
 	"github.com/driusan/bug/bugs"
 	"os"
+	"os/exec"
+	//    "bytes"
+	//   "io"
 )
 
 func main() {
@@ -14,9 +17,36 @@ func main() {
 		fmt.Printf("Aborting.\n")
 		os.Exit(2)
 	}
+
+	// Create a pipe for a pager to use
+	r, w, err := os.Pipe()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	}
+	// Capture STDOUT for the Pager
+	stdout := os.Stdout
+	os.Stdout = w
+
+	// Invoke less -RF attached to the pipe
+	// we created
+	cmd := exec.Command("less", "-RF")
+	cmd.Stdin = r
+	cmd.Stdout = stdout
+	cmd.Stderr = os.Stderr
+	// Make sure the pipe is closed after we
+	// finish, then restore STDOUT
+	defer func() {
+		w.Close()
+		if err := cmd.Run(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+		os.Stdout = stdout
+	}()
+
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
 		case "add", "new", "create":
+			os.Stdout = stdout
 			bugapp.Create(os.Args[2:])
 		case "view", "list":
 			bugapp.List(os.Args[2:])
@@ -37,6 +67,7 @@ func main() {
 		case "rm", "close":
 			bugapp.Close(os.Args[2:])
 		case "edit":
+			os.Stdout = stdout
 			bugapp.Edit(os.Args[2:])
 		case "--version", "version":
 			bugapp.Version()
