@@ -5,5 +5,5 @@
 - Implement golang io interfaces in Bug class
 
 ## v0.3:
-- bug-import tool should be able to import from other issue trackers
+- bug commit should include Closes message when imported from GitHub
 - More options for bug roadmap

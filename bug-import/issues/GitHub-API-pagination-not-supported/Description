@@ -1,0 +1,7 @@
+The GitHub API paginates the results. This means
+that we only get about 25 results with an API
+request.
+
+The bug-import tool should keep calling the API
+following the next page link until it runs out
+of results.
