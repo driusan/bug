@@ -7,3 +7,9 @@ type SCMHandler interface {
 	Purge(bugs.Directory) error
 	GetSCMType() string
 }
+
+type FileStatus struct {
+	Filename      string
+	IndexStatus   string
+	WorkingStatus string
+}

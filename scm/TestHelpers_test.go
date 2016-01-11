@@ -14,11 +14,6 @@ type Commit interface {
 	Diff() (string, error)
 }
 
-type FileStatus struct {
-	Filename      string
-	IndexStatus   string
-	WorkingStatus string
-}
 type ManagerTester interface {
 	GetLogs() ([]Commit, error)
 	Setup() error

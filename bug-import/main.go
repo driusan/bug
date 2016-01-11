@@ -51,8 +51,8 @@ func githubImport(user, repo string) {
 		}
 	}
 }
-func main() {
 
+func main() {
 	args := ArgumentList(os.Args)
 	if githubRepo := args.GetArgument("--github", ""); githubRepo != "" {
 		if strings.Count(githubRepo, "/") != 1 {
