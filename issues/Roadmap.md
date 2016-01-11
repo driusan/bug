@@ -5,5 +5,7 @@
 - Implement golang io interfaces in Bug class
 
 ## v0.3:
-- bug commit should include Closes message when imported from GitHub
 - More options for bug roadmap
+
+## No milestone set:
+- should have bug commit --no-autoclose feature
