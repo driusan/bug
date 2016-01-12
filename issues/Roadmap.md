@@ -6,6 +6,3 @@
 
 ## v0.3:
 - More options for bug roadmap
-
-## No milestone set:
-- should have bug commit --no-autoclose feature

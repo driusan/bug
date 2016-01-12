@@ -76,7 +76,7 @@ func main() {
 		case "dir", "pwd":
 			bugapp.Pwd()
 		case "commit":
-			bugapp.Commit()
+			bugapp.Commit(os.Args[2:])
 		case "roadmap":
 			bugapp.Roadmap(os.Args[2:])
 		case "help":

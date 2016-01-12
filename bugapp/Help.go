@@ -162,12 +162,18 @@ remove the bug from source control.
 git.
 `)
 	case "commit":
-		fmt.Printf("Usage: " + os.Args[0] + " commit\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " commit [--no-autoclose]\n\n")
 		fmt.Printf(`This will commit any new, modified, or removed issues to
 git or hg.
 
 Your working tree and staging area should be otherwise
 unaffected by using this command.
+
+If the --no-autoclose option is passed to commit, bug will
+not include a "Closes #x" line for each issue imported from
+"bug-import --github." Otherwise, the commit message will
+include the list of issues that were closed so that GitHub
+will autoclose them when the changes are pushed upstream.
 `)
 	case "env":
 		fmt.Printf("Usage: " + os.Args[0] + " env\n\n")

@@ -7,7 +7,7 @@ import (
 )
 
 func Purge() {
-	scm, _, err := scm.DetectSCM()
+	scm, _, err := scm.DetectSCM(make(map[string]bool))
 
 	if err != nil {
 		fmt.Printf("Error: %s\n", err.Error())

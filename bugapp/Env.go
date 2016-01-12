@@ -7,7 +7,7 @@ import (
 )
 
 func Env() {
-	scm, scmdir, scmerr := scm.DetectSCM()
+	scm, scmdir, scmerr := scm.DetectSCM(make(map[string]bool))
 	fmt.Printf("Settings used by this command:\n")
 	fmt.Printf("\nEditor: %s", getEditor())
 	fmt.Printf("\nIssues directory: %s", bugs.GetIssuesDir())

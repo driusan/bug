@@ -28,7 +28,9 @@ func (a UnsupportedType) Error() string {
 	return string(a)
 }
 
-type GitManager struct{}
+type GitManager struct {
+	Autoclose bool
+}
 
 func (a GitManager) Purge(dir bugs.Directory) error {
 	cmd := exec.Command("git", "clean", "-fd", string(dir))
@@ -72,7 +74,12 @@ func (a GitManager) Commit(dir bugs.Directory, commitMsg string) error {
 
 	}
 
-	deletedIdentifiers := a.getDeletedIdentifiers(dir)
+	var deletedIdentifiers []string
+	if a.Autoclose == true {
+		deletedIdentifiers = a.getDeletedIdentifiers(dir)
+	} else {
+		deletedIdentifiers = []string{}
+	}
 	if len(deletedIdentifiers) > 0 {
 		commitMsg = fmt.Sprintf("%s\n\nCloses %s\n", commitMsg, strings.Join(a.getDeletedIdentifiers(dir), ", closes "))
 	} else {
