@@ -6,7 +6,3 @@
 
 ## v0.3:
 - More options for bug roadmap
-
-## No milestone set:
-- should handle --help option
-- bug-import needs better help

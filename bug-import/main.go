@@ -22,6 +22,14 @@ func main() {
 		if strings.Count(githubRepo, "/") != 1 {
 			fmt.Fprintf(os.Stderr, "Usage: %s --github user/repo\n", os.Args[0])
 			fmt.Fprintf(os.Stderr, "       %s --be\n", os.Args[0])
+			fmt.Fprintf(os.Stderr, `
+Use this tool to import an external bug database into the local
+issues/ directory.
+
+Either "--github user/repo" is required to import GitHub issues,
+from GitHub, or "--be" is required to import a local BugsEverywhere
+database.
+`)
 			os.Exit(2)
 		}
 	}
