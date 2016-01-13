@@ -1,0 +1,3 @@
+On MacOS, it seems that the pager code (in particular, the
+part that reassigns os.Stdout to a pipe) is breaking output
+entirely.
