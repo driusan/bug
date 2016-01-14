@@ -47,9 +47,9 @@ func (a GitManager) Purge(dir bugs.Directory) error {
 }
 
 func (a GitManager) getDeletedIdentifiers(dir bugs.Directory) []string {
-	cmd := exec.Command("git", "status", "--porcelain", string(dir))
+	cmd := exec.Command("git", "status", "-z", "--porcelain", string(dir))
 	out, _ := cmd.CombinedOutput()
-	files := strings.Split(string(out), "\n")
+	files := strings.Split(string(out), "\000")
 	retVal := []string{}
 	for _, file := range files {
 		if file == "" {

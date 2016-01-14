@@ -6,6 +6,7 @@ import (
 	"github.com/driusan/bug/bugs"
 	"os"
 	"os/exec"
+	"runtime"
 	//    "bytes"
 	//   "io"
 )
@@ -25,7 +26,12 @@ func main() {
 	}
 	// Capture STDOUT for the Pager
 	stdout := os.Stdout
-	os.Stdout = w
+
+	// Don't capture the output on MacOS, because for some reason
+	// it doesn't work and results in nothing getting printed
+	if runtime.GOOS != "darwin" {
+		os.Stdout = w
+	}
 
 	// Invoke less -RF attached to the pipe
 	// we created
