@@ -4,5 +4,5 @@
 - bug-serve should have feature parity with bug
 - Implement golang io interfaces in Bug class
 
-## v0.3:
-- More options for bug roadmap
+## No milestone set:
+- Pager breaks output on OS X
