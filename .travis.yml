@@ -1,0 +1,10 @@
+language: go
+sudo: false
+go:
+    - 1.5
+
+before_install:
+    - pip install --user codecov
+
+after_success:
+    - codecov

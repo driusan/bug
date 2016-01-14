@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+    "fmt"
 )
 
 type GitCommit struct {
@@ -95,6 +96,7 @@ func (m GitTester) AssertCleanTree(t *testing.T) {
 		t.Error("Error running git status")
 	}
 	if out != "" {
+        fmt.Printf(out)
 		t.Error("Unexpected Output from git status")
 	}
 }
