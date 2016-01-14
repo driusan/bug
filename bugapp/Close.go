@@ -9,7 +9,7 @@ import (
 func Close(args ArgumentList) {
 	// No parameters, print a list of all bugs
 	if len(args) == 0 {
-		fmt.Printf("Usage: %s close BugID\n\nMust provide an BugID to close as parameter\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s close BugID\n\nMust provide an BugID to close as parameter\n", os.Args[0])
 		return
 	}
 
