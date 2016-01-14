@@ -6,7 +6,6 @@ import (
 	"os"
 	"strings"
 	"testing"
-    "fmt"
 )
 
 type GitCommit struct {
