@@ -13,6 +13,22 @@ func (b BugNotFoundError) Error() string {
 	return string(b)
 }
 func FindBugsByTag(tags []string) []Bug {
+	issues, _ := ioutil.ReadDir(string(GetRootDir()) + "/issues")
+
+	var bugs []Bug
+	for idx, file := range issues {
+		if file.IsDir() == true {
+			bug := Bug{}
+			bug.LoadBug(Directory(GetRootDir() + "/issues/" + Directory(issues[idx].Name())))
+			for _, tag := range tags {
+				if bug.HasTag(Tag(tag)) {
+					bugs = append(bugs, bug)
+					break
+				}
+			}
+		}
+	}
+	return bugs
 	return []Bug{}
 }
 

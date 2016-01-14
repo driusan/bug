@@ -203,13 +203,22 @@ If the --rm option is provided before the BugID, all tags provided will
 be removed instead of added.
 `)
 	case "roadmap":
-		fmt.Printf("Usage: " + os.Args[0] + " roadmap [--simple]\n\n")
+		fmt.Printf("Usage: " + os.Args[0] + " roadmap [options]\n\n")
 		fmt.Printf(
 			`This will print a markdown formatted list of all open
 issues, grouped by milestone.
 
-If the argument --simple is provided, only the titles will be displayed.
-Otherwise, the Status and Priority will be included as well as the title
+Valid options are:
+    --simple      Don't show anything other than the title in the output
+    --no-status   Don't show the status of an issue
+    --no-priority Don't show the priority of an issue
+    --no-identifier Don't include the bug identifier of an issue
+    --tags        Include the tags attached to a bug in it's output
+
+    --filter tag           Only show bugs matching tag
+    --filter tag1,tag2,etc Only show issues matching at least one of
+                           the supplied tags
+
 `)
 	case "id", "identifier":
 		fmt.Printf("Usage: " + os.Args[0] + " identifier BugID [--generate] [value]\n\n")
