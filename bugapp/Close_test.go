@@ -37,7 +37,16 @@ func TestCloseByIndex(t *testing.T) {
 	os.Chdir(dir)
 	os.MkdirAll("issues/Test", 0700)
 
-    ioutil.WriteFile(dir + "/issues/Test/Identifier", []byte("TestBug\n"), 0600)
+	// On MacOS, /tmp is a symlink, which causes GetDirectory() to return
+	// a different path than expected in these tests, so make the issues
+	// directory explicit with an environment variable
+	err = os.Setenv("PMIT", dir)
+	if err != nil {
+		t.Error("Could not set environment variable: " + err.Error())
+		return
+	}
+
+	ioutil.WriteFile(dir+"/issues/Test/Identifier", []byte("TestBug\n"), 0600)
 
 	issuesDir, err := ioutil.ReadDir(fmt.Sprintf("%s/issues/", dir))
 	// Assert that there's 1 bug to start, otherwise what are we closing?
@@ -53,6 +62,7 @@ func TestCloseByIndex(t *testing.T) {
 	}
 	if stdout != fmt.Sprintf("Removing %s/issues/Test\n", dir) {
 		t.Error("Unexpected output on STDOUT for Test-bug")
+		fmt.Printf("Got %s\nExpected%s", stdout, fmt.Sprintf("Removing %s/issues/Test\n", dir))
 	}
 	issuesDir, err = ioutil.ReadDir(fmt.Sprintf("%s/issues/", dir))
 	if err != nil {
@@ -75,6 +85,15 @@ func TestCloseBugByIdentifier(t *testing.T) {
 	os.MkdirAll("issues/Test", 0700)
 	defer os.RemoveAll(dir)
 
+	// On MacOS, /tmp is a symlink, which causes GetDirectory() to return
+	// a different path than expected in these tests, so make the issues
+	// directory explicit with an environment variable
+	err = os.Setenv("PMIT", dir)
+	if err != nil {
+		t.Error("Could not set environment variable: " + err.Error())
+		return
+	}
+
 	issuesDir, err := ioutil.ReadDir(fmt.Sprintf("%s/issues/", dir))
 	// Assert that there's 1 bug to start, otherwise what are we closing?
 	if err != nil || len(issuesDir) != 1 {
@@ -89,6 +108,7 @@ func TestCloseBugByIdentifier(t *testing.T) {
 	}
 	if stdout != fmt.Sprintf("Removing %s/issues/Test\n", dir) {
 		t.Error("Unexpected output on STDOUT for Test-bug")
+		fmt.Printf("Got %s\nExpected: %s\n", stdout, dir)
 	}
 	issuesDir, err = ioutil.ReadDir(fmt.Sprintf("%s/issues/", dir))
 	if err != nil {
