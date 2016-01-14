@@ -52,7 +52,10 @@ func main() {
 			os.Stdout = stdout
 			bugapp.Create(os.Args[2:])
 		case "view", "list":
-			bugapp.List(os.Args[2:])
+            // bug list with no parameters shouldn't autopage,
+            // bug list with bugs to view should. So the original
+            // stdout is passed as a parameter.
+			bugapp.List(os.Args[2:], stdout)
 		case "priority":
 			bugapp.Priority(os.Args[2:])
 		case "status":
@@ -66,10 +69,14 @@ func main() {
 		case "mv", "rename", "retitle", "relabel":
 			bugapp.Relabel(os.Args[2:])
 		case "purge":
+            // This shouldn't autopage
+            os.Stdout = stdout
 			bugapp.Purge()
 		case "rm", "close":
 			bugapp.Close(os.Args[2:])
 		case "edit":
+            // Edit needs the original Stdout since it
+            // invokes an editor
 			os.Stdout = stdout
 			bugapp.Edit(os.Args[2:])
 		case "--version", "version":
