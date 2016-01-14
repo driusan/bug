@@ -6,3 +6,4 @@
 
 ## No milestone set:
 - Pager breaks output on OS X
+- --help

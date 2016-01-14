@@ -44,7 +44,7 @@ func main() {
 	}()
 
 	if len(os.Args) > 1 {
-		if len(os.Args) > 3 && os.Args[2] == "--help" {
+		if len(os.Args) >= 3 && os.Args[2] == "--help" {
 			os.Args[1], os.Args[2] = "help", os.Args[1]
 		}
 		switch os.Args[1] {
@@ -52,9 +52,9 @@ func main() {
 			os.Stdout = stdout
 			bugapp.Create(os.Args[2:])
 		case "view", "list":
-            // bug list with no parameters shouldn't autopage,
-            // bug list with bugs to view should. So the original
-            // stdout is passed as a parameter.
+			// bug list with no parameters shouldn't autopage,
+			// bug list with bugs to view should. So the original
+			// stdout is passed as a parameter.
 			bugapp.List(os.Args[2:], stdout)
 		case "priority":
 			bugapp.Priority(os.Args[2:])
@@ -69,14 +69,14 @@ func main() {
 		case "mv", "rename", "retitle", "relabel":
 			bugapp.Relabel(os.Args[2:])
 		case "purge":
-            // This shouldn't autopage
-            os.Stdout = stdout
+			// This shouldn't autopage
+			os.Stdout = stdout
 			bugapp.Purge()
 		case "rm", "close":
 			bugapp.Close(os.Args[2:])
 		case "edit":
-            // Edit needs the original Stdout since it
-            // invokes an editor
+			// Edit needs the original Stdout since it
+			// invokes an editor
 			os.Stdout = stdout
 			bugapp.Edit(os.Args[2:])
 		case "--version", "version":

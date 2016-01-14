@@ -36,7 +36,7 @@ func List(args ArgumentList, stdout *os.File) {
 
 	// No parameters, print a list of all bugs
 	if len(args) == 0 || (wantTags && len(args) == 1) {
-        //os.Stdout = stdout
+		//os.Stdout = stdout
 		for idx, issue := range issues {
 			if issue.IsDir() != true {
 				continue
