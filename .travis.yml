@@ -2,9 +2,16 @@ language: go
 sudo: false
 go:
     - 1.5
+addons:
+    apt:
+        packages:
+            - git-2.0
+    
 
 before_install:
     - pip install --user codecov
+    - git --version
+    - hg --version
 
 after_success:
     - codecov
