@@ -12,8 +12,8 @@ import (
 
 func Create(Args ArgumentList) {
 	if len(Args) < 1 || (len(Args) < 2 && Args[0] == "-n") {
-		fmt.Printf("Usage: %s create [-n] Bug Description\n", os.Args[0])
-		fmt.Printf("\nNo Bug Description provided.\n")
+		fmt.Fprintf(os.Stderr, "Usage: %s create [-n] Bug Description\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "\nNo Bug Description provided.\n")
 		return
 	}
 	var noDesc bool = false
