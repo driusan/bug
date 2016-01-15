@@ -50,19 +50,19 @@ func (t HgTester) GetLogs() ([]Commit, error) {
 }
 
 func (c HgTester) AssertStagingIndex(t *testing.T, f []FileStatus) {
-    for _, file := range f {
-        out, err := runCmd("hg", "status", file.Filename)
-        if err != nil {
-            t.Error("Could not get status of " + file.Filename)
-        }
+	for _, file := range f {
+		out, err := runCmd("hg", "status", file.Filename)
+		if err != nil {
+			t.Error("Could not get status of " + file.Filename)
+		}
 
-        // hg status doesn't include the working directory status
-        expected := file.IndexStatus + " " + file.Filename + "\n"
-        if out != expected {
-            t.Error("Unexpected status. Got " + out + " not " + expected)
-        }
+		// hg status doesn't include the working directory status
+		expected := file.IndexStatus + " " + file.Filename + "\n"
+		if out != expected {
+			t.Error("Unexpected status. Got " + out + " not " + expected)
+		}
 
-    }
+	}
 }
 
 func (c HgTester) StageFile(file string) error {

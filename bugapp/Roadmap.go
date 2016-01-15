@@ -1,4 +1,4 @@
-package main
+package bugapp
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"github.com/driusan/bug/bugs"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 type BugListByMilestone [](bugs.Bug)
@@ -43,8 +44,16 @@ func (a BugListByMilestone) Less(i, j int) bool {
 	return iMS < jMS
 }
 
-func (a BugApplication) Roadmap(args ArgumentList) {
-	bgs := bugs.GetAllBugs()
+func Roadmap(args ArgumentList) {
+	var bgs []bugs.Bug
+
+	if args.HasArgument("--filter") {
+		tags := strings.Split(args.GetArgument("--filter", ""), ",")
+		fmt.Printf("%s", tags)
+		bgs = bugs.FindBugsByTag(tags)
+	} else {
+		bgs = bugs.GetAllBugs()
+	}
 	sort.Sort(BugListByMilestone(bgs))
 
 	fmt.Printf("# Roadmap for %s\n", bugs.GetRootDir().GetShortName().ToTitle())
@@ -59,10 +68,24 @@ func (a BugApplication) Roadmap(args ArgumentList) {
 				fmt.Printf("\n## %s:\n", newMilestone)
 			}
 		}
-		if args.HasArgument("--simple") == false {
-			fmt.Printf("- %s\n", b.Title("status priority"))
-		} else {
+		if args.HasArgument("--simple") {
 			fmt.Printf("- %s\n", b.Title(""))
+		} else {
+			options := ""
+			if !args.HasArgument("--no-status") {
+				options += "status"
+			}
+			if !args.HasArgument("--no-priority") {
+				options += " priority"
+			}
+			if !args.HasArgument("--no-identifier") {
+				options += " identifier"
+			}
+
+			if args.HasArgument("--tags") {
+				options += "tags"
+			}
+			fmt.Printf("- %s\n", b.Title(options))
 		}
 		milestone = newMilestone
 

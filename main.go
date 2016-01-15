@@ -2,67 +2,105 @@ package main
 
 import (
 	"fmt"
-	"os"
-	//"regex"
+	"github.com/driusan/bug/bugapp"
 	"github.com/driusan/bug/bugs"
+	"os"
+	"os/exec"
+	"runtime"
+	//    "bytes"
+	//   "io"
 )
 
-func getEditor() string {
-	editor := os.Getenv("EDITOR")
-
-	if editor != "" {
-		return editor
-	}
-	return "vim"
-
-}
-
 func main() {
-	app := BugApplication{}
 	if bugs.GetRootDir() == "" {
 		fmt.Printf("Could not find issues directory.\n")
 		fmt.Printf("Make sure either the PMIT environment variable is set, or a parent directory of your working directory has an issues folder.\n")
 		fmt.Printf("Aborting.\n")
 		os.Exit(2)
 	}
+
+	// Create a pipe for a pager to use
+	r, w, err := os.Pipe()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	}
+	// Capture STDOUT for the Pager
+	stdout := os.Stdout
+
+	// Don't capture the output on MacOS, because for some reason
+	// it doesn't work and results in nothing getting printed
+	if runtime.GOOS != "darwin" {
+		os.Stdout = w
+	}
+
+	// Invoke less -RF attached to the pipe
+	// we created
+	cmd := exec.Command("less", "-RF")
+	cmd.Stdin = r
+	cmd.Stdout = stdout
+	cmd.Stderr = os.Stderr
+	// Make sure the pipe is closed after we
+	// finish, then restore STDOUT
+	defer func() {
+		w.Close()
+		if err := cmd.Run(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+		os.Stdout = stdout
+	}()
+
 	if len(os.Args) > 1 {
+		if len(os.Args) >= 3 && os.Args[2] == "--help" {
+			os.Args[1], os.Args[2] = "help", os.Args[1]
+		}
 		switch os.Args[1] {
 		case "add", "new", "create":
-			app.Create(os.Args[2:])
+			os.Stdout = stdout
+			bugapp.Create(os.Args[2:])
 		case "view", "list":
-			app.List(os.Args[2:])
+			// bug list with no parameters shouldn't autopage,
+			// bug list with bugs to view should. So the original
+			// stdout is passed as a parameter.
+			bugapp.List(os.Args[2:], stdout)
 		case "priority":
-			app.Priority(os.Args[2:])
+			bugapp.Priority(os.Args[2:])
 		case "status":
-			app.Status(os.Args[2:])
+			bugapp.Status(os.Args[2:])
 		case "milestone":
-			app.Milestone(os.Args[2:])
+			bugapp.Milestone(os.Args[2:])
+		case "id", "identifier":
+			bugapp.Identifier(os.Args[2:])
 		case "tag":
-			app.Tag(os.Args[2:])
+			bugapp.Tag(os.Args[2:])
 		case "mv", "rename", "retitle", "relabel":
-			app.Relabel(os.Args[2:])
+			bugapp.Relabel(os.Args[2:])
 		case "purge":
-			app.Purge()
+			// This shouldn't autopage
+			os.Stdout = stdout
+			bugapp.Purge()
 		case "rm", "close":
-			app.Close(os.Args[2:])
+			bugapp.Close(os.Args[2:])
 		case "edit":
-			app.Edit(os.Args[2:])
+			// Edit needs the original Stdout since it
+			// invokes an editor
+			os.Stdout = stdout
+			bugapp.Edit(os.Args[2:])
 		case "--version", "version":
-			app.Version()
+			bugapp.Version()
 		case "env":
-			app.Env()
+			bugapp.Env()
 		case "dir", "pwd":
-			app.Pwd()
+			bugapp.Pwd()
 		case "commit":
-			app.Commit()
+			bugapp.Commit(os.Args[2:])
 		case "roadmap":
-			app.Roadmap(os.Args[2:])
+			bugapp.Roadmap(os.Args[2:])
 		case "help":
 			fallthrough
 		default:
-			app.Help(os.Args[1:]...)
+			bugapp.Help(os.Args[1:]...)
 		}
 	} else {
-		app.Help()
+		bugapp.Help()
 	}
 }

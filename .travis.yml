@@ -1,0 +1,21 @@
+language: go
+sudo: false
+os:
+    - linux
+    - osx
+go:
+    - 1.5
+addons:
+    apt:
+        packages:
+            - git-2.0
+    
+
+before_install:
+    - git --version
+    - hg --version
+
+script:
+    - bash test.sh
+after_success:
+    - bash <(curl -s https://codecov.io/bash)

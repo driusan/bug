@@ -14,11 +14,6 @@ type Commit interface {
 	Diff() (string, error)
 }
 
-type FileStatus struct {
-	Filename      string
-	IndexStatus   string
-	WorkingStatus string
-}
 type ManagerTester interface {
 	GetLogs() ([]Commit, error)
 	Setup() error
@@ -40,7 +35,8 @@ func runCmd(cmd string, options ...string) (string, error) {
 func assertLogs(tester ManagerTester, t *testing.T, titles []string, diffs []string) {
 	logs, err := tester.GetLogs()
 	if err != nil {
-		t.Error("Could not get scm logs")
+		t.Error("Could not get scm logs" + err.Error())
+		return
 	}
 
 	if len(diffs) != len(titles) {
@@ -69,10 +65,12 @@ func assertLogs(tester ManagerTester, t *testing.T, titles []string, diffs []str
 
 func runtestRenameCommitsHelper(tester ManagerTester, t *testing.T, expectedDiffs []string) {
 	err := tester.Setup()
-	if err != nil {
-		panic("Something went wrong trying to initialize git:" + err.Error())
-	}
 	defer tester.TearDown()
+	if err != nil {
+		t.Error("Could not initialize repo")
+		panic("Something went wrong trying to initialize git:" + err.Error())
+		return
+	}
 
 	m := tester.GetManager()
 	if m == nil {

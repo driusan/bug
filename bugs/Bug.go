@@ -40,10 +40,11 @@ func TitleToDir(title string) Directory {
 	s = re.ReplaceAllStringFunc(s, replaceWhitespaceWithUnderscore)
 
 	s = strings.Replace(s, " ", "-", -1)
+	s = strings.Replace(s, "/", " ", -1)
 	return Directory(s)
 }
-func (b Bug) GetDirectory() (Directory, error) {
-	return b.Dir, nil
+func (b Bug) GetDirectory() Directory {
+	return b.Dir
 }
 
 func (b *Bug) LoadBug(dir Directory) {
@@ -52,7 +53,15 @@ func (b *Bug) LoadBug(dir Directory) {
 }
 
 func (b Bug) Title(options string) string {
+	var checkOption = func(o string) bool {
+		return strings.Contains(options, o)
+	}
+
 	title := b.Dir.GetShortName().ToTitle()
+
+	if id := b.Identifier(); checkOption("identifier") && id != "" {
+		title = fmt.Sprintf("(%s) %s", id, title)
+	}
 	if strings.Contains(options, "tags") {
 		tags := b.StringTags()
 		if len(tags) > 0 {
@@ -60,8 +69,8 @@ func (b Bug) Title(options string) string {
 		}
 	}
 
-	priority := strings.Contains(options, "priority") && b.Priority() != ""
-	status := strings.Contains(options, "status") && b.Status() != ""
+	priority := checkOption("priority") && b.Priority() != ""
+	status := checkOption("status") && b.Status() != ""
 	if options == "" {
 		priority = false
 		status = false
@@ -77,7 +86,7 @@ func (b Bug) Title(options string) string {
 	return title
 }
 func (b Bug) Description() string {
-	dir, _ := b.GetDirectory()
+	dir := b.GetDirectory()
 	desc, err := ioutil.ReadFile(string(dir) + "/Description")
 
 	if err != nil {
@@ -86,46 +95,51 @@ func (b Bug) Description() string {
 
 	return string(desc)
 }
+func (b Bug) SetDescription(val string) error {
+	dir := b.GetDirectory()
+
+	return ioutil.WriteFile(string(dir)+"/Description", []byte(val), 0644)
+}
 func (b *Bug) RemoveTag(tag Tag) {
-	if dir, err := b.GetDirectory(); err == nil {
+	if dir := b.GetDirectory(); dir != "" {
 		os.Remove(string(dir) + "/tags/" + string(tag))
 	} else {
-		fmt.Printf("Error removing tag: %s", err.Error())
+		fmt.Printf("Error removing tag: %s", tag)
 	}
 }
 func (b *Bug) TagBug(tag Tag) {
-	if dir, err := b.GetDirectory(); err == nil {
+	if dir := b.GetDirectory(); dir != "" {
 		os.Mkdir(string(dir)+"/tags/", 0755)
 		ioutil.WriteFile(string(dir)+"/tags/"+string(tag), []byte(""), 0644)
 	} else {
-		fmt.Printf("Error tagging bug: %s", err.Error())
+		fmt.Printf("Error tagging bug: %s", tag)
 	}
 }
 func (b Bug) ViewBug() {
+	if identifier := b.Identifier(); identifier != "" {
+		fmt.Printf("Identifier: %s\n", identifier)
+	}
+
 	fmt.Printf("Title: %s\n\n", b.Title(""))
 	fmt.Printf("Description:\n%s", b.Description())
 
-	status := b.Status()
-	if status != "" {
+	if status := b.Status(); status != "" {
 		fmt.Printf("\nStatus: %s", status)
 	}
-	priority := b.Priority()
-	if priority != "" {
+	if priority := b.Priority(); priority != "" {
 		fmt.Printf("\nPriority: %s", priority)
 	}
-	milestone := b.Milestone()
-	if milestone != "" {
+	if milestone := b.Milestone(); milestone != "" {
 		fmt.Printf("\nMilestone: %s", milestone)
 	}
-	tags := b.StringTags()
-	if tags != nil {
+	if tags := b.StringTags(); tags != nil {
 		fmt.Printf("\nTags: %s", strings.Join([]string(tags), ", "))
 	}
 
 }
 
 func (b Bug) StringTags() []string {
-	dir, _ := b.GetDirectory()
+	dir := b.GetDirectory()
 	dir += "/tags/"
 	issues, err := ioutil.ReadDir(string(dir))
 	if err != nil {
@@ -149,7 +163,7 @@ func (b Bug) HasTag(tag Tag) bool {
 	return false
 }
 func (b Bug) Tags() []Tag {
-	dir, _ := b.GetDirectory()
+	dir := b.GetDirectory()
 	dir += "/tags/"
 	issues, err := ioutil.ReadDir(string(dir))
 	if err != nil {
@@ -165,7 +179,7 @@ func (b Bug) Tags() []Tag {
 }
 
 func (b Bug) getField(fieldName string) string {
-	dir, _ := b.GetDirectory()
+	dir := b.GetDirectory()
 	field, err := ioutil.ReadFile(string(dir) + "/" + fieldName)
 	if err != nil {
 		return ""
@@ -178,7 +192,7 @@ func (b Bug) getField(fieldName string) string {
 }
 
 func (b Bug) setField(fieldName, value string) error {
-	dir, _ := b.GetDirectory()
+	dir := b.GetDirectory()
 	oldValue, err := ioutil.ReadFile(string(dir) + "/" + fieldName)
 	var oldLines []string
 	if err == nil {
@@ -221,4 +235,12 @@ func (b Bug) Milestone() string {
 
 func (b Bug) SetMilestone(newValue string) error {
 	return b.setField("Milestone", newValue)
+}
+
+func (b Bug) Identifier() string {
+	return b.getField("Identifier")
+}
+
+func (b Bug) SetIdentifier(newValue string) error {
+	return b.setField("Identifier", newValue)
 }

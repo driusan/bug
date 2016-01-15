@@ -1,0 +1,15 @@
+The bugs.Bug class should implement some common
+go interfaces so that you can easily intergrate
+bug with other programs/libraries. In particular,
+the interfaces:
+
+1. io.Writer should append to the bug description
+2. io.WriterAt should modify the description
+3. io.Reader should print either the bug description
+   or the full bug list BugIdx style output (not sure
+   which, maybe have a flag in the bug struct to modify
+   the two.)
+
+This would make it much easier to integrate bugs
+with logging systems when errors are encounterd by using
+ie. io.MultiWriter
