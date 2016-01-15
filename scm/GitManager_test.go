@@ -107,13 +107,6 @@ func (m GitTester) GetManager() SCMHandler {
 }
 
 func TestGitBugRenameCommits(t *testing.T) {
-	if os.Getenv("TRAVIS") == "true" {
-		// I think this is related to the version of git installed
-		// on Travis, but the apt add-on won't let us install a newer
-		// version to test. For now, this test gets skipped.
-		t.Skip("Test failing under Travis for unknown reasons.")
-		return
-	}
 	gm := GitTester{}
 	gm.handler = GitManager{}
 
