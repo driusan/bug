@@ -107,7 +107,7 @@ func (m GitTester) GetManager() SCMHandler {
 }
 
 func TestGitBugRenameCommits(t *testing.T) {
-	if os.Getenv("TRAVIS") == "true" {
+	if os.Getenv("TRAVIS") == "true" && os.Getenv("TRAVIS_OS_NAME") == "linux" {
 		t.Skip("Skipping test which fails only under Travis for unknown reasons..")
 		return
 	}
@@ -135,4 +135,12 @@ func TestGitFilesOutsideOfBugNotCommited(t *testing.T) {
 	gm := GitTester{}
 	gm.handler = GitManager{}
 	runtestCommitDirtyTree(&gm, t)
+}
+
+func TestGitManagerGetType(t *testing.T) {
+	manager := GitManager{}
+
+	if getType := manager.GetSCMType(); getType != "git" {
+		t.Error("Incorrect SCM Type for GitManager. Got " + getType)
+	}
 }
