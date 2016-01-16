@@ -9,10 +9,11 @@ import (
 func Commit(args ArgumentList) {
 	options := make(map[string]bool)
 	if !args.HasArgument("--no-autoclose") {
-		options["autoclose"] = false
-	} else {
 		options["autoclose"] = true
+	} else {
+		options["autoclose"] = false
 	}
+
 	scm, _, err := scm.DetectSCM(options)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err.Error())
