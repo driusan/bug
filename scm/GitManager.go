@@ -10,18 +10,6 @@ import (
 	"strings"
 )
 
-type PreconditionFailed string
-
-func (a PreconditionFailed) Error() string {
-	return string(a)
-}
-
-type ExecutionFailed string
-
-func (a ExecutionFailed) Error() string {
-	return string(a)
-}
-
 type UnsupportedType string
 
 func (a UnsupportedType) Error() string {
