@@ -10,12 +10,6 @@ import (
 	"strings"
 )
 
-type UnsupportedType string
-
-func (a UnsupportedType) Error() string {
-	return string(a)
-}
-
 type GitManager struct {
 	Autoclose bool
 }
