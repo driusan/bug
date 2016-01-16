@@ -120,3 +120,80 @@ func TestCloseBugByIdentifier(t *testing.T) {
 		t.Error("Unexpected number of issues in issues dir\n")
 	}
 }
+
+func TestCloseMultipleIndexesWithLastIndex(t *testing.T) {
+	dir, err := ioutil.TempDir("", "closetest")
+	defer os.RemoveAll(dir)
+	if err != nil {
+		t.Error("Could not create temporary dir for test")
+		return
+	}
+	os.Chdir(dir)
+	os.Setenv("PMIT", dir)
+	os.MkdirAll("issues/Test", 0700)
+	os.MkdirAll("issues/Test2", 0700)
+	os.MkdirAll("issues/Test3", 0700)
+	issuesDir, err := ioutil.ReadDir(fmt.Sprintf("%s/issues/", dir))
+	if err != nil {
+		t.Error("Could not read issues directory")
+		return
+	}
+	if len(issuesDir) != 3 {
+		t.Error("Unexpected number of issues in issues dir after creating multiple issues\n")
+	}
+	_, stderr := captureOutput(func() {
+		Close(ArgumentList{"1", "3"})
+	}, t)
+	issuesDir, err = ioutil.ReadDir(fmt.Sprintf("%s/issues/", dir))
+	if err != nil {
+		t.Error("Could not read issues directory")
+		return
+	}
+	// After closing, there should be 1 bug. Otherwise, it probably
+	// means that the last error was "invalid index" since indexes
+	// were renumbered after closing the first bug.
+	if len(issuesDir) != 1 {
+		fmt.Printf("%s\n\n", stderr)
+		t.Error("Unexpected number of issues in issues dir after closing multiple issues\n")
+	}
+}
+
+func TestCloseMultipleIndexesAtOnce(t *testing.T) {
+	dir, err := ioutil.TempDir("", "closetest")
+	defer os.RemoveAll(dir)
+	if err != nil {
+		t.Error("Could not create temporary dir for test")
+		return
+	}
+	os.Chdir(dir)
+	os.Setenv("PMIT", dir)
+	os.MkdirAll("issues/Test", 0700)
+	os.MkdirAll("issues/Test2", 0700)
+	os.MkdirAll("issues/Test3", 0700)
+	issuesDir, err := ioutil.ReadDir(fmt.Sprintf("%s/issues/", dir))
+	if err != nil {
+		t.Error("Could not read issues directory")
+		return
+	}
+	if len(issuesDir) != 3 {
+		t.Error("Unexpected number of issues in issues dir after creating multiple issues\n")
+	}
+	_, _ = captureOutput(func() {
+		Close(ArgumentList{"1", "2"})
+	}, t)
+	issuesDir, err = ioutil.ReadDir(fmt.Sprintf("%s/issues/", dir))
+	if err != nil {
+		t.Error("Could not read issues directory")
+		return
+	}
+	if len(issuesDir) != 1 {
+		t.Error("Unexpected number of issues in issues dir after closing multiple issues\n")
+		return
+	}
+
+	// 1 and 2 should have closed. If 3 was renumbered after 1 was closed,
+	// it would be closed instead.
+	if issuesDir[0].Name() != "Test3" {
+		t.Error("Closed incorrect issue when closing multiple issues.")
+	}
+}

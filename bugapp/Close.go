@@ -15,13 +15,17 @@ func Close(args ArgumentList) {
 
 	// There were parameters, so show the full description of each
 	// of those issues
+	var bugsToClose []string
 	for _, bugID := range args {
 		if bug, err := bugs.LoadBugByHeuristic(bugID); err == nil {
 			dir := bug.GetDirectory()
-			fmt.Printf("Removing %s\n", dir)
-			os.RemoveAll(string(dir))
+			bugsToClose = append(bugsToClose, string(dir))
 		} else {
-			fmt.Printf("Could not close bug %s: %s\n", bugID, err)
+			fmt.Fprintf(os.Stderr, "Could not close bug %s: %s\n", bugID, err)
 		}
+	}
+	for _, dir := range bugsToClose {
+		fmt.Printf("Removing %s\n", dir)
+		os.RemoveAll(dir)
 	}
 }
