@@ -144,3 +144,9 @@ func TestGitManagerGetType(t *testing.T) {
 		t.Error("Incorrect SCM Type for GitManager. Got " + getType)
 	}
 }
+
+func TestGitManagerPurge(t *testing.T) {
+	gm := GitTester{}
+	gm.handler = GitManager{}
+	runtestPurgeFiles(&gm, t)
+}

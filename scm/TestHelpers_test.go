@@ -123,3 +123,37 @@ func runtestCommitDirtyTree(tester ManagerTester, t *testing.T) {
 		FileStatus{"donotcommit.txt", "A", " "},
 	})
 }
+
+func runtestPurgeFiles(tester ManagerTester, t *testing.T) {
+	err := tester.Setup()
+	if err != nil {
+		panic("Something went wrong trying to initialize: " + err.Error())
+	}
+	defer tester.TearDown()
+	m := tester.GetManager()
+	if m == nil {
+		t.Error("Could not get manager")
+		return
+	}
+	os.Mkdir("issues", 0755)
+	// Commit a bug which should stay around after the purge
+	runCmd("bug", "create", "-n", "Test", "bug")
+	m.Commit(bugs.Directory(tester.GetWorkDir()+"/issues"), "Initial commit")
+
+	// Create another bug to elimate with "bug purge"
+	runCmd("bug", "create", "-n", "Test", "purge", "bug")
+	err = m.Purge(bugs.Directory(tester.GetWorkDir() + "/issues"))
+	if err != nil {
+		t.Error("Error purging bug directory: " + err.Error())
+	}
+	issuesDir, err := ioutil.ReadDir("issues") //fmt.Sprintf("%s/issues/", tester.GetWorkDir()))
+	if err != nil {
+		t.Error("Error reading issues directory")
+	}
+	if len(issuesDir) != 1 {
+		t.Error("Unexpected number of directories in issues/ after purge.")
+	}
+	if len(issuesDir) > 0 && issuesDir[0].Name() != "Test-bug" {
+		t.Error("Expected Test-bug to remain.")
+	}
+}
