@@ -1,0 +1,12 @@
+When do you "bug close 1 2 3" for multiple issues by directory
+index, after it coses 1, the index of the ones following 1 changes,
+resulting in the wrong bugs being closed for 2 and 3. The "new" index
+2 is closed from after 1 being removed, not the old "2" that the user
+expected to be closed from when they did "bug list"
+
+Possible solutions:
+1. Only allow 1 issue to be closed at a time
+2. Reverse sort the input before closing. (If this works it
+   would be ideal, but I'd first need to verify that unlinking
+   a file changes the rest of the indexes in a predictable order.)
+
