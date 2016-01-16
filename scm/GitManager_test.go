@@ -107,11 +107,8 @@ func (m GitTester) GetManager() SCMHandler {
 }
 
 func TestGitBugRenameCommits(t *testing.T) {
-	if os.Getenv("TRAVIS") == "true" {
-		// I think this is related to the version of git installed
-		// on Travis, but the apt add-on won't let us install a newer
-		// version to test. For now, this test gets skipped.
-		t.Skip("Test failing under Travis for unknown reasons.")
+	if os.Getenv("TRAVIS") == "true" && os.Getenv("TRAVIS_OS_NAME") == "linux" {
+		t.Skip("Skipping test which fails only under Travis for unknown reasons..")
 		return
 	}
 	gm := GitTester{}
@@ -138,4 +135,12 @@ func TestGitFilesOutsideOfBugNotCommited(t *testing.T) {
 	gm := GitTester{}
 	gm.handler = GitManager{}
 	runtestCommitDirtyTree(&gm, t)
+}
+
+func TestGitManagerGetType(t *testing.T) {
+	manager := GitManager{}
+
+	if getType := manager.GetSCMType(); getType != "git" {
+		t.Error("Incorrect SCM Type for GitManager. Got " + getType)
+	}
 }

@@ -1,6 +1,7 @@
 package scm
 
 import (
+	"fmt"
 	"github.com/driusan/bug/bugs"
 	"io/ioutil"
 	"os"
@@ -58,6 +59,7 @@ func assertLogs(tester ManagerTester, t *testing.T, titles []string, diffs []str
 		} else {
 			if diff != diffs[i] {
 				t.Error("Incorrect diff for " + titles[i])
+				fmt.Fprintf(os.Stderr, "Got %s, expected %s", diff, diffs[i])
 			}
 		}
 	}
@@ -68,7 +70,6 @@ func runtestRenameCommitsHelper(tester ManagerTester, t *testing.T, expectedDiff
 	defer tester.TearDown()
 	if err != nil {
 		t.Error("Could not initialize repo")
-		panic("Something went wrong trying to initialize git:" + err.Error())
 		return
 	}
 
@@ -77,10 +78,10 @@ func runtestRenameCommitsHelper(tester ManagerTester, t *testing.T, expectedDiff
 		t.Error("Could not get manager")
 		return
 	}
-	os.Mkdir("issues", 0755)
-	runCmd("bug", "create", "-n", "Test bug")
+	os.MkdirAll("issues/Test-bug", 0755)
+	ioutil.WriteFile("issues/Test-bug/Description", []byte(""), 0644)
 	m.Commit(bugs.Directory(tester.GetWorkDir()), "Initial commit")
-	runCmd("bug", "relabel", "1", "Renamed bug")
+	runCmd("bug", "relabel", "1", "Renamed", "bug")
 	m.Commit(bugs.Directory(tester.GetWorkDir()), "This is a test rename")
 
 	tester.AssertCleanTree(t)
@@ -100,7 +101,7 @@ func runtestCommitDirtyTree(tester ManagerTester, t *testing.T) {
 		return
 	}
 	os.Mkdir("issues", 0755)
-	runCmd("bug", "create", "-n", "Test bug")
+	runCmd("bug", "create", "-n", "Test", "bug")
 	if err = ioutil.WriteFile("donotcommit.txt", []byte(""), 0644); err != nil {
 		t.Error("Could not write file")
 		return
