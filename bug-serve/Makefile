@@ -1,5 +1,7 @@
-all: Go React
+all: Generate React Go
 
+Generate:
+	go generate
 Go:
 	go build .
 

@@ -103,15 +103,27 @@ func (m BugPageHandler) Get(r *http.Request, extras map[string]interface{}) (str
 		return HTMLPageRenderer.Render(page), nil
 	}
 
+
 }
 
+type JSAssetHandler struct {
+	URLHandler.DefaultHandler
+}
+func (s JSAssetHandler) Get(r *http.Request, p map[string]interface{}) (string, error) {
+    data, err := Asset(r.URL.Path[1:])
+    if err == nil {
+        return string(data), nil
+
+    }
+    return "File Not found", URLHandler.NotFoundError{}
+}
 func main() {
 	URLHandler.RegisterHandler(MainPageHandler{}, "/")
 	URLHandler.RegisterHandler(SettingsHandler{}, "/settings")
 	URLHandler.RegisterHandler(BugPageHandler{}, "/issues/")
-	URLHandler.RegisterStaticHandler("/js/", "./js")
+	URLHandler.RegisterHandler(JSAssetHandler{}, "/js/")
 	http.ListenAndServe(":8080", nil)
 }
 
-//go:generate FileConstGenerator main js/BugApp.js BugListConst.go BugListJS
-//go:generate FileConstGenerator main js/BugApp.js BugListConst.go BugListJS
+//go:generate babel --out-dir=js jsx
+//go:generate go-bindata js/
