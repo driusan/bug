@@ -2,12 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	//	"fmt"
 	"github.com/driusan/GoWebapp/HTMLPageRenderer"
 	"github.com/driusan/GoWebapp/URLHandler"
 	"github.com/driusan/bug/bugs"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type BugRenderer struct {
@@ -24,7 +24,9 @@ func getBugList() (string, error) {
 	var issuesSlice []string
 
 	for _, issue := range issues {
-		issuesSlice = append(issuesSlice, issue.Name())
+		if issue.IsDir() {
+			issuesSlice = append(issuesSlice, issue.Name())
+		}
 	}
 
 	retVal, _ := json.Marshal(issuesSlice)
@@ -35,14 +37,35 @@ func (m BugPageHandler) Get(r *http.Request, extras map[string]interface{}) (str
 	if r.URL.Path == "/issues" || r.URL.Path == "/issues/" {
 		return getBugList()
 	}
-	bugDir := string(bugs.GetRootDir()) + r.URL.Path
-	b := bugs.Bug{}
-	b.LoadBug(bugs.Directory(bugDir))
+	// Strip off the "/issues/"
+	bugURL := r.URL.Path[8:]
+
+	// See if we're getting the whole bug JSON or
+	// a field from it.
+	pieces := strings.Split(bugURL, "/")
+
+	b, err := bugs.LoadBugByDirectory(pieces[0])
+	if err != nil {
+		return "", URLHandler.NotFoundError{}
+	}
 
 	bJSONStruct := struct {
+		Identifier  string `json:",omitempty"`
 		Title       string
 		Description string
-	}{Title: b.Title(""), Description: b.Description()}
+		Status      string   `json:",omitempty"`
+		Priority    string   `json:",omitempty"`
+		Milestone   string   `json:",omitempty"`
+		Tags        []string `json:",omitempty"`
+	}{
+		Identifier:  b.Identifier(),
+		Title:       b.Title(""),
+		Description: b.Description(),
+		Status:      b.Status(),
+		Priority:    b.Priority(),
+		Milestone:   b.Milestone(),
+		Tags:        b.StringTags(),
+	}
 
 	bJSON, _ := json.Marshal(bJSONStruct)
 	return string(bJSON), nil

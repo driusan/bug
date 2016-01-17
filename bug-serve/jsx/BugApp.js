@@ -1,5 +1,4 @@
 var BugApp = React.createClass({
-	
 	componentDidMount: function() {
 		var that = this;
 		AjaxGet("/issues/", function(response) {
@@ -25,7 +24,7 @@ var BugApp = React.createClass({
 		e.preventDefault();
 		var bug = e.currentTarget.textContent;
 		var that = this;
-		AjaxGet("/issues/" + bug + "?format=json", function(response) {
+		AjaxGet("/issues/" + bug + "/", function(response) {
 			that.setState({SelectedBug : JSON.parse(response)});
 		});
 	},
