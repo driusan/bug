@@ -90,27 +90,6 @@ func (b Bug) Title(options string) string {
 	return title
 }
 
-func (b Bug) Close() error {
-	if b.descFile != nil {
-		err := b.descFile.Close()
-		b.descFile = nil
-		return err
-	}
-	return nil
-}
-func (b *Bug) Read(p []byte) (int, error) {
-	dir, _ := b.GetDirectory()
-	if b.descFile == nil {
-		fp, err := os.Open(string(dir) + "/Description")
-		b.descFile = fp
-		if err != nil {
-			fmt.Printf("err: " + err.Error())
-			return 0, NoDescriptionError
-		}
-	}
-
-	return b.descFile.Read(p)
-}
 func (b Bug) Description() string {
 	value, err := ioutil.ReadAll(&b)
 
