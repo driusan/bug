@@ -34,9 +34,24 @@ var BugApp = React.createClass({
 	render: function() {
 		var content;
 		if(this.state.SelectedBug != null) {
-			content = <BugPage Title={this.state.SelectedBug.Title} Description={this.state.SelectedBug.Description} onBack={this.resetSelected} AllBugs={this.state.Bugs} onOtherBugClicked={this.selectBugHandler}/>
+			content = <BugPage 
+                Title={this.state.SelectedBug.Title}
+                Description={this.state.SelectedBug.Description} 
+                Milestone={this.state.SelectedBug.Milestone} 
+                Status={this.state.SelectedBug.Status}
+                Priority={this.state.SelectedBug.Priority}
+                Identifier={this.state.SelectedBug.Identifier}
+                Tags={this.state.SelectedBug.Tags}
+                onBack={this.resetSelected}
+                AllBugs={this.state.Bugs}
+                onOtherBugClicked={this.selectBugHandler}
+                />
 		} else {
-			content = <BugList Title={this.state.Title} Bugs={this.state.Bugs} onBugClicked={this.selectBugHandler} />
+			content = <BugList 
+                Title={this.state.Title} 
+                Bugs={this.state.Bugs} 
+                onBugClicked={this.selectBugHandler}
+                />
 		}
 		return (<div>
 			<h1>Issues for: {this.state.Settings.Title}</h1>

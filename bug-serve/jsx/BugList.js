@@ -22,16 +22,3 @@ var BugList = React.createClass({
 		);
 	}
 });
-/*
-func (b BugListRenderer) GetBody() string {
-	issues, _ := ioutil.ReadDir(bugs.GetRootDir() + "/issues")
-
-	ret := "<h2>" + b.Title + "</h2><ol>"
-	for _, issue := range issues {
-		var dir bugs.Directory = bugs.Directory(issue.Name())
-		ret += fmt.Sprintf("<li><a href=\"/issues/%s\">%s</a></li>\n", (dir), dir.ToTitle())
-	}
-	ret += "</ol>"
-
-	return ret
-}*/

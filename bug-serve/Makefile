@@ -1,4 +1,4 @@
-all: Generate React Go
+all: Generate Go serve
 
 Generate:
 	go generate
