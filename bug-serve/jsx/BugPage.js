@@ -1,4 +1,24 @@
 var BugPage = React.createClass({
+    loadPreviousBug: function() {
+        for(var i = 1; i < this.props.AllBugs.length; i += 1) {
+            var bugCandidate = this.props.AllBugs[i];
+            if (bugCandidate === this.props.CurrentBug) {
+                this.props.LoadBug(this.props.AllBugs[i-1]);
+                return
+            }
+        }
+        return;
+    },
+    loadNextBug: function() {
+        for(var i = 0; i < this.props.AllBugs.length - 1 ; i += 1) {
+            var bugCandidate = this.props.AllBugs[i];
+            if (bugCandidate === this.props.CurrentBug) {
+                this.props.LoadBug(this.props.AllBugs[i+1]);
+                return
+            }
+        }
+        return;
+    },
 	render: function() {
         var fieldRow = function(name, value) {
             if (value) {
@@ -11,13 +31,26 @@ var BugPage = React.createClass({
                     <div className="col-md-4 badge">
                         {value}
                     </div>
-                    <div classname="col-md-5">&nbsp;</div>
+                    <div className="col-md-5">&nbsp;</div>
                 </div>);
             }
             return;
         }, priority = fieldRow("Priority", this.props.Priority),
            statusRow = fieldRow("Status", this.props.Status),
            milestone = fieldRow("Milestone", this.props.Milestone);
+        var prevClass, nextClass;
+        if (this.props.AllBugs.length > 1 && 
+                this.props.AllBugs[0] != this.props.CurrentBug) {
+            prevClass = "previous";
+        } else {
+            prevClass = "previous disabled";
+        }
+        if (this.props.AllBugs.length > 1 && 
+                this.props.AllBugs[this.props.AllBugs.length-1] != this.props.CurrentBug) {
+            nextClass = "next";
+        } else {
+            nextClass = "next disabled";
+        }
 		return (
 		<div>
 			<div className="col-md-8 container">
@@ -39,9 +72,9 @@ var BugPage = React.createClass({
 			</div>
             <div className="col-md-12">
                 <ul className="pager">
-                    <li className="previous"><a href="#"><span aria-hidden="true">&larr;</span> Previous</a></li>
+                    <li className={prevClass}><a href="#" onClick={this.loadPreviousBug}><span aria-hidden="true">&larr;</span> Previous</a></li>
                     <li className="return"><a href="#" onClick={this.props.onBack}>Return to list</a></li>
-                    <li className="next"><a href="#">Next <span aria-hidden="true">&rarr;</span></a></li>
+                    <li className={nextClass}><a href="#" onClick={this.loadNextBug}>Next <span aria-hidden="true">&rarr;</span></a></li>
                 </ul>
             </div>
 		</div>);

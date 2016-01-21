@@ -17,16 +17,22 @@ var BugApp = React.createClass({
             "Settings" : {},
 			"Title" : "Open Issues",
 			"Bugs": [],
-			"SelectedBugJSON" : null
+			"SelectedBug" : null,
+            "SelectedBugDir" : ""
 		}
 	},
-	selectBugHandler: function(e) {
-		e.preventDefault();
-		var bug = e.currentTarget.textContent;
+    loadBug: function(bug) {
 		var that = this;
 		AjaxGet("/issues/" + bug + "/", function(response) {
-			that.setState({SelectedBug : JSON.parse(response)});
+			that.setState({
+                SelectedBug : JSON.parse(response),
+                "SelectedBugDir" : bug
+            });
 		});
+    },
+	selectBugHandler: function(e) {
+		e.preventDefault();
+        this.loadBug(e.currentTarget.textContent);
 	},
 	resetSelected: function() {
 		this.setState({ "SelectedBug" : null});
@@ -44,7 +50,9 @@ var BugApp = React.createClass({
                 Tags={this.state.SelectedBug.Tags}
                 onBack={this.resetSelected}
                 AllBugs={this.state.Bugs}
+                CurrentBug={this.state.SelectedBugDir}
                 onOtherBugClicked={this.selectBugHandler}
+                LoadBug={this.loadBug}
                 />
 		} else {
 			content = <BugList 
