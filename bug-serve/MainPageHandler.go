@@ -19,6 +19,7 @@ func (m MainPageHandler) Get(r *http.Request, p map[string]interface{}) (string,
 			// React
 			"https://cdnjs.cloudflare.com/ajax/libs/react/0.14.3/react.js",
 			"https://cdnjs.cloudflare.com/ajax/libs/react/0.14.3/react-dom.js",
+            "/js/marked.min.js",
 			"/js/BugApp.js",
 			"/js/BugList.js",
 			"/js/BugPage.js",

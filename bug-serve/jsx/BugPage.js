@@ -1,4 +1,10 @@
 var BugPage = React.createClass({
+    componentDidMount: function() {
+        this.refs.desc.innerHTML = marked(this.props.Description)
+    },
+    componentDidUpdate: function() {
+        this.refs.desc.innerHTML = marked(this.props.Description)
+    },
     loadPreviousBug: function() {
         for(var i = 1; i < this.props.AllBugs.length; i += 1) {
             var bugCandidate = this.props.AllBugs[i];
@@ -56,7 +62,7 @@ var BugPage = React.createClass({
 			<div className="col-md-8 container">
                 <div className="jumbotron bugsummary">
                     <h2>{this.props.Title}</h2>
-                    <div>{this.props.Description}</div>
+                    <div ref="desc">{this.props.Description}</div>
                 </div>
                 <div className="fields">
                     {priority}
