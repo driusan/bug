@@ -1,9 +1,16 @@
 var BugPage = React.createClass({
     componentDidMount: function() {
-        this.refs.desc.innerHTML = marked(this.props.Description)
+        if(this.refs.desc) {
+            this.refs.desc.innerHTML = marked(this.props.Description)
+        }
+        this.setState({
+            "Editing" : false
+        });
     },
     componentDidUpdate: function() {
-        this.refs.desc.innerHTML = marked(this.props.Description)
+        if(this.refs.desc) {
+            this.refs.desc.innerHTML = marked(this.props.Description)
+        }
     },
     loadPreviousBug: function() {
         for(var i = 1; i < this.props.AllBugs.length; i += 1) {
@@ -24,6 +31,28 @@ var BugPage = React.createClass({
             }
         }
         return;
+    },
+    getInitialState: function() {
+        return {
+            "Editing" : false
+        }
+    },
+    editCurrentBug: function() {
+        this.setState({
+            "Editing" : true
+        });
+    },
+    cancelEditting: function() {
+        this.setState({
+            "Editing" : false
+        });
+    },
+    onOtherBugClicked: function(e) {
+        this.setState({
+            "Editing" : false
+        });
+
+        this.props.onOtherBugClicked(e)
     },
 	render: function() {
         var fieldRow = function(name, value) {
@@ -57,12 +86,25 @@ var BugPage = React.createClass({
         } else {
             nextClass = "next disabled";
         }
+
+        var descDiv;
+        if (this.state.Editing === true) {
+            descDiv = (<div>
+                <textarea className="col-md-12" rows="30" defaultValue={this.props.Description} />
+                <div className="row">
+                    <button>Save</button>
+                    <button onClick={this.cancelEditting}>Cancel</button>
+                </div>
+            </div>);
+        } else {
+            descDiv = <div ref="desc" onClick={this.editCurrentBug}>{this.props.Description}</div>
+        }
 		return (
 		<div>
 			<div className="col-md-8 container">
                 <div className="jumbotron bugsummary">
                     <h2>{this.props.Title}</h2>
-                    <div ref="desc">{this.props.Description}</div>
+                    {descDiv}
                 </div>
                 <div className="fields">
                     {priority}
@@ -73,7 +115,7 @@ var BugPage = React.createClass({
 			<div className="col-md-4">
 				<BugList Title="Other Issues" 
 					Bugs={this.props.AllBugs}
-					onBugClicked={this.props.onOtherBugClicked}
+					onBugClicked={this.onOtherBugClicked}
 				/>
 			</div>
             <div className="col-md-12">
