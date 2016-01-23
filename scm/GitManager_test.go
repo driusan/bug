@@ -36,7 +36,8 @@ type GitTester struct {
 func (t GitTester) GetLogs() ([]Commit, error) {
 	logs, err := runCmd("git", "log", "--oneline", "--reverse", "-z")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error retrieving git logs: %s", logs)
+		wd, _ := os.Getwd()
+		fmt.Fprintf(os.Stderr, "Error retrieving git logs: %s in directory %s\n", logs, wd)
 		return nil, err
 	}
 	logMsgs := strings.Split(logs, "\000")
@@ -81,7 +82,7 @@ func (t *GitTester) Setup() error {
 		return err
 	}
 
-	out, err := runCmd("git", "init", ".")
+	out, err := runCmd("git", "init")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error initializing git: %s", out)
 		return err
@@ -111,10 +112,6 @@ func (m GitTester) GetManager() SCMHandler {
 }
 
 func TestGitBugRenameCommits(t *testing.T) {
-	if os.Getenv("TRAVIS") == "true" && os.Getenv("TRAVIS_OS_NAME") == "linux" {
-		t.Skip("Skipping test which fails only under Travis for unknown reasons..")
-		return
-	}
 	gm := GitTester{}
 	gm.handler = GitManager{}
 
