@@ -38,11 +38,12 @@ func (a GitManager) getDeletedIdentifiers(dir bugs.Directory) []string {
 			continue
 		}
 		if file[0:1] == "D" && strings.HasSuffix(file, "Identifier") {
-			ghRegex := regexp.MustCompile("(?im)^-Github:(\\s*)(.*)(\\s*)$^")
+			ghRegex := regexp.MustCompile("(?im)^-Github:(.*)$")
 			diff := exec.Command("git", "diff", "--staged", "--", file[3:])
 			diffout, _ := diff.CombinedOutput()
-			if matches := ghRegex.FindStringSubmatch(string(diffout)); len(matches) > 2 {
-				retVal = append(retVal, matches[2])
+			//fmt.Printf("Output: %s", diffout)
+			if matches := ghRegex.FindStringSubmatch(string(diffout)); len(matches) > 1 {
+				retVal = append(retVal, strings.TrimSpace(matches[1]))
 			}
 		}
 	}
