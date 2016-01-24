@@ -12,6 +12,9 @@ func TestDetectGit(t *testing.T) {
 	gdir, err := ioutil.TempDir("", "gitdetect")
 	if err == nil {
 		os.Chdir(gdir)
+		// Hack to get around the fact that /tmp is a symlink on
+		// OS X, and it causes the directory checks to fail..
+		gdir, _ = os.Getwd()
 		defer os.RemoveAll(gdir)
 	} else {
 		t.Error("Failed creating temporary directory for detect")
@@ -60,6 +63,9 @@ func TestDetectHg(t *testing.T) {
 	gdir, err := ioutil.TempDir("", "hgdetect")
 	if err == nil {
 		os.Chdir(gdir)
+		// Hack to get around the fact that /tmp is a symlink on
+		// OS X, and it causes the directory checks to fail..
+		gdir, _ = os.Getwd()
 		defer os.RemoveAll(gdir)
 	} else {
 		t.Error("Failed creating temporary directory for detect")
