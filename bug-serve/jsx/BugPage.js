@@ -90,7 +90,7 @@ var BugPage = React.createClass({
         var descDiv;
         if (this.state.Editing === true) {
             descDiv = (<div>
-                <textarea className="col-md-12" rows="30" defaultValue={this.props.Description} />
+                <textarea className="col-md-12" rows="16" defaultValue={this.props.Description} />
                 <div className="row">
                     <button>Save</button>
                     <button onClick={this.cancelEditting}>Cancel</button>
