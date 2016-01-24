@@ -254,3 +254,12 @@ func (b Bug) Identifier() string {
 func (b Bug) SetIdentifier(newValue string) error {
 	return b.setField("Identifier", newValue)
 }
+
+func New(title string) (*Bug, error) {
+	expectedDir := GetIssuesDir() + TitleToDir(title)
+	err := os.Mkdir(string(expectedDir), 0755)
+	if err != nil {
+		return nil, err
+	}
+	return &Bug{Dir: expectedDir}, nil
+}

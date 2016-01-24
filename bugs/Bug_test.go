@@ -2,6 +2,8 @@ package bugs
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -36,4 +38,27 @@ func TestTitleToDirectory(t *testing.T) {
 	assertDirectory("Test--TripleDash", "Test---TripleDash")
 	assertDirectory("Test --WithSpace", "Test_--WithSpace")
 	assertDirectory("Test - What", "Test_-_What")
+}
+
+func TestNewBug(t *testing.T) {
+	var gdir string
+	gdir, err := ioutil.TempDir("", "newbug")
+	if err == nil {
+		os.Chdir(gdir)
+		// Hack to get around the fact that /tmp is a symlink on
+		// OS X, and it causes the directory checks to fail..
+		gdir, _ = os.Getwd()
+		defer os.RemoveAll(gdir)
+	} else {
+		t.Error("Failed creating temporary directory for detect")
+		return
+	}
+	os.Mkdir("issues", 0755)
+	b, err := New("I am a test")
+	if err != nil || b == nil {
+		t.Error("Unexpected error when creating New bug" + err.Error())
+	}
+	if b.Dir != GetIssuesDir()+TitleToDir("I am a test") {
+		t.Error("Unexpected directory when creating New bug")
+	}
 }
