@@ -32,6 +32,10 @@ func GetRootDir() Directory {
 }
 
 func GetIssuesDir() Directory {
+	root := GetRootDir()
+	if root == "" {
+		return root
+	}
 	return GetRootDir() + "/issues/"
 }
 
