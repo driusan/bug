@@ -71,6 +71,7 @@ func (m BugPageHandler) Get(r *http.Request, extras map[string]interface{}) (str
 	}
 	return "", URLHandler.NotFoundError{}
 }
+
 func (m BugPageHandler) Put(r *http.Request, extras map[string]interface{}) (string, error) {
 	urlChunks := parseURL(r.URL)
 	switch len(urlChunks) {
@@ -93,6 +94,7 @@ func (m BugPageHandler) Put(r *http.Request, extras map[string]interface{}) (str
 	case "Description":
 		if val, err := ioutil.ReadAll(r.Body); err == nil {
 			b.SetDescription(string(val))
+			return "", nil
 		} else {
 			panic(err.Error())
 		}
@@ -101,9 +103,25 @@ func (m BugPageHandler) Put(r *http.Request, extras map[string]interface{}) (str
 	return "", URLHandler.BadRequestError{}
 }
 
-func (m BugPageHandler) ETag(u *url.URL, o map[string]interface{}) (URLHandler.ETag, error) {
+func (m BugPageHandler) Delete(r *http.Request, extras map[string]interface{}) (string, error) {
+	urlChunks := parseURL(r.URL)
+	if len(urlChunks) != 1 {
+		return "", URLHandler.BadRequestError{}
+	}
+
+	b, err := bugs.LoadBugByDirectory(urlChunks[0])
+	if err != nil {
+		return "", URLHandler.NotFoundError{}
+	}
+
+	if err := b.Remove(); err != nil {
+		panic("Could not delete bug.")
+	}
 	return "", nil
+}
+func (m BugPageHandler) ETag(u *url.URL, o map[string]interface{}) (URLHandler.ETag, error) {
 	urlChunks := parseURL(u)
+	fmt.Printf("Calculating ETag for %s => %s\n", u, urlChunks)
 	if len(urlChunks) == 0 {
 		return URLHandler.ETag(""), nil
 	}

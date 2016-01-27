@@ -1,8 +1,8 @@
 package bugs
-import (
-    "encoding/json"
-)
 
+import (
+	"encoding/json"
+)
 
 func (b Bug) ToJSONString() (string, error) {
 	bJSONStruct := struct {
@@ -24,8 +24,8 @@ func (b Bug) ToJSONString() (string, error) {
 	}
 
 	bJSON, err := json.Marshal(bJSONStruct)
-    if err != nil {
-        return "", err
-    }
+	if err != nil {
+		return "", err
+	}
 	return string(bJSON), nil
 }

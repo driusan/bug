@@ -10,6 +10,7 @@ import (
 )
 
 var NoDescriptionError = errors.New("No description provided")
+var NotFoundError = errors.New("Could not find bug")
 
 type Bug struct {
 	Dir      Directory

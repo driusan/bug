@@ -47,6 +47,33 @@ var BugPage = React.createClass({
             "Editing" : false
         });
     },
+    saveCurrentBug: function(e) {
+        var editClosure = function(ctx) {
+            return function(e) {
+                ctx.setState({"Editing" : false});
+                ctx.props.LoadBug(ctx.props.CurrentBug);
+            }
+        }
+        AjaxPut(
+            "/issues/" + this.props.CurrentBug + "/Description",
+            this.refs.editdesc.value,
+            editClosure(this),
+            this.props.CurrentETag
+        );
+
+    },
+    deleteCurrentBug: function() {
+        var that = this;
+        AjaxDelete(
+            "/issues/" + this.props.CurrentBug,
+            function() {
+                if (that.props.onDelete) {
+                    that.props.onDelete();
+                }
+            },
+            this.props.CurrentETag
+        );
+    },
     onOtherBugClicked: function(e) {
         this.setState({
             "Editing" : false
@@ -90,10 +117,17 @@ var BugPage = React.createClass({
         var descDiv;
         if (this.state.Editing === true) {
             descDiv = (<div>
-                <textarea className="col-md-12" rows="16" defaultValue={this.props.Description} />
                 <div className="row">
-                    <button>Save</button>
-                    <button onClick={this.cancelEditting}>Cancel</button>
+                    <textarea className="col-md-12" rows="16" defaultValue={this.props.Description} ref="editdesc" />
+                </div>
+                <div className="row">
+                <div className="col-md-10">
+                    <button className="btn btn-default" onClick={this.saveCurrentBug}>Save</button>
+                    <button className="btn btn-default" onClick={this.cancelEditting}>Cancel</button>
+                </div>
+                <div className="col-md-2">
+                    <button onClick={this.deleteCurrentBug} className="btn btn-default glyphicon glyphicon-remove">Delete</button>
+                    </div>
                 </div>
             </div>);
         } else {

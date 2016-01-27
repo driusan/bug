@@ -54,3 +54,11 @@ func (b Bug) Close() error {
 	}
 	return nil
 }
+
+func (b *Bug) Remove() error {
+	dir := b.GetDirectory()
+	if dir != "" {
+		return os.RemoveAll(string(dir))
+	}
+	return NotFoundError
+}
