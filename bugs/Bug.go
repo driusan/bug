@@ -58,24 +58,24 @@ func (b *Bug) LoadBug(dir Directory) {
 }
 
 func (b Bug) Title(options string) string {
-	var checkOption = func(o string) bool {
+	var hasOption = func(o string) bool {
 		return strings.Contains(options, o)
 	}
 
 	title := b.Dir.GetShortName().ToTitle()
 
-	if id := b.Identifier(); checkOption("identifier") && id != "" {
+	if id := b.Identifier(); hasOption("identifier") && id != "" {
 		title = fmt.Sprintf("(%s) %s", id, title)
 	}
-	if strings.Contains(options, "tags") {
+	if hasOption("tags") {
 		tags := b.StringTags()
 		if len(tags) > 0 {
 			title += fmt.Sprintf(" (%s)", strings.Join(tags, ", "))
 		}
 	}
 
-	priority := checkOption("priority") && b.Priority() != ""
-	status := checkOption("status") && b.Status() != ""
+	priority := hasOption("priority") && b.Priority() != ""
+	status := hasOption("status") && b.Status() != ""
 	if options == "" {
 		priority = false
 		status = false
