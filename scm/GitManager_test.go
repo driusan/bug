@@ -195,10 +195,11 @@ func TestGitManagerAutoclosingGitHub(t *testing.T) {
 	if msg, err := commits[1].(GitCommit).CommitMessage(); err != nil {
 		t.Error("Error getting git logs while attempting to test GitHub autoclosing")
 	} else {
-		if msg != `Removal commit
-
-Closes #Whitespace, closes #TestBug
-` {
+		closing := func(issue string) bool {
+			return strings.Contains(msg, "Closes #"+issue) ||
+				strings.Contains(msg, ", closes #"+issue)
+		}
+		if !closing("Whitespace") || !closing("TestBug") {
 			fmt.Printf("%s\n", msg)
 			t.Error("GitManager did not autoclose Github issues")
 		}
