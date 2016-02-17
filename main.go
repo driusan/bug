@@ -15,6 +15,7 @@ func main() {
 	if bugs.GetRootDir() == "" {
 		fmt.Printf("Could not find issues directory.\n")
 		fmt.Printf("Make sure either the PMIT environment variable is set, or a parent directory of your working directory has an issues folder.\n")
+		fmt.Println("(If you just started new repo, you probably want to create directory named `issues`).")
 		fmt.Printf("Aborting.\n")
 		os.Exit(2)
 	}
