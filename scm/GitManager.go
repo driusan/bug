@@ -20,25 +20,21 @@ func (a GitManager) Purge(dir bugs.Directory) error {
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-
-	if err != nil {
-		return err
-	}
-	return nil
+	return cmd.Run()
 }
 
-func (a GitManager) getDeletedIdentifiers(dir bugs.Directory) []string {
+func (a GitManager) closedGithubIssues(dir bugs.Directory) []string {
+	ghRegex := regexp.MustCompile("(?im)^-Github:(.*)$")
 	cmd := exec.Command("git", "status", "-z", "--porcelain", string(dir))
 	out, _ := cmd.CombinedOutput()
 	files := strings.Split(string(out), "\000")
-	retVal := []string{}
+	var retVal []string
 	for _, file := range files {
 		if file == "" {
 			continue
 		}
-		if file[0:1] == "D" && strings.HasSuffix(file, "Identifier") {
-			ghRegex := regexp.MustCompile("(?im)^-Github:(.*)$")
+
+		if file[:1] == "D" && strings.HasSuffix(file, "Identifier") {
 			diff := exec.Command("git", "diff", "--staged", "--", file[3:])
 			diffout, _ := diff.CombinedOutput()
 			//fmt.Printf("Output: %s", diffout)
@@ -49,6 +45,7 @@ func (a GitManager) getDeletedIdentifiers(dir bugs.Directory) []string {
 	}
 	return retVal
 }
+
 func (a GitManager) Commit(dir bugs.Directory, commitMsg string) error {
 	cmd := exec.Command("git", "add", "-A", string(dir))
 	if err := cmd.Run(); err != nil {
@@ -57,26 +54,22 @@ func (a GitManager) Commit(dir bugs.Directory, commitMsg string) error {
 
 	}
 
-	var deletedIdentifiers []string
-	if a.Autoclose == true {
-		deletedIdentifiers = a.getDeletedIdentifiers(dir)
-	} else {
-		deletedIdentifiers = []string{}
+	var closesGH string
+	if a.Autoclose {
+		ci := a.closedGithubIssues(dir)
+		if len(ci) > 0 {
+			closesGH = fmt.Sprintf("\nCloses %s\n", strings.Join(ci, ", closes "))
+		}
 	}
-	if len(deletedIdentifiers) > 0 {
-		commitMsg = fmt.Sprintf("%s\n\nCloses %s\n", commitMsg, strings.Join(a.getDeletedIdentifiers(dir), ", closes "))
-	} else {
-		commitMsg = fmt.Sprintf("%s\n", commitMsg)
-	}
+
 	file, err := ioutil.TempFile("", "bugCommit")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Could not create temporary file.\nNothing commited.\n")
 		return err
 	}
-	defer func() {
-		os.Remove(file.Name())
-	}()
-	file.WriteString(commitMsg)
+	defer os.Remove(file.Name())
+
+	fmt.Fprintf(file, "%s\n%s", commitMsg, closesGH)
 	cmd = exec.Command("git", "commit", "-o", string(dir), "-F", file.Name(), "-q")
 	if err := cmd.Run(); err != nil {
 		// If nothing was added commit will have an error,
