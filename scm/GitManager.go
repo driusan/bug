@@ -70,7 +70,8 @@ func (a GitManager) Commit(dir bugs.Directory, commitMsg string) error {
 	}
 	file, err := ioutil.TempFile("", "bugCommit")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Could not create file for commit message.\n")
+		fmt.Fprintf(os.Stderr, "Could not create temporary file.\nNothing commited.\n")
+		return err
 	}
 	defer func() {
 		os.Remove(file.Name())
