@@ -38,10 +38,14 @@ func DetectSCM(options map[string]bool) (SCMHandler, bugs.Directory, error) {
 
 	dirFound, scmtype := walkAndSearch(wd, []string{".git", ".hg"})
 	if dirFound != "" && scmtype == ".git" {
-		if val, exists := options["autoclose"]; exists && val == true {
-			return GitManager{Autoclose: true}, bugs.Directory(dirFound), nil
+		var gm GitManager
+		if val, ok := options["autoclose"]; ok {
+			gm.Autoclose = val
 		}
-		return GitManager{Autoclose: false}, bugs.Directory(dirFound), nil
+		if val, ok := options["use_bug_prefix"]; ok {
+			gm.UseBugPrefix = val
+		}
+		return gm, bugs.Directory(dirFound), nil
 	}
 	if dirFound != "" && scmtype == ".hg" {
 		return HgManager{}, bugs.Directory(dirFound), nil

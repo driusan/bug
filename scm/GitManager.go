@@ -12,7 +12,8 @@ import (
 )
 
 type GitManager struct {
-	Autoclose bool
+	Autoclose    bool
+	UseBugPrefix bool
 }
 
 func (a GitManager) Purge(dir bugs.Directory) error {
@@ -85,7 +86,6 @@ func (a GitManager) currentStatus(dir bugs.Directory) (closedOnGitHub []string, 
 			continue
 		}
 
-		// TODO: check if path starts with $issues
 		path := file[3:]
 		op := file[0]
 		desc := strings.HasSuffix(path, "/Description")
@@ -168,9 +168,6 @@ func (a GitManager) Commit(dir bugs.Directory, backupCommitMsg string) error {
 	}
 
 	msg := a.commitMsg(dir)
-	if len(msg) == 0 {
-		msg = []byte(backupCommitMsg)
-	}
 
 	file, err := ioutil.TempFile("", "bugCommit")
 	if err != nil {
@@ -178,7 +175,15 @@ func (a GitManager) Commit(dir bugs.Directory, backupCommitMsg string) error {
 	}
 	defer os.Remove(file.Name())
 
-	fmt.Fprintf(file, "%s\n", msg)
+	if len(msg) == 0 {
+		fmt.Fprintf(file, "%s\n", backupCommitMsg)
+	} else {
+		var pref string
+		if a.UseBugPrefix {
+			pref = "bug: "
+		}
+		fmt.Fprintf(file, "%s%s\n", pref, msg)
+	}
 	cmd = exec.Command("git", "commit", "-o", string(dir), "-F", file.Name(), "-q")
 	if err := cmd.Run(); err != nil {
 		// If nothing was added commit will have an error,
