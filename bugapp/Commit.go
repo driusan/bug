@@ -13,6 +13,7 @@ func Commit(args ArgumentList) {
 	} else {
 		options["autoclose"] = false
 	}
+	options["use_bug_prefix"] = true // SCM will ignore this option if it doesn't know it
 
 	scm, _, err := scm.DetectSCM(options)
 	if err != nil {
