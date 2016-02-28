@@ -26,7 +26,7 @@ func listTags(files []os.FileInfo, args ArgumentList) {
 		}
 	}
 }
-func List(args ArgumentList, stdout *os.File) {
+func List(args ArgumentList) {
 	issues, _ := ioutil.ReadDir(string(bugs.GetIssuesDir()))
 
 	var wantTags bool = false
