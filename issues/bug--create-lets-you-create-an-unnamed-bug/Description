@@ -1,0 +1,4 @@
+$ bug create --status open --priority 0 --identifier 1
+Created issue:
+$ ls issues
+Description Identifier Priority   Status
