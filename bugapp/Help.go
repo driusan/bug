@@ -35,6 +35,7 @@ time as creating it. Valid options are:
     --priority   Sets the priority to the next parameter
     --milestone  Sets the milestone to the next parameter
     --identifier Sets the identifier to the next parameter
+    --generate-id Automatically generate a stable bug identifier
 `, os.Args[0])
 	case "list":
 		fmt.Printf("Usage: " + os.Args[0] + " list [BugIDs]\n")
