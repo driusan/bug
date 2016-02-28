@@ -22,7 +22,7 @@ func githubImport(user, repo string) {
 	for lastPage := false; lastPage != true; {
 		for _, issue := range issues {
 			if issue.PullRequestLinks == nil {
-				b := bugs.Bug{issueDir + bugs.TitleToDir(*issue.Title)}
+				b := bugs.Bug{Dir: issueDir + bugs.TitleToDir(*issue.Title)}
 				if dir := b.GetDirectory(); dir != "" {
 					os.Mkdir(string(dir), 0755)
 				}

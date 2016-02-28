@@ -124,6 +124,34 @@ deleted file mode 100644
 }
 func TestHgFilesOutsideOfBugNotCommited(t *testing.T) {
 	tester := HgTester{}
-	tester.handler = GitManager{}
+	tester.handler = HgManager{}
 	runtestCommitDirtyTree(&tester, t)
+}
+
+func TestHgGetType(t *testing.T) {
+	m := HgManager{}
+
+	if m.GetSCMType() != "hg" {
+		t.Error("Incorrect type for HgManager")
+	}
+}
+
+func TestHgPurge(t *testing.T) {
+	// This should eventually be replaced by something more
+	// like:
+	//      m := HgTester{}
+	//      m.handler = HgManager{}
+	//      runtestPurgeFiles(&m, t)
+	// but since the current behaviour is to return a not
+	// supported error, that would evidently fail..
+	m := HgManager{}
+	err := m.Purge("/tmp/imaginaryHgRepo")
+
+	switch err.(type) {
+	case UnsupportedType:
+		// This is valid, do nothing.
+	default:
+		t.Error("Unexpected return value for Hg purge function.")
+	}
+
 }

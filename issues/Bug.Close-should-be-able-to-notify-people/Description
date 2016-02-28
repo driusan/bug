@@ -1,0 +1,6 @@
+When a bug is closed with bug.Close(), instead of
+just closing the file descriptor, there should
+be a method of notifying things other than the VCS
+that a bug was created (ie. email, send a post
+to a url, etc) so make it more useful to embed
+the bugs library into other applications.

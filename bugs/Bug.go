@@ -1,6 +1,7 @@
 package bugs
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -8,8 +9,12 @@ import (
 	"strings"
 )
 
+var NoDescriptionError = errors.New("No description provided")
+var NotFoundError = errors.New("Could not find bug")
+
 type Bug struct {
-	Dir Directory
+	Dir      Directory
+	descFile *os.File
 }
 
 type Tag string
@@ -53,24 +58,24 @@ func (b *Bug) LoadBug(dir Directory) {
 }
 
 func (b Bug) Title(options string) string {
-	var checkOption = func(o string) bool {
+	var hasOption = func(o string) bool {
 		return strings.Contains(options, o)
 	}
 
 	title := b.Dir.GetShortName().ToTitle()
 
-	if id := b.Identifier(); checkOption("identifier") && id != "" {
+	if id := b.Identifier(); hasOption("identifier") && id != "" {
 		title = fmt.Sprintf("(%s) %s", id, title)
 	}
-	if strings.Contains(options, "tags") {
+	if hasOption("tags") {
 		tags := b.StringTags()
 		if len(tags) > 0 {
 			title += fmt.Sprintf(" (%s)", strings.Join(tags, ", "))
 		}
 	}
 
-	priority := checkOption("priority") && b.Priority() != ""
-	status := checkOption("status") && b.Status() != ""
+	priority := hasOption("priority") && b.Priority() != ""
+	status := hasOption("status") && b.Status() != ""
 	if options == "" {
 		priority = false
 		status = false
@@ -85,15 +90,21 @@ func (b Bug) Title(options string) string {
 	}
 	return title
 }
+
 func (b Bug) Description() string {
-	dir := b.GetDirectory()
-	desc, err := ioutil.ReadFile(string(dir) + "/Description")
+	value, err := ioutil.ReadAll(&b)
 
 	if err != nil {
-		return "No description provided"
+		if err == NoDescriptionError {
+			return "No description provided."
+		}
+		panic("Unhandled error" + err.Error())
 	}
 
-	return string(desc)
+	if string(value) == "" {
+		return "No description provided."
+	}
+	return string(value)
 }
 func (b Bug) SetDescription(val string) error {
 	dir := b.GetDirectory()
@@ -243,4 +254,13 @@ func (b Bug) Identifier() string {
 
 func (b Bug) SetIdentifier(newValue string) error {
 	return b.setField("Identifier", newValue)
+}
+
+func New(title string) (*Bug, error) {
+	expectedDir := GetIssuesDir() + TitleToDir(title)
+	err := os.Mkdir(string(expectedDir), 0755)
+	if err != nil {
+		return nil, err
+	}
+	return &Bug{Dir: expectedDir}, nil
 }

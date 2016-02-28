@@ -26,7 +26,7 @@ func listTags(files []os.FileInfo, args ArgumentList) {
 		}
 	}
 }
-func List(args ArgumentList, stdout *os.File) {
+func List(args ArgumentList) {
 	issues, _ := ioutil.ReadDir(string(bugs.GetIssuesDir()))
 
 	var wantTags bool = false
@@ -42,7 +42,7 @@ func List(args ArgumentList, stdout *os.File) {
 				continue
 			}
 			var dir bugs.Directory = bugs.GetIssuesDir() + bugs.Directory(issue.Name())
-			b := bugs.Bug{dir}
+			b := bugs.Bug{Dir: dir}
 			name := getBugName(b, idx)
 			if wantTags == false {
 				fmt.Printf("%s: %s\n", name, b.Title(""))

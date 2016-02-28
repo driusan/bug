@@ -6,6 +6,6 @@ import (
 )
 
 func Version() {
-	fmt.Printf("%s version 0.3.1\n", os.Args[0])
+	fmt.Printf("%s version 0.4\n", os.Args[0])
 
 }

@@ -45,6 +45,13 @@ func Create(Args ArgumentList) {
 		identifier = generateID(strings.Join(Args, " "))
 	}
 
+	// It's possible there were arguments provided, but still no title
+	// included. Do another check before trying to create the bug.
+	if strings.TrimSpace(strings.Join(Args, " ")) == "" {
+		fmt.Fprintf(os.Stderr, "Usage: %s create [-n] Bug Description\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "\nNo Bug Description provided.\n")
+		return
+	}
 	var bug bugs.Bug
 	bug = bugs.Bug{
 		Dir: bugs.GetIssuesDir() + bugs.TitleToDir(strings.Join(Args, " ")),

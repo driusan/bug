@@ -1,5 +1,10 @@
 language: go
-sudo: false
+sudo: required
+dist: trusty
+    # Trusty Tahr seems to be the only way to get
+    # a modern version of git on Travis. Once they've
+    # upgraded with non-beta, this can be removed along
+    # with sudo: required..
 os:
     - linux
     - osx
@@ -8,10 +13,11 @@ go:
 addons:
     apt:
         packages:
-            - git-2.0
+            - git
     
 
 before_install:
+    - git config -l
     - git --version
     - hg --version
 

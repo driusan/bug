@@ -32,6 +32,15 @@ func FindBugsByTag(tags []string) []Bug {
 	return []Bug{}
 }
 
+func LoadBugByDirectory(dir string) (*Bug, error) {
+	_, err := ioutil.ReadDir(string(GetRootDir()) + "/issues/" + dir)
+	if err != nil {
+		return nil, BugNotFoundError("Could not find bug " + dir)
+	}
+	bug := Bug{}
+	bug.LoadBug(GetIssuesDir() + Directory(dir))
+	return &bug, nil
+}
 func LoadBugByHeuristic(id string) (*Bug, error) {
 	issues, _ := ioutil.ReadDir(string(GetRootDir()) + "/issues")
 

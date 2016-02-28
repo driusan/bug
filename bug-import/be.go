@@ -79,7 +79,7 @@ func beImportBug(identifier, issuesDir, fullbepath string) {
 
 	bugdir := bugs.TitleToDir(beBug.Summary)
 
-	b := bugs.Bug{bugs.Directory(issuesDir) + bugdir}
+	b := bugs.Bug{Dir: bugs.Directory(issuesDir) + bugdir}
 	if dir := b.GetDirectory(); dir != "" {
 		os.Mkdir(string(dir), 0755)
 	}

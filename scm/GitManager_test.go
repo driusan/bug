@@ -2,6 +2,7 @@ package scm
 
 import (
 	"fmt"
+	"github.com/driusan/bug/bugs"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -23,6 +24,10 @@ func (c GitCommit) Diff() (string, error) {
 	return runCmd("git", "show", "--pretty=format:%b", c.CommitID())
 }
 
+func (c GitCommit) CommitMessage() (string, error) {
+	return runCmd("git", "show", "--pretty=format:%B", "--quiet", c.CommitID())
+}
+
 type GitTester struct {
 	handler SCMHandler
 	workdir string
@@ -31,7 +36,8 @@ type GitTester struct {
 func (t GitTester) GetLogs() ([]Commit, error) {
 	logs, err := runCmd("git", "log", "--oneline", "--reverse", "-z")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error retrieving git logs: %s", logs)
+		wd, _ := os.Getwd()
+		fmt.Fprintf(os.Stderr, "Error retrieving git logs: %s in directory %s\n", logs, wd)
 		return nil, err
 	}
 	logMsgs := strings.Split(logs, "\000")
@@ -76,13 +82,12 @@ func (t *GitTester) Setup() error {
 		return err
 	}
 
-	out, err := runCmd("git", "init", ".")
+	out, err := runCmd("git", "init")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error initializing git: %s", out)
 		return err
 	}
 
-	t.handler = GitManager{}
 	return nil
 }
 func (t GitTester) TearDown() {
@@ -107,10 +112,6 @@ func (m GitTester) GetManager() SCMHandler {
 }
 
 func TestGitBugRenameCommits(t *testing.T) {
-	if os.Getenv("TRAVIS") == "true" && os.Getenv("TRAVIS_OS_NAME") == "linux" {
-		t.Skip("Skipping test which fails only under Travis for unknown reasons..")
-		return
-	}
 	gm := GitTester{}
 	gm.handler = GitManager{}
 
@@ -142,5 +143,65 @@ func TestGitManagerGetType(t *testing.T) {
 
 	if getType := manager.GetSCMType(); getType != "git" {
 		t.Error("Incorrect SCM Type for GitManager. Got " + getType)
+	}
+}
+
+func TestGitManagerPurge(t *testing.T) {
+	gm := GitTester{}
+	gm.handler = GitManager{}
+	runtestPurgeFiles(&gm, t)
+}
+
+func TestGitManagerAutoclosingGitHub(t *testing.T) {
+	// This test is specific to gitmanager, since GitHub
+	// only supports git..
+	tester := GitTester{}
+	tester.handler = GitManager{Autoclose: true}
+
+	err := tester.Setup()
+	if err != nil {
+		panic("Something went wrong trying to initialize git:" + err.Error())
+	}
+	defer tester.TearDown()
+	m := tester.GetManager()
+	if m == nil {
+		t.Error("Could not get manager")
+		return
+	}
+	os.Mkdir("issues", 0755)
+	runCmd("bug", "create", "-n", "Test", "bug")
+	runCmd("bug", "create", "-n", "Test", "Another", "bug")
+	if err = ioutil.WriteFile("issues/Test-bug/Identifier", []byte("\n\nGitHub:#TestBug"), 0644); err != nil {
+		t.Error("Could not write Identifier file")
+		return
+	}
+	if err = ioutil.WriteFile("issues/Test-Another-bug/Identifier", []byte("\n\nGITHuB:  #Whitespace   "), 0644); err != nil {
+		t.Error("Could not write Identifier file")
+		return
+	}
+
+	// Commit the file, so that we can close it..
+	m.Commit(bugs.Directory(tester.GetWorkDir()+"/issues"), "Adding commit")
+	// Delete the bug
+	os.RemoveAll(tester.GetWorkDir() + "/issues/Test-bug")
+	os.RemoveAll(tester.GetWorkDir() + "/issues/Test-Another-bug")
+	m.Commit(bugs.Directory(tester.GetWorkDir()+"/issues"), "Removal commit")
+
+	commits, err := tester.GetLogs()
+	if len(commits) != 2 || err != nil {
+		t.Error("Error getting git logs while attempting to test GitHub autoclosing")
+		return
+	}
+	if msg, err := commits[1].(GitCommit).CommitMessage(); err != nil {
+		t.Error("Error getting git logs while attempting to test GitHub autoclosing")
+	} else {
+		closing := func(issue string) bool {
+			return strings.Contains(msg, "Closes #"+issue) ||
+				strings.Contains(msg, ", closes #"+issue)
+		}
+		if !closing("Whitespace") || !closing("TestBug") {
+			fmt.Printf("%s\n", msg)
+			t.Error("GitManager did not autoclose Github issues")
+		}
 	}
 }
