@@ -1,3 +1,0 @@
-When PUTing a description to a field that doesn't exist,
-the issue should be created instead of returning a 400
-error.

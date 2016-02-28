@@ -1,3 +1,0 @@
-A PUT of valid JSON to /issues/Bug-Title should create
-Bug-Title if it doesn't exist, and overwrite Bug-Title
-if the JSON is valid and ETag matches
