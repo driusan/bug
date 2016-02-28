@@ -8,12 +8,27 @@ import (
 )
 
 func main() {
-	if bugs.GetRootDir() == "" {
+	var skipRootCheck bool = false
+	switch len(os.Args) {
+	case 0, 1:
+		skipRootCheck = true
+	case 2:
+		if os.Args[1] == "help" {
+			skipRootCheck = true
+		}
+	case 3:
+		if os.Args[2] == "--help" {
+			skipRootCheck = true
+		}
+
+	}
+	if skipRootCheck == false && bugs.GetRootDir() == "" {
 		fmt.Printf("Could not find issues directory.\n")
 		fmt.Printf("Make sure either the PMIT environment variable is set, or a parent directory of your working directory has an issues folder.\n")
 		fmt.Println("(If you just started new repo, you probably want to create directory named `issues`).")
 		fmt.Printf("Aborting.\n")
 		os.Exit(2)
+
 	}
 
 	if len(os.Args) > 1 {
