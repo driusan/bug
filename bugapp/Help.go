@@ -156,7 +156,16 @@ remove the bug from source control.
 
 "%s rm" is an alias for this "%s close"
 `, os.Args[0], os.Args[0], os.Args[0], os.Args[0])
-	case "purge":
+	case "find":
+	    fmt.Printf("Usage: %s find tag value1 [value2 ...]\n", os.Args[0])
+	    fmt.Printf("Usage: %s find status value1 [value2 ...]\n", os.Args[0])
+	    fmt.Printf("Usage: %s find priority value1 [value2 ...]\n", os.Args[0])
+	    fmt.Printf("Usage: %s find milestone value1 [value2 ...]\n\n", os.Args[0])
+		fmt.Printf(
+            `This will search all bugs for multiple tags, statuses, priorities, or milestone.
+The matching bugs will be printed.
+`)
+    case "purge":
 		fmt.Printf("Usage: " + os.Args[0] + " purge\n\n")
 		fmt.Printf(
 			`This will delete any bugs that are not currently tracked by
@@ -300,6 +309,7 @@ identifiers in the system before giving up.
 		fmt.Printf("\tstatus\t   View or edit a bug's status\n")
 		fmt.Printf("\tpriority   View or edit a bug's priority\n")
 		fmt.Printf("\tmilestone  View or edit a bug's milestone\n")
+		fmt.Printf("\tfind\t   Search bugs for a tag, status, priority, or milestone\n")
 
 		fmt.Printf("\nSource control commands:\n")
 		fmt.Printf("\tcommit\t Commit any new, changed or deleted bug to git\n")

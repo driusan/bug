@@ -71,6 +71,8 @@ func main() {
 			bugapp.Commit(os.Args[2:])
 		case "roadmap":
 			bugapp.Roadmap(os.Args[2:])
+		case "find":
+			bugapp.Find(os.Args[2:])
 		case "help":
 			fallthrough
 		default:
