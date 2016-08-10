@@ -24,6 +24,7 @@ Because issues are stored as human readable plaintext files, they branch
 and merge along with the rest of your code, and you can resolve conflicts 
 using your standard tools.
 
+For a demo, see my talk at [GoMTL-01](https://www.youtube.com/watch?v=ysgMlGHtDMo)
 # Installation
 If you have go installed, install the latest released version with:
 
