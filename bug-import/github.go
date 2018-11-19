@@ -5,6 +5,7 @@ import (
 	"github.com/driusan/bug/bugs"
 	"github.com/google/go-github/github"
 	"os"
+	"context"
 )
 
 func githubImport(user, repo string) {
@@ -13,7 +14,7 @@ func githubImport(user, repo string) {
 	opt := &github.IssueListByRepoOptions{
 		ListOptions: github.ListOptions{PerPage: 100},
 	}
-	issues, resp, err := client.Issues.ListByRepo(user, repo, opt)
+	issues, resp, err := client.Issues.ListByRepo(context.Background(), user, repo, opt)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return
@@ -46,7 +47,7 @@ func githubImport(user, repo string) {
 			lastPage = true
 		} else {
 			opt.ListOptions.Page = resp.NextPage
-			issues, resp, err = client.Issues.ListByRepo(user, repo, opt)
+			issues, resp, err = client.Issues.ListByRepo(context.Background(), user, repo, opt)
 		}
 	}
 }
