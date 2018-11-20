@@ -1,5 +1,11 @@
 # Bug
 
+[!GoDoc(https://godoc.org/github.com/driusan/bug?status.svg)](https://godoc.org/github.com/driusan/bug) [![Build Status](https://travis-ci.org/driusan/bug.svg?branch=master)](https://travis-ci.org/driusan/bug) [![Test Coverage](https://codecov.io/gh/driusan/branch/master/graph/badge.svg)](https://codecov.io/gh/driusan/bug)
+
+bug writes code problem reports to plain text files.
+
+bug requires Go version 1.7 or greater.
+
 Bug is an implementation of a distributed issue tracker using
 git (or hg) to manage issues on the filesystem following [poor man's
 issue tracker](https://github.com/driusan/PoormanIssueTracker) conventions.
