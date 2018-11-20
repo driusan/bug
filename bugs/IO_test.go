@@ -1,7 +1,6 @@
 package bugs
 
 import (
-	bugs "."
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -21,7 +20,7 @@ func TestBugWrite(t *testing.T) {
 
 	_, err := b.Write([]byte("Hello there, Mr. Test"))
 	if err != nil {
-		t.Error("Error writing to bug at %s.", b.Dir)
+		t.Errorf("Error writing to bug at %s.", b.Dir)
 	}
 	b.Close()
 
@@ -42,7 +41,7 @@ func TestBugWrite(t *testing.T) {
 }
 
 func ExampleBugWriter() {
-	if b, err := bugs.New("Bug Title"); err != nil {
+	if b, err := New("Bug Title"); err != nil {
 		fmt.Fprintf(b, "This is a bug report.\n")
 		fmt.Fprintf(b, "The bug will be created as necessary.\n")
 	}

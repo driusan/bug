@@ -121,12 +121,10 @@ diff --git a/issues/Test-bug/Description b/issues/Test-bug/Description
 new file mode 100644
 index 0000000..e69de29
 `, `
-diff --git a/issues/Renamed-bug/Description b/issues/Renamed-bug/Description
-new file mode 100644
-index 0000000..e69de29
-diff --git a/issues/Test-bug/Description b/issues/Test-bug/Description
-deleted file mode 100644
-index e69de29..0000000
+diff --git a/issues/Test-bug/Description b/issues/Renamed-bug/Description
+similarity index 100%
+rename from issues/Test-bug/Description
+rename to issues/Renamed-bug/Description
 `}
 
 	runtestRenameCommitsHelper(&gm, t, expectedDiffs)

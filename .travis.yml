@@ -4,7 +4,7 @@ os:
     - linux
     - osx
 go:
-    - 1.9
+    - 1.7
 addons:
     apt:
         packages:
@@ -19,4 +19,4 @@ before_install:
 script:
     - bash test.sh
 after_success:
-    - bash <(curl -s https://codecov.io/bash)
+    - bash <(curl -s https://codecov.io/bash) || echo "Codecov coverage report upload error"

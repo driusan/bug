@@ -1,3 +1,4 @@
+// bug writes code problem reports to plain text files.
 package main
 
 import (

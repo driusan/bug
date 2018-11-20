@@ -130,7 +130,7 @@ directory to provide further explanation (for instance, why that
 milestone is set) with the command "bug edit milestone BugID"
 
 This command will preserve the explanation when updating a priority.
-`, os.Args[0])
+`, os.Args[0], os.Args[0])
 	case "retitle", "mv", "rename", "relabel":
 		fmt.Printf("Usage: " + os.Args[0] + " relabel BugID New Title\n\n")
 		fmt.Printf(

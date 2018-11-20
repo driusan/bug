@@ -102,7 +102,7 @@ func TestDetectHg(t *testing.T) {
 	}
 	switch handler.(type) {
 	case HgManager:
-		// GitManager is what we expect, don't fall through
+		// HgManager is what we expect, don't fall through
 		// to the error
 	default:
 		t.Error("Unexpected SCMHandler found for Mercurial")
