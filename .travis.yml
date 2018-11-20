@@ -1,10 +1,10 @@
 language: go
-dist: trusty
+dist: xenial
 os:
     - linux
     - osx
 go:
-    - 1.7
+    - 1.9
 addons:
     apt:
         packages:
