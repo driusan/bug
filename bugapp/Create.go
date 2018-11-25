@@ -61,7 +61,11 @@ func Create(Args ArgumentList) {
 
 	var mode os.FileMode
 	mode = 0775
-	os.Mkdir(string(dir), mode)
+	err := os.Mkdir(string(dir), mode)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "\n%s error: mkdir\n", os.Args[0])
+		log.Fatal(err)
+	}
 
 	if noDesc {
 		txt := []byte("")
