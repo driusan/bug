@@ -1,0 +1,32 @@
+Flexibility to embed bug in other systems sounds great. The described
+bug.Close() would be a nice place to implement this feature.
+
+A step towards implementing this would be reconmmending a convention to help
+other developers with whatever implementation they choose. For example a file
+containing a list of email addresses in each issue directory could be read and
+used only for changes to that issue.
+
+This seems like it couild also be implemented together with whatever standard
+VCS mechanisms already exist though the Description states implementing it
+independently of the VCS.
+
+I don't know about hg or other VCS but a git plugin run during the post-receive
+hook exists: git-multimail.py
+
+The recommended implementation of this is a python override of
+get_revision_recipients() as described on line 2497 of
+https://github.com/git/git/blob/master/contrib/hooks/multimail/git_multimail.py
+
+The file post.receive.example has just such python overrides.
+
+If a python implementation is not desired configurable exerimental a feature
+multimailhook.refFilterInclusionRegex of git-multimail.py hook. It matches
+against complete refnames and could match against just issue path names.
+
+github and other systems built on top of VCS have their own notification
+systems.
+
+Given the available workarounds this feels like a lower priority than other
+features and may be better handled in a different way. I encourage anyone
+interested to try this out.
+
