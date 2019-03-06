@@ -47,7 +47,7 @@ Otherwise, you can download a 64-bit release for OS X or Linux on the
 # Sample Usage
 
 If an environment variable named PMIT is set, that directory will be
-used to create and maintain issues, otherwise the bug command will
+used to create and maintain issues by looking for an 'issues' folder in it, otherwise the bug command will
 walk up the tree until it finds somewhere with a subdirectory named
 "issues" to track issues in.
 
